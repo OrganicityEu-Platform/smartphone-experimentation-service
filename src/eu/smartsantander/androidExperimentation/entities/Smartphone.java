@@ -8,23 +8,24 @@ package eu.smartsantander.androidExperimentation.entities;
  * To change this template use File | Settings | File Templates.
  */
 public class Smartphone {
-    private int id;
+    private Integer id;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
+        this.phoneId=this.id;
     }
 
-    private int phoneId;
+    private Integer phoneId;
 
-    public int getPhoneId() {
+    public Integer getPhoneId() {
         return phoneId;
     }
 
-    public void setPhoneId(int phoneId) {
+    public void setPhoneId(Integer phoneId) {
         this.phoneId = phoneId;
     }
 
