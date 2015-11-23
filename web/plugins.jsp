@@ -1,5 +1,5 @@
-<%@ page import="eu.smartsantander.androidExperimentation.service.ModelManager" %>
-<%@ page import="eu.smartsantander.androidExperimentation.model.Plugin" %>
+<%@ page import="gr.cti.android.experimentation.service.ModelManager" %>
+<%@ page import="gr.cti.android.experimentation.model.Plugin" %>
 <%@ page import="java.util.List" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>

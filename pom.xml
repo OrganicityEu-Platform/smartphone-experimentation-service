@@ -15,7 +15,7 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <start-class>eu.smartsantander.androidExperimentation.Application</start-class>
+        <start-class>gr.cti.android.experimentation.Application</start-class>
     </properties>
 
     <repositories>
