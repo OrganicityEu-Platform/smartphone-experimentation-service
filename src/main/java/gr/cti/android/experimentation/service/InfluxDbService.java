@@ -20,11 +20,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created with IntelliJ IDEA.
- * User: theodori
- * Date: 9/4/13
- * Time: 11:18 AM
- * To change this template use File | Settings | File Templates.
+ * Provides connection to the influx  database for storing data.
  */
 @Service
 public class InfluxDbService {

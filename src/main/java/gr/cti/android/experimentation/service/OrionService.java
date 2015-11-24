@@ -10,6 +10,7 @@ import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -20,11 +21,7 @@ import java.util.Iterator;
 
 
 /**
- * Created with IntelliJ IDEA.
- * User: theodori
- * Date: 9/4/13
- * Time: 11:18 AM
- * To change this template use File | Settings | File Templates.
+ * Provides connection to the orion context broker for storing data.
  */
 @Service
 public class OrionService {
@@ -38,6 +35,9 @@ public class OrionService {
     @Value("${siteName:london}")
     private String siteName;
 
+    @Autowired
+    CityService cityService;
+
     private OrionClient orionClient;
 
     private void setName(String siteName) {
@@ -50,13 +50,10 @@ public class OrionService {
     }
 
     @Async
-    public void storeOrion(final String id, Result newResult) {
-        LOGGER.info("store-orion:" + id);
+    public void store(Result newResult) {
+        LOGGER.info("store-orion:" + newResult.getDeviceId());
 
-        final String uri = String.format(ORION_SMARTPHONE_ID_FORMAT, siteName, id);
-        LOGGER.info(uri);
-
-        final SmartphoneDevice phoneEntity = new SmartphoneDevice(uri);
+        final SmartphoneDevice phoneEntity = new SmartphoneDevice();
 
         phoneEntity.setTimestamp(new Date());
 
@@ -135,14 +132,28 @@ public class OrionService {
                     phoneEntity.addAttribute(a);
                 }
             }
-            try {
-                if (longitude != null && latitude != null) {
+            if (longitude != null && latitude != null) {
+                try {
+                    final String locationName =
+                            cityService.findLocation(Double.parseDouble(latitude), Double.parseDouble(longitude));
+
+                    String uri;
+                    if (locationName != null) {
+                        uri = String.format(ORION_SMARTPHONE_ID_FORMAT, locationName, newResult.getDeviceId());
+                    } else {
+                        uri = String.format(ORION_SMARTPHONE_ID_FORMAT, siteName, newResult.getDeviceId());
+                    }
+                    LOGGER.info(uri);
+
+                    phoneEntity.setId(uri);
                     phoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
+
+                    final String res = orionClient.postContextEntity(uri, phoneEntity.getContextElement());
+                    LOGGER.info(res);
+
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
                 }
-                final String res = orionClient.postContextEntity(uri, phoneEntity.getContextElement());
-                LOGGER.info(res);
-            } catch (Exception e) {
-                LOGGER.error(e, e);
             }
 
         } catch (JSONException e) {

@@ -2,8 +2,14 @@ package gr.cti.android.experimentation.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.cti.android.experimentation.GcmMessageData;
+import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.repository.ResultRepository;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 
 import javax.ws.rs.client.ClientBuilder;
@@ -13,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Dimitrios Amaxilatis.
+ * Provides connection to the gcm service for sending messages to the clients.
  */
 @Controller
 public class GCMService {
@@ -25,6 +31,8 @@ public class GCMService {
     @Value("${gcm.key}")
     private String gcmKey;
 
+    @Autowired
+    ResultRepository resultRepository;
 
     public String send2Experiment(int experiment, String message) {
         Map<String, String> dataMap = new HashMap<>();
@@ -67,6 +75,28 @@ public class GCMService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Async
+    public void check(final Result newResult) throws JsonProcessingException {
+
+        long total = resultRepository.countByDeviceIdAndTimestampAfter(newResult.getDeviceId(),
+                new DateTime().withMillisOfDay(0).getMillis());
+
+        LOGGER.info("Total measurements : " + total + " device: " + newResult.getDeviceId());
+
+        if (total == 200) {
+            GcmMessageData data = new GcmMessageData();
+            data.setType("encourage");
+            data.setCount((int) total);
+            send2Device(newResult.getDeviceId(), new ObjectMapper().writeValueAsString(data));
+
+        } else if (total == 1000) {
+            GcmMessageData data = new GcmMessageData();
+            data.setType("encourage");
+            data.setCount((int) total);
+            send2Device(newResult.getDeviceId(), new ObjectMapper().writeValueAsString(data));
         }
     }
 }

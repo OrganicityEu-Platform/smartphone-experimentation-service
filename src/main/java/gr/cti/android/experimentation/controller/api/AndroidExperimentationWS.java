@@ -2,7 +2,6 @@ package gr.cti.android.experimentation.controller.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.organicity.entities.namespace.OrganicityAttributeTypes;
-import gr.cti.android.experimentation.GcmMessageData;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.entities.Reading;
 import gr.cti.android.experimentation.entities.Report;
@@ -11,10 +10,7 @@ import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.repository.SmartphoneRepository;
-import gr.cti.android.experimentation.service.GCMService;
-import gr.cti.android.experimentation.service.InfluxDbService;
-import gr.cti.android.experimentation.service.ModelManager;
-import gr.cti.android.experimentation.service.OrionService;
+import gr.cti.android.experimentation.service.*;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.Smartphone;
 import org.apache.log4j.Logger;
@@ -38,7 +34,7 @@ public class AndroidExperimentationWS extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(AndroidExperimentationWS.class);
     private static final int LIDIA_PHONE_ID = 11;
-    private static final int MYLONAS_PHONE_ID = -6;//6
+    private static final int MYLONAS_PHONE_ID = 6;//6
 
 
     @Autowired
@@ -52,9 +48,13 @@ public class AndroidExperimentationWS extends BaseController {
     @Autowired
     InfluxDbService influxDbService;
     @Autowired
+    SqlDbService sqlDbService;
+    @Autowired
     OrionService orionService;
     @Autowired
     GCMService gcmService;
+    @Autowired
+    CityService cityService;
 
 
     /**
@@ -116,6 +116,46 @@ public class AndroidExperimentationWS extends BaseController {
             JSONException, IOException {
         LOGGER.info("saveExperiment Called");
 
+        final Result newResult = extractResultFromBody(body);
+
+        //store to sql
+        try {
+            sqlDbService.store(newResult);
+        } catch (Exception e) {
+            LOGGER.error(e, e);
+        }
+
+        //store to influx
+//        try {
+//            boolean res = influxDbService.store(newResult);
+//            LOGGER.info(res);
+//        } catch (Exception e) {
+//            LOGGER.error(e, e);
+//        }
+
+        //store to orion
+        try {
+            orionService.store(newResult);
+        } catch (Exception e) {
+            LOGGER.error(e, e);
+        }
+
+        //send incentive messages to phone
+        try {
+            gcmService.check(newResult);
+        } catch (Exception e) {
+            LOGGER.error(e, e);
+        }
+
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        final JSONObject responseObje = new JSONObject();
+        responseObje.put("status", "Ok");
+        responseObje.put("code", 202);
+        return responseObje;
+    }
+
+    private Result extractResultFromBody(String body) throws JSONException, IOException {
+
         body = body.replaceAll("org.ambientdynamix.contextplugins.10pm", OrganicityAttributeTypes.Types.PARTICLES10.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.25pm", OrganicityAttributeTypes.Types.PARTICLES25.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.co", OrganicityAttributeTypes.Types.CARBON_MONOXIDE.getUrn())
@@ -124,12 +164,13 @@ public class AndroidExperimentationWS extends BaseController {
                 .replaceAll("org.ambientdynamix.contextplugins.temperature", OrganicityAttributeTypes.Types.TEMPERATURE.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.battery%", OrganicityAttributeTypes.Types.BATTERY_LEVEL.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.batteryv", OrganicityAttributeTypes.Types.BATTERY_VOLTAGE.getUrn());
+
+
         Report result = new ObjectMapper().readValue(body, Report.class);
         LOGGER.info("saving for deviceId:" + result.getDeviceId() + " jobName:" + result.getJobName());
         final Smartphone phone = smartphoneRepository.findById(result.getDeviceId());
         final Experiment experiment = experimentRepository.findById(Integer.parseInt(result.getJobName()));
         LOGGER.info("saving for PhoneId:" + phone.getPhoneId() + " ExperimentName:" + experiment.getName());
-
 
         final Result newResult = new Result();
         final JSONObject objTotal = new JSONObject();
@@ -167,56 +208,8 @@ public class AndroidExperimentationWS extends BaseController {
         newResult.setMessage(objTotal.toString());
 
         LOGGER.info(newResult.toString());
-        try {
-            orionService.storeOrion(String.valueOf(phone.getId()), newResult);
 
-
-            long total = resultRepository.countByDeviceIdAndTimestampAfter(phone.getId(),
-                    new DateTime().withMillisOfDay(0).getMillis());
-
-            LOGGER.info("Total measurements : " + total + " device: " + phone.getId());
-
-            if (total == 200) {
-                GcmMessageData data = new GcmMessageData();
-                data.setType("encourage");
-                data.setCount((int) total);
-                gcmService.send2Device(phone.getId(), new ObjectMapper().writeValueAsString(data));
-
-            } else if (total == 1000) {
-                GcmMessageData data = new GcmMessageData();
-                data.setType("encourage");
-                data.setCount((int) total);
-                gcmService.send2Device(phone.getId(), new ObjectMapper().writeValueAsString(data));
-            }
-        } catch (Exception e) {
-            LOGGER.error(e, e);
-        }
-
-//            boolean res = influxDbService.store(newResult);
-//            LOGGER.info(res);
-
-
-        LOGGER.info("saving result");
-        try {
-            try {
-                final Set<Result> res = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(newResult.getExperimentId(), newResult.getDeviceId(), newResult.getTimestamp(), newResult.getMessage());
-                if (res == null || (res.isEmpty())) {
-                    resultRepository.save(newResult);
-                }
-            } catch (Exception e) {
-                resultRepository.save(newResult);
-            }
-            response.setStatus(HttpServletResponse.SC_OK);
-            LOGGER.info("saveExperiment: OK");
-            LOGGER.info("saveExperiment: Stored:");
-            LOGGER.info("-----------------------------------");
-            return ok(response);
-        } catch (Exception e) {
-            LOGGER.info("saveExperiment: FAILEd" + e.getMessage(), e);
-            LOGGER.info("-----------------------------------");
-            return internalServerError(response);
-        }
-
+        return newResult;
     }
 
     @ResponseBody
