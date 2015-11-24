@@ -1,6 +1,8 @@
 package gr.cti.android.experimentation.service;
 
 import com.amaxilatis.orion.OrionClient;
+import com.amaxilatis.orion.model.OrionContextElement;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.organicity.entities.handler.attributes.Attribute;
 import eu.organicity.entities.handler.entities.SmartphoneDevice;
 import eu.organicity.entities.handler.metadata.Datatype;
@@ -148,9 +150,10 @@ public class OrionService {
                     phoneEntity.setId(uri);
                     phoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
 
-                    final String res = orionClient.postContextEntity(uri, phoneEntity.getContextElement());
-                    LOGGER.info(res);
-
+                    final OrionContextElement entity = phoneEntity.getContextElement();
+                    LOGGER.info((new ObjectMapper()).writeValueAsString(entity));
+                    final String res = orionClient.postContextEntity(uri, entity);
+                    LOGGER.info(res.replaceAll("\n", ""));
                 } catch (Exception e) {
                     LOGGER.error(e, e);
                 }

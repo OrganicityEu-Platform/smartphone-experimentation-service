@@ -34,7 +34,7 @@ public class AndroidExperimentationWS extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(AndroidExperimentationWS.class);
     private static final int LIDIA_PHONE_ID = 11;
-    private static final int MYLONAS_PHONE_ID = 6;//6
+    private static final int MYLONAS_PHONE_ID = -6;//6
 
 
     @Autowired
@@ -147,7 +147,7 @@ public class AndroidExperimentationWS extends BaseController {
             LOGGER.error(e, e);
         }
 
-        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        response.setStatus(HttpServletResponse.SC_OK);
         final JSONObject responseObje = new JSONObject();
         responseObje.put("status", "Ok");
         responseObje.put("code", 202);
@@ -156,7 +156,9 @@ public class AndroidExperimentationWS extends BaseController {
 
     private Result extractResultFromBody(String body) throws JSONException, IOException {
 
-        body = body.replaceAll("org.ambientdynamix.contextplugins.10pm", OrganicityAttributeTypes.Types.PARTICLES10.getUrn())
+        body = body.replaceAll("atributeType", "attributeType")
+                .replaceAll("org.ambientdynamix.contextplugins.sound", OrganicityAttributeTypes.Types.SOUND_PRESSURE_LEVEL.getUrn())
+                .replaceAll("org.ambientdynamix.contextplugins.10pm", OrganicityAttributeTypes.Types.PARTICLES10.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.25pm", OrganicityAttributeTypes.Types.PARTICLES25.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.co", OrganicityAttributeTypes.Types.CARBON_MONOXIDE.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.lpg", OrganicityAttributeTypes.Types.LPG.getUrn())
