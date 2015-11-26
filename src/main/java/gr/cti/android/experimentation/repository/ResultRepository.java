@@ -28,7 +28,7 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
 
     Set<Result> findByDeviceIdAndTimestampIsBetween(int deviceId, long start, long end);
 
-    Set<Result> findByExperimentIdAndDeviceIdAndTimestampAndMessage(int experimentId, int deviceId,long timestamp ,String message);
+    Set<Result> findByExperimentIdAndDeviceIdAndTimestampAndMessage(int experimentId, int deviceId, long timestamp, String message);
 
     long countByDeviceIdAndTimestampAfter(Integer id, long millis);
 }

@@ -4,14 +4,14 @@
 
     <groupId>cti.organicity</groupId>
     <artifactId>web-service</artifactId>
-
+    <version>1.2.7.RELEASE</version>
     <name>WebService</name>
     <description>WebService for AndroidExperimentation.</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.2.7.RELEASE</version>
+        <version>1.3.0.RELEASE</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
