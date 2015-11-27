@@ -18,6 +18,8 @@ import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.TimeZone;
+
 
 @Configuration
 @ComponentScan(basePackages = "gr.cti.android.experimentation")
@@ -37,6 +39,7 @@ public class Application implements CommandLineRunner {
 
     public static void main(String[] args)
             throws Exception {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         final ConfigurableApplicationContext ctx = SpringApplication.run(Application.class, args);
         for (String name : ctx.getBeanDefinitionNames()) {
             LOGGER.info(name);
