@@ -76,6 +76,16 @@ public class Plugin implements Serializable {
         this.installUrl = installUrl;
     }
 
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     private String filename;
 
     public String getFilename() {
