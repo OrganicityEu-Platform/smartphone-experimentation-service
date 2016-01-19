@@ -124,4 +124,13 @@ public class Plugin implements Serializable {
         result = 31 * result + (filename != null ? filename.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Plugin{" +
+                "contextType='" + contextType + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

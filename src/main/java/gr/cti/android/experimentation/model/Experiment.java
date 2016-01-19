@@ -1,6 +1,8 @@
 package gr.cti.android.experimentation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +18,8 @@ import java.util.Objects;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Experiment implements Serializable {
 
     @Id
@@ -23,7 +27,18 @@ public class Experiment implements Serializable {
     private Integer id;
     private String description;
     private String urlDescription;
-    private long timestamp;
+    private Long timestamp;
+    private String name;
+    private String contextType;
+    private String sensorDependencies;
+    private Long fromTime;
+    private Long toTime;
+    private String status;
+    private Integer userId;
+    private String url;
+    private String filename;
+    @JsonIgnore
+    private Boolean enabled;
 
     public long getTimestamp() {
         return timestamp;
@@ -49,8 +64,6 @@ public class Experiment implements Serializable {
         this.id = id;
     }
 
-    private String name;
-
     public String getName() {
         return name;
     }
@@ -58,8 +71,6 @@ public class Experiment implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    private String contextType;
 
     public String getContextType() {
         return contextType;
@@ -69,8 +80,6 @@ public class Experiment implements Serializable {
         this.contextType = contextType;
     }
 
-    private String sensorDependencies;
-
     public String getSensorDependencies() {
         return sensorDependencies;
     }
@@ -78,8 +87,6 @@ public class Experiment implements Serializable {
     public void setSensorDependencies(String sensorDependencies) {
         this.sensorDependencies = sensorDependencies;
     }
-
-    private Long fromTime;
 
     public Long getFromTime() {
         return fromTime;
@@ -89,8 +96,6 @@ public class Experiment implements Serializable {
         this.fromTime = fromTime;
     }
 
-    private Long toTime;
-
     public Long getToTime() {
         return toTime;
     }
@@ -98,8 +103,6 @@ public class Experiment implements Serializable {
     public void setToTime(Long toTime) {
         this.toTime = toTime;
     }
-
-    private String status;
 
     public String getStatus() {
         return status;
@@ -109,8 +112,6 @@ public class Experiment implements Serializable {
         this.status = status;
     }
 
-    private Integer userId;
-
     public Integer getUserId() {
         return userId;
     }
@@ -119,8 +120,6 @@ public class Experiment implements Serializable {
         this.userId = userId;
     }
 
-    private String url;
-
     public String getUrl() {
         return url;
     }
@@ -128,8 +127,6 @@ public class Experiment implements Serializable {
     public void setUrl(String url) {
         this.url = url;
     }
-
-    private String filename;
 
     public String getFilename() {
         return filename;
@@ -147,8 +144,6 @@ public class Experiment implements Serializable {
         this.urlDescription = urlDescription;
     }
 
-    @JsonIgnore
-    private Boolean enabled;
 
     public Boolean getEnabled() {
         return enabled;

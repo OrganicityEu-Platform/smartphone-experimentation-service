@@ -61,6 +61,22 @@ public class RestDataController extends BaseController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "text/csv")
+    public String dataCsv(final Map<String, Object> model, @RequestParam(value = "type") final String type) throws JSONException {
+        final StringBuilder response = new StringBuilder();
+        for (final Result result : resultRepository.findAll()) {
+            try {
+                final JSONObject object = new JSONObject(result.getMessage());
+                if (object.has(type)) {
+                    response.append(object.get(type)).append("\n");
+                }
+            } catch (Exception ingore) {
+            }
+        }
+        return response.toString();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/data/{experimentId}", method = RequestMethod.GET, produces = "application/json")
     public String experimentViewApi(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
         return getExperimentData(experiment, deviceId, after).toString();

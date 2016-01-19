@@ -33,8 +33,8 @@ public class AndroidExperimentationWS extends BaseController {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(AndroidExperimentationWS.class);
-    private static final int LIDIA_PHONE_ID = 11;
-    private static final int MYLONAS_PHONE_ID = -6;//6
+    public static final int LIDIA_PHONE_ID = 11;
+    public static final int MYLONAS_PHONE_ID = -6;//6
 
 
     @Autowired
@@ -55,63 +55,8 @@ public class AndroidExperimentationWS extends BaseController {
     GCMService gcmService;
     @Autowired
     CityService cityService;
-
-
-    /**
-     * Lists all avalialalbe plugins in the system.
-     *
-     * @return a json list of all available plugins in the system.
-     */
     @ResponseBody
-    @RequestMapping(value = "/plugin", method = RequestMethod.GET, produces = "application/json")
-    public Set<Plugin> getPluginList(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        Experiment experiment = modelManager.getEnabledExperiments().get(0);
-        if (phoneId == LIDIA_PHONE_ID || phoneId == MYLONAS_PHONE_ID) {
-            experiment = experimentRepository.findById(7);
-        }
-        Set<String> dependencies = new HashSet<>();
-        for (final String dependency : experiment.getSensorDependencies().split(",")) {
-            dependencies.add(dependency);
-        }
-        final Set<Plugin> plugins = modelManager.getPlugins(dependencies);
-        LOGGER.info("getPlugins Called: " + plugins);
-        return plugins;
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces = "application/json")
-    public List<Experiment> getExperiment(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        try {
-            if (phoneId == LIDIA_PHONE_ID || phoneId == MYLONAS_PHONE_ID) {
-                ArrayList<Experiment> experiements = new ArrayList<>();
-                experiements.add(experimentRepository.findById(7));
-                return experiements;
-            } else {
-                return modelManager.getEnabledExperiments();
-            }
-//            } else {
-//
-//                final Smartphone smartphone = smartphoneRepository.findById(phoneId);
-//                Experiment experiment = modelManager.getExperiment(smartphone);
-//                if (phoneId == LIDIA_PHONE_ID) {
-//                    experiment = experimentRepository.findById(7);
-//                }
-//                LOGGER.debug("getExperiment: Device:" + phoneId);
-//                LOGGER.debug("getExperiment:" + experiment);
-//                LOGGER.debug("-----------------------------------");
-//                final ArrayList<Experiment> list = new ArrayList<Experiment>();
-//                list.add(experiment);
-//                return list;
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.debug(e.getMessage());
-        }
-        return null;
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/experiment", method = RequestMethod.POST, produces = "text/plain", consumes = "text/plain")
+    @RequestMapping(value = "/api/v1/data", method = RequestMethod.POST, produces = "text/plain", consumes = "text/plain")
     public JSONObject saveExperiment(@RequestBody String body, final HttpServletResponse response) throws
             JSONException, IOException {
         LOGGER.info("saveExperiment Called");
