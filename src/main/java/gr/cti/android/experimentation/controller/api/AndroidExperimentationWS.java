@@ -56,7 +56,7 @@ public class AndroidExperimentationWS extends BaseController {
     @Autowired
     CityService cityService;
     @ResponseBody
-    @RequestMapping(value = "/api/v1/data", method = RequestMethod.POST, produces = "text/plain", consumes = "text/plain")
+    @RequestMapping(value = "/data", method = RequestMethod.POST, produces = "application/json", consumes = "text/plain")
     public JSONObject saveExperiment(@RequestBody String body, final HttpServletResponse response) throws
             JSONException, IOException {
         LOGGER.info("saveExperiment Called");

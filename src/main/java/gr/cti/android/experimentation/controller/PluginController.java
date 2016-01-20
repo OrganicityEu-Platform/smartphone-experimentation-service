@@ -126,4 +126,67 @@ public class PluginController {
         return null;
     }
 
+    /**
+     * Update an existing plugin.
+     *
+     * @return a json description of the plugin.
+     */
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
+    public Object addPlugin(HttpServletResponse response, @ModelAttribute final Plugin plugin, @PathVariable("pluginId") final long pluginId) throws IOException {
+
+        final ApiResponse apiResponse = new ApiResponse();
+        final String contextType = plugin.getContextType();
+        if (pluginId != plugin.getId()
+                || contextType == null
+                || plugin.getName() == null
+                || plugin.getImageUrl() == null
+                || plugin.getFilename() == null
+                || plugin.getDescription() == null
+                || plugin.getRuntimeFactoryClass() == null
+                ) {
+            LOGGER.error("wrong data: " + plugin);
+            String errorMessage = "error";
+            if (pluginId != plugin.getId()) {
+                errorMessage = "pluginId does not match submitted plugin description";
+            } else if (contextType == null) {
+                errorMessage = "contextType cannot be null";
+            } else if (plugin.getName() == null) {
+                errorMessage = "name cannot be null";
+            } else if (plugin.getImageUrl() == null) {
+                errorMessage = "imageUrl cannot be null";
+            } else if (plugin.getFilename() == null) {
+                errorMessage = "filename cannot be null";
+            } else if (plugin.getDescription() == null) {
+                errorMessage = "description cannot be null";
+            } else if (plugin.getRuntimeFactoryClass() == null) {
+                errorMessage = "runtimeFactoryClass cannot be null";
+            }
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
+        } else {
+            final Set<Plugin> existingPlugins = pluginRepository.findByContextType(contextType);
+            for (final Plugin existingPlugin : existingPlugins) {
+                if (existingPlugin.getId() != pluginId) {
+                    final String errorMessage = "this context type is already reserved by another plugin";
+                    response.sendError(HttpServletResponse.SC_CONFLICT, errorMessage);
+                }
+            }
+            if (!existingPlugins.isEmpty()) {
+                LOGGER.info("updatePlugin: " + plugin);
+                plugin.setId((int) pluginId);
+                //setInstall Url
+                plugin.setInstallUrl("http://195.220.224.231:8080/dynamixRepository/" + plugin.getFilename());
+                pluginRepository.save(plugin);
+                apiResponse.setStatus(HttpServletResponse.SC_OK);
+                apiResponse.setMessage("ok");
+                apiResponse.setValue(plugin);
+                return apiResponse;
+            } else {
+                LOGGER.error("plugin not found: " + plugin);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "a plugin with this contextType does not exist");
+            }
+        }
+        return null;
+    }
+
 }
