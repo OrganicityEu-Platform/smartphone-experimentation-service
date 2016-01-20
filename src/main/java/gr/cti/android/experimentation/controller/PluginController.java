@@ -39,13 +39,20 @@ public class PluginController {
     @Autowired
     PluginRepository pluginRepository;
 
+    /**
+     * Retrieve an existing plugin.
+     *
+     * @param response   the HTTP response object.
+     * @param pluginName the name of the plugin requested
+     * @return
+     */
     @RequestMapping(value = "/dynamixRepository/{pluginName}.jar", method = RequestMethod.GET)
-    public String downloadPlugin(@PathVariable("pluginName") final String pluginName, final HttpServletResponse httpServletResponse) {
+    public String downloadPlugin(@PathVariable("pluginName") final String pluginName, final HttpServletResponse response) {
         try {
             final InputStream is = new BufferedInputStream(new FileInputStream(new File(pluginsDir + pluginName + ".jar")));
-            httpServletResponse.setHeader("Content-Disposition", "attachment; filename=\"" + pluginName + ".jar\"");
-            httpServletResponse.setContentType("data:text/plaincharset=utf-8");
-            FileCopyUtils.copy(is, httpServletResponse.getOutputStream());
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + pluginName + ".jar\"");
+            response.setContentType("data:text/plaincharset=utf-8");
+            FileCopyUtils.copy(is, response.getOutputStream());
         } catch (IOException e) {
             LOGGER.error(e, e);
         }
@@ -54,8 +61,9 @@ public class PluginController {
 
 
     /**
-     * Lists all avalialalbe plugins in the system.
+     * Lists all available plugins in the system.
      *
+     * @param phoneId the id of the phone requesting the list of available plugins.
      * @return a json list of all available plugins in the system.
      */
     @ResponseBody
@@ -77,7 +85,8 @@ public class PluginController {
     /**
      * Register a new plugin to the backend.
      *
-     * @return a json description of the plugin.
+     * @param response the HTTP response object.
+     * @param plugin   the plugin object to register.
      */
     @ResponseBody
     @RequestMapping(value = "/api/v1/plugin", method = RequestMethod.POST, produces = "application/json")
@@ -129,7 +138,9 @@ public class PluginController {
     /**
      * Update an existing plugin.
      *
-     * @return a json description of the plugin.
+     * @param response the HTTP response object.
+     * @param plugin   the plugin object to update.
+     * @param pluginId the id of the plugin to update.
      */
     @ResponseBody
     @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
@@ -189,4 +200,28 @@ public class PluginController {
         return null;
     }
 
+    /**
+     * Delete an existing plugin.
+     *
+     * @param response the HTTP response object.
+     * @param pluginId the id of the plugin to delete.
+     */
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.DELETE, produces = "application/json")
+    public Object deletePlugin(HttpServletResponse response, @PathVariable("pluginId") final int pluginId) throws IOException {
+
+        final ApiResponse apiResponse = new ApiResponse();
+        final Plugin plugin = pluginRepository.findById(pluginId);
+        if (plugin == null) {
+            final String errorMessage = "no plugin found with this id";
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMessage);
+        } else {
+            pluginRepository.delete(plugin);
+            apiResponse.setStatus(HttpServletResponse.SC_OK);
+            apiResponse.setMessage("ok");
+            apiResponse.setValue(plugin);
+            return apiResponse;
+        }
+        return null;
+    }
 }

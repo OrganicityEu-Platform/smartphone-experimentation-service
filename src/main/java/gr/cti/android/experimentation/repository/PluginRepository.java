@@ -21,4 +21,5 @@ public interface PluginRepository extends CrudRepository<Plugin, Long> {
 
     Set<Plugin> findByContextType(String contextType);
 
+    Plugin findById(int id);
 }
