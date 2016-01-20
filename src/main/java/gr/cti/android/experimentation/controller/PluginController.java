@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashSet;
@@ -90,7 +91,9 @@ public class PluginController {
      */
     @ResponseBody
     @RequestMapping(value = "/api/v1/plugin", method = RequestMethod.POST, produces = "application/json")
-    public Object addPlugin(HttpServletResponse response, @ModelAttribute final Plugin plugin) throws IOException {
+    public Object addPlugin(HttpServletRequest request, HttpServletResponse response, @ModelAttribute final Plugin plugin) throws IOException {
+        LOGGER.info(request.getRemoteAddr());
+
         final ApiResponse apiResponse = new ApiResponse();
         final String contextType = plugin.getContextType();
         if (contextType == null
@@ -136,6 +139,31 @@ public class PluginController {
     }
 
     /**
+     * Get an existing plugin.
+     *
+     * @param response the HTTP response object.
+     * @param pluginId the id of the plugin to update.
+     */
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.GET, produces = "application/json")
+    public Object getPlugin(HttpServletResponse response, @PathVariable("pluginId") final long pluginId) throws IOException {
+
+        final ApiResponse apiResponse = new ApiResponse();
+
+        final Plugin storedPlugin = pluginRepository.findById((int) pluginId);
+        if (storedPlugin != null) {
+            LOGGER.info("getPlugin: " + storedPlugin);
+            apiResponse.setStatus(HttpServletResponse.SC_OK);
+            apiResponse.setMessage("ok");
+            apiResponse.setValue(storedPlugin);
+            return apiResponse;
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "no plugin found with the given id");
+        }
+        return null;
+    }
+
+    /**
      * Update an existing plugin.
      *
      * @param response the HTTP response object.
@@ -175,14 +203,17 @@ public class PluginController {
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
         } else {
-            final Set<Plugin> existingPlugins = pluginRepository.findByContextType(contextType);
-            for (final Plugin existingPlugin : existingPlugins) {
-                if (existingPlugin.getId() != pluginId) {
-                    final String errorMessage = "this context type is already reserved by another plugin";
-                    response.sendError(HttpServletResponse.SC_CONFLICT, errorMessage);
+            final Plugin storedPlugin = pluginRepository.findById((int) pluginId);
+            if (storedPlugin != null) {
+
+                final Set<Plugin> existingPlugins = pluginRepository.findByContextType(contextType);
+                for (final Plugin existingPlugin : existingPlugins) {
+                    if (existingPlugin.getId() != pluginId) {
+                        final String errorMessage = "this context type is already reserved by another plugin";
+                        response.sendError(HttpServletResponse.SC_CONFLICT, errorMessage);
+                    }
                 }
-            }
-            if (!existingPlugins.isEmpty()) {
+
                 LOGGER.info("updatePlugin: " + plugin);
                 plugin.setId((int) pluginId);
                 //setInstall Url
@@ -208,7 +239,7 @@ public class PluginController {
      */
     @ResponseBody
     @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.DELETE, produces = "application/json")
-    public Object deletePlugin(HttpServletResponse response, @PathVariable("pluginId") final int pluginId) throws IOException {
+    public Object deletePlugin(HttpServletRequest request, HttpServletResponse response, @PathVariable("pluginId") final int pluginId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
         final Plugin plugin = pluginRepository.findById(pluginId);
