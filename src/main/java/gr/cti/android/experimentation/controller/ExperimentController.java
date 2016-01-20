@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
@@ -70,6 +71,26 @@ public class ExperimentController {
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.debug(e.getMessage());
+        }
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
+    public ApiResponse getExperiment(HttpServletResponse response,
+                                     @PathVariable(value = "experimentId") final int experimentId) throws IOException {
+
+        final ApiResponse apiResponse = new ApiResponse();
+
+        final Experiment storedExperiment = experimentRepository.findById(experimentId);
+        if (storedExperiment != null) {
+            LOGGER.info("getExperiment: " + storedExperiment);
+            apiResponse.setStatus(HttpServletResponse.SC_OK);
+            apiResponse.setMessage("ok");
+            apiResponse.setValue(storedExperiment);
+            return apiResponse;
+        } else {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "no experiment found with the given id");
         }
         return null;
     }
