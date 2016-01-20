@@ -225,7 +225,7 @@ public class PluginController {
                 return apiResponse;
             } else {
                 LOGGER.error("plugin not found: " + plugin);
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "a plugin with this contextType does not exist");
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "a plugin with this id does not exist");
             }
         }
         return null;

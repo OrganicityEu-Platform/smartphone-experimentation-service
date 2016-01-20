@@ -150,4 +150,88 @@ public class ExperimentController {
         }
         return null;
     }
+
+
+    /**
+     * Update an existing experiment.
+     *
+     * @param response     the HTTP response object.
+     * @param experiment   the experiment object to update.
+     * @param experimentId the id of the experiment to update.
+     */
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
+    public Object updateExperiment(HttpServletResponse response, @ModelAttribute final BaseExperiment experiment, @PathVariable("experimentId") final long experimentId) throws IOException {
+
+        final ApiResponse apiResponse = new ApiResponse();
+        if (experiment.getName() == null
+                || experiment.getDescription() == null
+                || experiment.getUrlDescription() == null
+                || experiment.getFilename() == null
+                || experiment.getSensorDependencies() == null
+                || experiment.getUserId() == null
+                ) {
+            LOGGER.info("wrong data: " + experiment);
+            String errorMessage = "error";
+            if (experiment.getName() == null) {
+                errorMessage = "name cannot be null";
+            } else if (experiment.getDescription() == null) {
+                errorMessage = "description cannot be null";
+            } else if (experiment.getUrlDescription() == null) {
+                errorMessage = "urlDescription cannot be null";
+            } else if (experiment.getFilename() == null) {
+                errorMessage = "filename cannot be null";
+            } else if (experiment.getSensorDependencies() == null) {
+                errorMessage = "sensorDependencies cannot be null";
+            } else if (experiment.getUserId() == null) {
+                errorMessage = "userId cannot be null";
+            }
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
+        } else {
+            final Experiment storedExperiment = experimentRepository.findById((int) experimentId);
+            if (storedExperiment != null) {
+                storedExperiment.setName(experiment.getName());
+                storedExperiment.setDescription(experiment.getDescription());
+                storedExperiment.setUrlDescription(experiment.getUrlDescription());
+                storedExperiment.setFilename(experiment.getFilename());
+                storedExperiment.setSensorDependencies(experiment.getSensorDependencies());
+                storedExperiment.setUserId(experiment.getUserId());
+                LOGGER.info("updateExperiment: " + experiment);
+                //setInstall Url
+                storedExperiment.setUrl("http://195.220.224.231:8080/dynamixRepository/" + experiment.getFilename());
+                storedExperiment.setEnabled(false);
+                storedExperiment.setTimestamp(System.currentTimeMillis());
+                experimentRepository.save(storedExperiment);
+                apiResponse.setStatus(HttpServletResponse.SC_OK);
+                apiResponse.setMessage("ok");
+                apiResponse.setValue(experiment);
+                return apiResponse;
+            } else {
+                LOGGER.error("experiment not found: " + experiment);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "an experiment with this id does not exist");
+            }
+        }
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.DELETE, produces = "application/json")
+    public ApiResponse deleteExperiment(HttpServletResponse response,
+                                        @PathVariable(value = "experimentId") final int experimentId) throws IOException {
+
+        final ApiResponse apiResponse = new ApiResponse();
+        final Experiment experiment = experimentRepository.findById(experimentId);
+        if (experiment == null) {
+            final String errorMessage = "no experiment found with this id";
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMessage);
+        } else {
+            experimentRepository.delete(experiment);
+            apiResponse.setStatus(HttpServletResponse.SC_OK);
+            apiResponse.setMessage("ok");
+            apiResponse.setValue(experiment);
+            return apiResponse;
+        }
+        return null;
+    }
+
 }
