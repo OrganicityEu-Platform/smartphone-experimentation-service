@@ -1,5 +1,7 @@
 package gr.cti.android.experimentation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -94,6 +96,17 @@ public class Plugin implements Serializable {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    @JsonIgnore
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     @Override

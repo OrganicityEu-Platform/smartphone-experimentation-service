@@ -102,6 +102,7 @@ public class PluginController {
                 || plugin.getFilename() == null
                 || plugin.getDescription() == null
                 || plugin.getRuntimeFactoryClass() == null
+                || plugin.getUserId() == null
                 ) {
             LOGGER.info("wrong data: " + plugin);
             String errorMessage = "error";
@@ -117,6 +118,8 @@ public class PluginController {
                 errorMessage = "description cannot be null";
             } else if (plugin.getRuntimeFactoryClass() == null) {
                 errorMessage = "runtimeFactoryClass cannot be null";
+            } else if (plugin.getUserId() == null) {
+                errorMessage = "userId cannot be null";
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
         } else {
@@ -183,6 +186,7 @@ public class PluginController {
                 || plugin.getFilename() == null
                 || plugin.getDescription() == null
                 || plugin.getRuntimeFactoryClass() == null
+                || plugin.getUserId() == null
                 ) {
             LOGGER.error("wrong data: " + plugin);
             String errorMessage = "error";
@@ -200,6 +204,8 @@ public class PluginController {
                 errorMessage = "description cannot be null";
             } else if (plugin.getRuntimeFactoryClass() == null) {
                 errorMessage = "runtimeFactoryClass cannot be null";
+            } else if (plugin.getUserId() == null) {
+                errorMessage = "userId cannot be null";
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
         } else {
