@@ -33,6 +33,7 @@ public class ExperimentController {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(ExperimentController.class);
+    private static final String EXPERIMENT_CONTEXT_TYPE = "org.ambientdynamix.contextplugins.ExperimentPlugin";
     @Value("${plugins.dir}")
     String pluginsDir;
 
@@ -131,6 +132,7 @@ public class ExperimentController {
                 experimentObj.setDescription(experiment.getDescription());
                 experimentObj.setUrlDescription(experiment.getUrlDescription());
                 experimentObj.setFilename(experiment.getFilename());
+                experimentObj.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 experimentObj.setSensorDependencies(experiment.getSensorDependencies());
                 experimentObj.setUserId(experiment.getUserId());
                 LOGGER.info("addExperiment: " + experiment);
@@ -194,6 +196,7 @@ public class ExperimentController {
                 storedExperiment.setDescription(experiment.getDescription());
                 storedExperiment.setUrlDescription(experiment.getUrlDescription());
                 storedExperiment.setFilename(experiment.getFilename());
+                storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 storedExperiment.setSensorDependencies(experiment.getSensorDependencies());
                 storedExperiment.setUserId(experiment.getUserId());
                 LOGGER.info("updateExperiment: " + experiment);
