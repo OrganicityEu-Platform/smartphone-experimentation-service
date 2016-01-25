@@ -69,18 +69,29 @@ public class PluginController {
      */
     @ResponseBody
     @RequestMapping(value = "/api/v1/plugin", method = RequestMethod.GET, produces = "application/json")
-    public Set<Plugin> getPluginList(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        Experiment experiment = modelManager.getEnabledExperiments().get(0);
-        if (phoneId == AndroidExperimentationWS.LIDIA_PHONE_ID || phoneId == AndroidExperimentationWS.MYLONAS_PHONE_ID) {
-            experiment = experimentRepository.findById(7);
+    public Set<Plugin> getPluginList(
+            @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
+            @RequestParam(value = "userId", required = false) final Long userId,
+            @RequestParam(value = "type", required = false, defaultValue = "live") final String type) {
+        if (userId != null) {
+            return pluginRepository.findByUserId(userId);
+        } else {
+            if (type.equals("all")) {
+                return pluginRepository.findAll();
+            } else {
+                Experiment experiment = modelManager.getEnabledExperiments().get(0);
+                if (phoneId == AndroidExperimentationWS.LIDIA_PHONE_ID || phoneId == AndroidExperimentationWS.MYLONAS_PHONE_ID) {
+                    experiment = experimentRepository.findById(7);
+                }
+                final Set<String> dependencies = new HashSet<>();
+                for (final String dependency : experiment.getSensorDependencies().split(",")) {
+                    dependencies.add(dependency);
+                }
+                final Set<Plugin> plugins = modelManager.getPlugins(dependencies);
+                LOGGER.info("getPlugins Called: " + plugins);
+                return plugins;
+            }
         }
-        final Set<String> dependencies = new HashSet<>();
-        for (final String dependency : experiment.getSensorDependencies().split(",")) {
-            dependencies.add(dependency);
-        }
-        final Set<Plugin> plugins = modelManager.getPlugins(dependencies);
-        LOGGER.info("getPlugins Called: " + plugins);
-        return plugins;
     }
 
     /**
