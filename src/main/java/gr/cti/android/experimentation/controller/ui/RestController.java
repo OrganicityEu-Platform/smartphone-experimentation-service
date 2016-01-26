@@ -45,11 +45,11 @@ public class RestController extends BaseController {
         return "experiment";
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
-    public String experimentViewApi(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
-        return getExperimentData(experiment, deviceId, after).toString();
-    }
+//    @ResponseBody
+//    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
+//    public String experimentViewApi(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
+//        return getExperimentData(experiment, deviceId, after).toString();
+//    }
 
     private JSONArray getExperimentData(final String experiment, final int deviceId, final String after) {
         DecimalFormat df = new DecimalFormat("#.00000000");
