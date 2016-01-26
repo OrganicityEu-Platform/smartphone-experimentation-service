@@ -143,7 +143,7 @@ public class ExperimentController {
                 experimentRepository.save(experimentObj);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");
-                apiResponse.setValue(experiment);
+                apiResponse.setValue(experimentObj);
                 return apiResponse;
             } else {
                 LOGGER.info("experiment exists: " + experiment);
@@ -207,7 +207,7 @@ public class ExperimentController {
                 experimentRepository.save(storedExperiment);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");
-                apiResponse.setValue(experiment);
+                apiResponse.setValue(storedExperiment);
                 return apiResponse;
             } else {
                 LOGGER.error("experiment not found: " + experiment);
