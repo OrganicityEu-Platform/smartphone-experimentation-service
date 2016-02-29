@@ -76,21 +76,7 @@ public class PluginController {
         if (userId != null) {
             return pluginRepository.findByUserId(userId);
         } else {
-            if (type.equals("all")) {
-                return pluginRepository.findAll();
-            } else {
-                Experiment experiment = modelManager.getEnabledExperiments().get(0);
-                if (phoneId == AndroidExperimentationWS.LIDIA_PHONE_ID || phoneId == AndroidExperimentationWS.MYLONAS_PHONE_ID) {
-                    experiment = experimentRepository.findById(7);
-                }
-                final Set<String> dependencies = new HashSet<>();
-                for (final String dependency : experiment.getSensorDependencies().split(",")) {
-                    dependencies.add(dependency);
-                }
-                final Set<Plugin> plugins = modelManager.getPlugins(dependencies);
-                LOGGER.info("getPlugins Called: " + plugins);
-                return plugins;
-            }
+            return pluginRepository.findAll();
         }
     }
 
@@ -138,7 +124,7 @@ public class PluginController {
             if (existingPlugins.isEmpty()) {
                 LOGGER.info("addPlugin: " + plugin);
                 //setInstall Url
-                plugin.setInstallUrl("http://195.220.224.231:8080/dynamixRepository/" + plugin.getFilename());
+                plugin.setInstallUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + plugin.getFilename());
                 pluginRepository.save(plugin);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");
@@ -234,7 +220,7 @@ public class PluginController {
                 LOGGER.info("updatePlugin: " + plugin);
                 plugin.setId((int) pluginId);
                 //setInstall Url
-                plugin.setInstallUrl("http://195.220.224.231:8080/dynamixRepository/" + plugin.getFilename());
+                plugin.setInstallUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + plugin.getFilename());
                 pluginRepository.save(plugin);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");

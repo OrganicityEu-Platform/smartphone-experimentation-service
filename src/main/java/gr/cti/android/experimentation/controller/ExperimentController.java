@@ -137,7 +137,7 @@ public class ExperimentController {
                 experimentObj.setUserId(experiment.getUserId());
                 LOGGER.info("addExperiment: " + experiment);
                 //setInstall Url
-                experimentObj.setUrl("http://195.220.224.231:8080/dynamixRepository/" + experimentObj.getFilename());
+                experimentObj.setUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + experimentObj.getFilename());
                 experimentObj.setEnabled(false);
                 experimentObj.setTimestamp(System.currentTimeMillis());
                 experimentRepository.save(experimentObj);
@@ -201,7 +201,7 @@ public class ExperimentController {
                 storedExperiment.setUserId(experiment.getUserId());
                 LOGGER.info("updateExperiment: " + experiment);
                 //setInstall Url
-                storedExperiment.setUrl("http://195.220.224.231:8080/dynamixRepository/" + experiment.getFilename());
+                storedExperiment.setUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + experiment.getFilename());
                 storedExperiment.setEnabled(false);
                 storedExperiment.setTimestamp(System.currentTimeMillis());
                 experimentRepository.save(storedExperiment);
