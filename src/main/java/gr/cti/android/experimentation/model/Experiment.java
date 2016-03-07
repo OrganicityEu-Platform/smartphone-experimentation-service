@@ -31,8 +31,6 @@ public class Experiment implements Serializable {
     private String name;
     private String contextType;
     private String sensorDependencies;
-    private Long fromTime;
-    private Long toTime;
     private String status;
     private Integer userId;
     private String url;
@@ -86,22 +84,6 @@ public class Experiment implements Serializable {
 
     public void setSensorDependencies(String sensorDependencies) {
         this.sensorDependencies = sensorDependencies;
-    }
-
-    public Long getFromTime() {
-        return fromTime;
-    }
-
-    public void setFromTime(Long fromTime) {
-        this.fromTime = fromTime;
-    }
-
-    public Long getToTime() {
-        return toTime;
-    }
-
-    public void setToTime(Long toTime) {
-        this.toTime = toTime;
     }
 
     public String getStatus() {
@@ -163,12 +145,10 @@ public class Experiment implements Serializable {
         if (!Objects.equals(id, that.id)) return false;
         if (contextType != null ? !contextType.equals(that.contextType) : that.contextType != null) return false;
         if (filename != null ? !filename.equals(that.filename) : that.filename != null) return false;
-        if (fromTime != null ? !fromTime.equals(that.fromTime) : that.fromTime != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (sensorDependencies != null ? !sensorDependencies.equals(that.sensorDependencies) : that.sensorDependencies != null)
             return false;
         if (status != null ? !status.equals(that.status) : that.status != null) return false;
-        if (toTime != null ? !toTime.equals(that.toTime) : that.toTime != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
         return !(userId != null ? !userId.equals(that.userId) : that.userId != null);
 
@@ -180,8 +160,6 @@ public class Experiment implements Serializable {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (contextType != null ? contextType.hashCode() : 0);
         result = 31 * result + (sensorDependencies != null ? sensorDependencies.hashCode() : 0);
-        result = 31 * result + (fromTime != null ? fromTime.hashCode() : 0);
-        result = 31 * result + (toTime != null ? toTime.hashCode() : 0);
         result = 31 * result + (status != null ? status.hashCode() : 0);
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);

@@ -22,9 +22,13 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
 
     Set<Result> findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(int experimentId, int deviceId, long start);
 
+    Long countByExperimentIdAndDeviceId(int experimentId, int deviceId);
+
     Set<Result> findByDeviceIdAndTimestampBetween(int deviceId, long start, long end);
 
     Set<Result> findByDeviceIdAndTimestampAfter(int deviceId, long start);
+
+    Set<Result> findByDeviceIdAndTimestampAfterOrderByTimestampAsc(int deviceId, long start);
 
     Set<Result> findByDeviceIdAndTimestampIsBetween(int deviceId, long start, long end);
 

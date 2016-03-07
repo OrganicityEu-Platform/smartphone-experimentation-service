@@ -32,7 +32,7 @@ public class ModelManager {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger log = Logger.getLogger(Application.class);
+    private static final Logger log = Logger.getLogger(ModelManager.class);
 
     @Autowired
     PluginRepository pluginRepository;
@@ -132,30 +132,31 @@ public class ModelManager {
     }
 
 
-    public Smartphone registerSmartphone(Smartphone smartphone) {
-        if (smartphone.getId() == -1) {
+    public Smartphone registerSmartphone(final Smartphone smartphone) {
+        if (smartphone.getId() == -1 || smartphone.getId() == 0) {
             smartphone.setId(null);
         }
         log.info("registerSmartphone: id:" + smartphone.getId() + " phoneId:" + smartphone.getPhoneId());
-        Smartphone phone = smartphoneRepository.findByPhoneId(smartphone.getPhoneId());
+        final Smartphone phone = smartphoneRepository.findByPhoneId(smartphone.getPhoneId());
         log.info("registerSmartphone: phone:" + phone);
         if (phone == null) {
             return smartphoneRepository.save(smartphone);
         } else {
-            return phone;
+            phone.setSensorsRules(smartphone.getSensorsRules());
+            return smartphoneRepository.save(phone);
         }
 
     }
 
-    public void reportResults(Report report) {
-        String expId = report.getName();
-        List<String> experimentResults = report.getResults();
+    public void reportResults(final Report report) {
+        final String expId = report.getName();
+        final List<String> experimentResults = report.getResults();
         System.out.println("experiment Id: " + expId);
 
-        Experiment experiment = experimentRepository.findById(Integer.parseInt(expId));
+        final Experiment experiment = experimentRepository.findById(Integer.parseInt(expId));
 
         for (final String result : experimentResults) {
-            Result resultsEntity = new Result();
+            final Result resultsEntity = new Result();
             resultsEntity.setExperimentId(experiment.getId());
             resultsEntity.setDeviceId(report.getDeviceId());
             resultsEntity.setTimestamp(System.currentTimeMillis());

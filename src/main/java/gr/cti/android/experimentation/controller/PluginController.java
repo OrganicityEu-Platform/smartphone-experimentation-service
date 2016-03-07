@@ -180,7 +180,7 @@ public class PluginController {
                 || contextType == null
                 || plugin.getName() == null
                 || plugin.getImageUrl() == null
-                || plugin.getFilename() == null
+//                || plugin.getFilename() == null
                 || plugin.getDescription() == null
                 || plugin.getRuntimeFactoryClass() == null
                 || plugin.getUserId() == null
@@ -195,8 +195,8 @@ public class PluginController {
                 errorMessage = "name cannot be null";
             } else if (plugin.getImageUrl() == null) {
                 errorMessage = "imageUrl cannot be null";
-            } else if (plugin.getFilename() == null) {
-                errorMessage = "filename cannot be null";
+//            } else if (plugin.getFilename() == null) {
+//                errorMessage = "filename cannot be null";
             } else if (plugin.getDescription() == null) {
                 errorMessage = "description cannot be null";
             } else if (plugin.getRuntimeFactoryClass() == null) {
@@ -217,8 +217,12 @@ public class PluginController {
                     }
                 }
 
+
                 LOGGER.info("updatePlugin: " + plugin);
                 plugin.setId((int) pluginId);
+                if (plugin.getFilename() == null) {
+                    plugin.setFilename(storedPlugin.getFilename());
+                }
                 //setInstall Url
                 plugin.setInstallUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + plugin.getFilename());
                 pluginRepository.save(plugin);

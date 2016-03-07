@@ -169,7 +169,7 @@ public class ExperimentController {
         if (experiment.getName() == null
                 || experiment.getDescription() == null
                 || experiment.getUrlDescription() == null
-                || experiment.getFilename() == null
+//                || experiment.getFilename() == null
                 || experiment.getSensorDependencies() == null
                 || experiment.getUserId() == null
                 ) {
@@ -181,8 +181,8 @@ public class ExperimentController {
                 errorMessage = "description cannot be null";
             } else if (experiment.getUrlDescription() == null) {
                 errorMessage = "urlDescription cannot be null";
-            } else if (experiment.getFilename() == null) {
-                errorMessage = "filename cannot be null";
+//            } else if (experiment.getFilename() == null) {
+//                errorMessage = "filename cannot be null";
             } else if (experiment.getSensorDependencies() == null) {
                 errorMessage = "sensorDependencies cannot be null";
             } else if (experiment.getUserId() == null) {
@@ -195,13 +195,15 @@ public class ExperimentController {
                 storedExperiment.setName(experiment.getName());
                 storedExperiment.setDescription(experiment.getDescription());
                 storedExperiment.setUrlDescription(experiment.getUrlDescription());
-                storedExperiment.setFilename(experiment.getFilename());
+                if (experiment.getFilename()!=null) {
+                    storedExperiment.setFilename(experiment.getFilename());
+                    storedExperiment.setUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + experiment.getFilename());
+                }
                 storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 storedExperiment.setSensorDependencies(experiment.getSensorDependencies());
                 storedExperiment.setUserId(experiment.getUserId());
                 LOGGER.info("updateExperiment: " + experiment);
                 //setInstall Url
-                storedExperiment.setUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + experiment.getFilename());
                 storedExperiment.setEnabled(false);
                 storedExperiment.setTimestamp(System.currentTimeMillis());
                 experimentRepository.save(storedExperiment);

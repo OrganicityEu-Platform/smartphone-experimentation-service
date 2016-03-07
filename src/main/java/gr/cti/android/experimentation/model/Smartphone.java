@@ -77,4 +77,14 @@ public class Smartphone implements Serializable {
         result = 31 * result + (sensorsRules != null ? sensorsRules.hashCode() : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Smartphone{" +
+                "id=" + id +
+                ", deviceType='" + deviceType + '\'' +
+                ", phoneId=" + phoneId +
+                ", sensorsRules='" + sensorsRules + '\'' +
+                '}';
+    }
 }
