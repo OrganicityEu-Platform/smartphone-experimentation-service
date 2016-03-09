@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -32,33 +35,60 @@ public class RestRankingController extends BaseController {
     ResultRepository resultRepository;
     @Autowired
     SmartphoneRepository smartphoneRepository;
+    private SimpleDateFormat dfTime;
+    private SimpleDateFormat dfDay;
 
+    @PostConstruct
+    public void init() {
+        final TimeZone tz = TimeZone.getTimeZone("UTC");
+        dfTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+        dfDay = new SimpleDateFormat("yyyy-MM-dd");
+        dfTime.setTimeZone(tz);
+        dfDay.setTimeZone(tz);
+    }
 
     @ResponseBody
     @RequestMapping(value = "/api/ranking", method = RequestMethod.GET)
-    public Set<T> experimentView(final Map<String, Object> model, @RequestParam(value = "after", required = false, defaultValue = "0") final long after) {
-        LOGGER.debug("ranking:" + after);
+    public Set<RankingEntry> experimentView(@RequestParam(value = "after", required = false, defaultValue = "") final String after) {
 
-        final DateTime start = new DateTime(after).withMillisOfDay(0);
-
-        SortedSet<T> list = new TreeSet<>((o1, o2) -> (int) (o2.getCount() - o1.getCount()));
-
+        SortedSet<RankingEntry> list = new TreeSet<>((o1, o2) -> (int) (o2.getCount() - o1.getCount()));
         final Iterable<Smartphone> phones = smartphoneRepository.findAll();
-        for (final Smartphone phone : phones) {
-            long count = resultRepository.countByDeviceIdAndTimestampAfter(phone.getId(), start.getMillis());
-            if (count > 0) {
-                list.add(new T(phone.getId(), count));
-            }
-        }
 
+        if (after.isEmpty()) {
+            for (final Smartphone phone : phones) {
+                long count = resultRepository.countByDeviceId(phone.getId());
+                if (count > 0) {
+                    list.add(new RankingEntry(phone.getId(), count));
+                }
+            }
+        } else {
+
+            try {
+                Date afterMillis;
+                if (after.contains("T")) {
+                    afterMillis = dfTime.parse(after);
+                } else {
+                    afterMillis = dfDay.parse(after);
+                }
+                for (final Smartphone phone : phones) {
+                    long count = resultRepository.countByDeviceIdAndTimestampAfter(phone.getId(), afterMillis.getTime());
+                    if (count > 0) {
+                        list.add(new RankingEntry(phone.getId(), count));
+                    }
+                }
+            } catch (ParseException e) {
+                return null;
+            }
+
+        }
         return list;
     }
 
-    class T {
+    class RankingEntry {
         long phoneId;
         long count;
 
-        public T(long phoneId, long count) {
+        public RankingEntry(long phoneId, long count) {
             this.phoneId = phoneId;
             this.count = count;
         }

@@ -34,5 +34,7 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
 
     Set<Result> findByExperimentIdAndDeviceIdAndTimestampAndMessage(int experimentId, int deviceId, long timestamp, String message);
 
-    long countByDeviceIdAndTimestampAfter(Integer id, long millis);
+    long countByDeviceIdAndTimestampAfter(int deviceId, long millis);
+
+    long countByDeviceId(int deviceId);
 }
