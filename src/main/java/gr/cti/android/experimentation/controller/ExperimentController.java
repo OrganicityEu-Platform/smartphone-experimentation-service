@@ -4,7 +4,6 @@ import gr.cti.android.experimentation.controller.api.AndroidExperimentationWS;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.BaseExperiment;
 import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.PluginRepository;
 import gr.cti.android.experimentation.service.ModelManager;
@@ -12,14 +11,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -104,6 +100,7 @@ public class ExperimentController {
         if (experiment.getName() == null
                 || experiment.getDescription() == null
                 || experiment.getUrlDescription() == null
+                || experiment.getUrl() == null
                 || experiment.getFilename() == null
                 || experiment.getSensorDependencies() == null
                 || experiment.getUserId() == null
@@ -114,10 +111,12 @@ public class ExperimentController {
                 errorMessage = "name cannot be null";
             } else if (experiment.getDescription() == null) {
                 errorMessage = "description cannot be null";
-            } else if (experiment.getUrlDescription() == null) {
+            } else if (experiment.getUrl() == null) {
                 errorMessage = "urlDescription cannot be null";
             } else if (experiment.getFilename() == null) {
                 errorMessage = "filename cannot be null";
+            } else if (experiment.getUrl() == null) {
+                errorMessage = "url cannot be null";
             } else if (experiment.getSensorDependencies() == null) {
                 errorMessage = "sensorDependencies cannot be null";
             } else if (experiment.getUserId() == null) {
@@ -130,15 +129,14 @@ public class ExperimentController {
                 Experiment experimentObj = new Experiment();
                 experimentObj.setName(experiment.getName());
                 experimentObj.setDescription(experiment.getDescription());
-                experimentObj.setUrlDescription(experiment.getUrlDescription());
+                experimentObj.setUrlDescription(experiment.getUrl());
                 experimentObj.setFilename(experiment.getFilename());
                 experimentObj.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 experimentObj.setSensorDependencies(experiment.getSensorDependencies());
                 experimentObj.setUserId(experiment.getUserId());
+                experimentObj.setUrl(experiment.getUrl());
+                experimentObj.setEnabled(true);
                 LOGGER.info("addExperiment: " + experiment);
-                //setInstall Url
-                experimentObj.setUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + experimentObj.getFilename());
-                experimentObj.setEnabled(false);
                 experimentObj.setTimestamp(System.currentTimeMillis());
                 experimentRepository.save(experimentObj);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
@@ -169,6 +167,7 @@ public class ExperimentController {
         if (experiment.getName() == null
                 || experiment.getDescription() == null
                 || experiment.getUrlDescription() == null
+                || experiment.getUrl() == null
 //                || experiment.getFilename() == null
                 || experiment.getSensorDependencies() == null
                 || experiment.getUserId() == null
@@ -183,6 +182,8 @@ public class ExperimentController {
                 errorMessage = "urlDescription cannot be null";
 //            } else if (experiment.getFilename() == null) {
 //                errorMessage = "filename cannot be null";
+//            } else if (experiment.getInstallUrl() == null) {
+//                errorMessage = "url cannot be null";
             } else if (experiment.getSensorDependencies() == null) {
                 errorMessage = "sensorDependencies cannot be null";
             } else if (experiment.getUserId() == null) {
@@ -195,9 +196,11 @@ public class ExperimentController {
                 storedExperiment.setName(experiment.getName());
                 storedExperiment.setDescription(experiment.getDescription());
                 storedExperiment.setUrlDescription(experiment.getUrlDescription());
-                if (experiment.getFilename()!=null) {
+                if (experiment.getUrl() != null) {
+                    storedExperiment.setUrl(experiment.getUrl());
+                }
+                if (experiment.getFilename() != null) {
                     storedExperiment.setFilename(experiment.getFilename());
-                    storedExperiment.setUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + experiment.getFilename());
                 }
                 storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 storedExperiment.setSensorDependencies(experiment.getSensorDependencies());

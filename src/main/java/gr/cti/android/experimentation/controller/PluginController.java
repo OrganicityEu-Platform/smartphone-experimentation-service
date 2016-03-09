@@ -1,8 +1,6 @@
 package gr.cti.android.experimentation.controller;
 
-import gr.cti.android.experimentation.controller.api.AndroidExperimentationWS;
 import gr.cti.android.experimentation.model.ApiResponse;
-import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.PluginRepository;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -97,6 +94,7 @@ public class PluginController {
                 || plugin.getName() == null
                 || plugin.getImageUrl() == null
                 || plugin.getFilename() == null
+                || plugin.getInstallUrl() == null
                 || plugin.getDescription() == null
                 || plugin.getRuntimeFactoryClass() == null
                 || plugin.getUserId() == null
@@ -111,6 +109,8 @@ public class PluginController {
                 errorMessage = "imageUrl cannot be null";
             } else if (plugin.getFilename() == null) {
                 errorMessage = "filename cannot be null";
+            } else if (plugin.getInstallUrl() == null) {
+                errorMessage = "url cannot be null";
             } else if (plugin.getDescription() == null) {
                 errorMessage = "description cannot be null";
             } else if (plugin.getRuntimeFactoryClass() == null) {
@@ -123,8 +123,6 @@ public class PluginController {
             final Set<Plugin> existingPlugins = pluginRepository.findByContextType(contextType);
             if (existingPlugins.isEmpty()) {
                 LOGGER.info("addPlugin: " + plugin);
-                //setInstall Url
-                plugin.setInstallUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + plugin.getFilename());
                 pluginRepository.save(plugin);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");
@@ -181,6 +179,7 @@ public class PluginController {
                 || plugin.getName() == null
                 || plugin.getImageUrl() == null
 //                || plugin.getFilename() == null
+//                || plugin.getInstallUrl() == null
                 || plugin.getDescription() == null
                 || plugin.getRuntimeFactoryClass() == null
                 || plugin.getUserId() == null
@@ -197,6 +196,8 @@ public class PluginController {
                 errorMessage = "imageUrl cannot be null";
 //            } else if (plugin.getFilename() == null) {
 //                errorMessage = "filename cannot be null";
+//            } else if (plugin.getInstallUrl() == null) {
+//                errorMessage = "url cannot be null";
             } else if (plugin.getDescription() == null) {
                 errorMessage = "description cannot be null";
             } else if (plugin.getRuntimeFactoryClass() == null) {
@@ -217,14 +218,14 @@ public class PluginController {
                     }
                 }
 
-
                 LOGGER.info("updatePlugin: " + plugin);
                 plugin.setId((int) pluginId);
                 if (plugin.getFilename() == null) {
                     plugin.setFilename(storedPlugin.getFilename());
                 }
-                //setInstall Url
-                plugin.setInstallUrl("http://smartphone-experimentation.eu:8080/dynamixRepository/" + plugin.getFilename());
+                if (plugin.getInstallUrl() == null) {
+                    plugin.setInstallUrl(storedPlugin.getInstallUrl());
+                }
                 pluginRepository.save(plugin);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");

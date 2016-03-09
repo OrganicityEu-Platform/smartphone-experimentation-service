@@ -1,14 +1,9 @@
 package gr.cti.android.experimentation.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +21,7 @@ public class BaseExperiment implements Serializable {
     private String name;
     private String sensorDependencies;
     private Integer userId;
+    private String url;
     private String filename;
 
     public String getDescription() {
@@ -66,6 +62,14 @@ public class BaseExperiment implements Serializable {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getFilename() {
