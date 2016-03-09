@@ -21,21 +21,12 @@ import java.util.Set;
  * @author Dimitrios Amaxilatis.
  */
 @Controller
-public class PluginController {
+public class PluginController extends BaseController {
 
     /**
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(PluginController.class);
-    @Value("${plugins.dir}")
-    String pluginsDir;
-
-    @Autowired
-    ModelManager modelManager;
-    @Autowired
-    ExperimentRepository experimentRepository;
-    @Autowired
-    PluginRepository pluginRepository;
 
     /**
      * Retrieve an existing plugin.

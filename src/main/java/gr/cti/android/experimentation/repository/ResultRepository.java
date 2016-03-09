@@ -36,5 +36,9 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
 
     long countByDeviceIdAndTimestampAfter(int deviceId, long millis);
 
+    long countByDeviceIdAndExperimentIdAndTimestampAfter(int deviceId, int experimentId, long millis);
+
     long countByDeviceId(int deviceId);
+
+    long countByDeviceIdAndExperimentId(int deviceId, int experimentId);
 }

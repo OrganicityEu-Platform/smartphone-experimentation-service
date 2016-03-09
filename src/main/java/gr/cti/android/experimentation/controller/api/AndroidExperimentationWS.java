@@ -36,25 +36,6 @@ public class AndroidExperimentationWS extends BaseController {
     public static final int LIDIA_PHONE_ID = 11;
     public static final int MYLONAS_PHONE_ID = -6;//6
 
-
-    @Autowired
-    ModelManager modelManager;
-    @Autowired
-    SmartphoneRepository smartphoneRepository;
-    @Autowired
-    ExperimentRepository experimentRepository;
-    @Autowired
-    ResultRepository resultRepository;
-    @Autowired
-    InfluxDbService influxDbService;
-    @Autowired
-    SqlDbService sqlDbService;
-    @Autowired
-    OrionService orionService;
-    @Autowired
-    GCMService gcmService;
-    @Autowired
-    CityService cityService;
     @ResponseBody
     @RequestMapping(value = "/data", method = RequestMethod.POST, produces = "application/json", consumes = "text/plain")
     public JSONObject saveExperiment(@RequestBody String body, final HttpServletResponse response) throws

@@ -23,22 +23,14 @@ import java.util.Set;
  * @author Dimitrios Amaxilatis.
  */
 @Controller
-public class ExperimentController {
+public class ExperimentController extends BaseController {
 
     /**
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(ExperimentController.class);
     private static final String EXPERIMENT_CONTEXT_TYPE = "org.ambientdynamix.contextplugins.ExperimentPlugin";
-    @Value("${plugins.dir}")
-    String pluginsDir;
 
-    @Autowired
-    ModelManager modelManager;
-    @Autowired
-    ExperimentRepository experimentRepository;
-    @Autowired
-    PluginRepository pluginRepository;
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.GET, produces = "application/json")

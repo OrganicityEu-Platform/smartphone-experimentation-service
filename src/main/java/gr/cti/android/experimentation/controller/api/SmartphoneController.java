@@ -21,8 +21,6 @@ public class SmartphoneController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(SmartphoneController.class);
 
-    @Autowired
-    ModelManager modelManager;
 
     /**
      * Registers a {@see Smartphone} to the service.

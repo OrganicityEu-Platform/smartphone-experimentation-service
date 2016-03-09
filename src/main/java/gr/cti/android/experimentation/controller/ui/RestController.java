@@ -27,11 +27,6 @@ public class RestController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(RestController.class);
 
-
-    @Autowired
-    ResultRepository resultRepository;
-
-
     @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.GET)
     public String experimentView(final Map<String, Object> model, @PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
         LOGGER.debug("experiment:" + experiment);

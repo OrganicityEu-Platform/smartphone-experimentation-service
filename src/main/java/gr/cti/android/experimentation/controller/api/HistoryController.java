@@ -26,9 +26,6 @@ public class HistoryController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(HistoryController.class);
 
-    @Autowired
-    ResultRepository resultRepository;
-
     @ResponseBody
     @RequestMapping(value = {"/api/v1/entities/{entity_id}/readings"}, method = RequestMethod.GET)
     public HistoricData experimentView(@PathVariable("entity_id") final String entityId,
