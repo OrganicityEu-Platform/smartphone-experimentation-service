@@ -38,7 +38,7 @@ public class RestRankingController extends BaseController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/api/ranking", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/v1/ranking", method = RequestMethod.GET)
     public Set<RankingEntry> getRankings(
             @RequestParam(required = false, defaultValue = "") final String after,
             @RequestParam(required = false, defaultValue = "0") final int experimentId
