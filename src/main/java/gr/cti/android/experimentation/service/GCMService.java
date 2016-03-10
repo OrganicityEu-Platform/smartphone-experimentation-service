@@ -3,7 +3,9 @@ package gr.cti.android.experimentation.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
+import gr.cti.android.experimentation.model.Badge;
 import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.repository.BadgeRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -33,6 +35,8 @@ public class GCMService {
 
     @Autowired
     ResultRepository resultRepository;
+    @Autowired
+    BadgeService badgeService;
 
     public String send2Experiment(int experiment, String message) {
         Map<String, String> dataMap = new HashMap<>();
@@ -92,11 +96,15 @@ public class GCMService {
             data.setCount((int) total);
             send2Device(newResult.getDeviceId(), new ObjectMapper().writeValueAsString(data));
 
+            badgeService.addBadge(newResult.getExperimentId(), newResult.getDeviceId(), "200 daily measurements");
         } else if (total == 1000) {
             GcmMessageData data = new GcmMessageData();
             data.setType("encourage");
             data.setCount((int) total);
             send2Device(newResult.getDeviceId(), new ObjectMapper().writeValueAsString(data));
+
+            badgeService.addBadge(newResult.getExperimentId(), newResult.getDeviceId(), "1000 daily measurements");
         }
     }
+
 }
