@@ -103,7 +103,7 @@ public class ExperimentController extends BaseController {
                 errorMessage = "name cannot be null";
             } else if (experiment.getDescription() == null) {
                 errorMessage = "description cannot be null";
-            } else if (experiment.getUrl() == null) {
+            } else if (experiment.getUrlDescription() == null) {
                 errorMessage = "urlDescription cannot be null";
             } else if (experiment.getFilename() == null) {
                 errorMessage = "filename cannot be null";
