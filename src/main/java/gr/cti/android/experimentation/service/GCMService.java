@@ -104,6 +104,13 @@ public class GCMService {
             send2Device(newResult.getDeviceId(), new ObjectMapper().writeValueAsString(data));
 
             badgeService.addBadge(newResult.getExperimentId(), newResult.getDeviceId(), "1000 daily measurements");
+        } else if (total == 10000) {
+            GcmMessageData data = new GcmMessageData();
+            data.setType("encourage");
+            data.setCount((int) total);
+            send2Device(newResult.getDeviceId(), new ObjectMapper().writeValueAsString(data));
+
+            badgeService.addBadge(newResult.getExperimentId(), newResult.getDeviceId(), "10000 daily measurements");
         }
     }
 
