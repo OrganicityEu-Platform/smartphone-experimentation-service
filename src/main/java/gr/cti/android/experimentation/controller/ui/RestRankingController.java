@@ -1,8 +1,12 @@
 package gr.cti.android.experimentation.controller.ui;
 
 import gr.cti.android.experimentation.controller.BaseController;
+import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.Smartphone;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -87,6 +91,38 @@ public class RestRankingController extends BaseController {
             }
         }
         return list;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/statistics", method = RequestMethod.GET)
+    public String getRankings(
+            @RequestParam(required = false, defaultValue = "0") final int deviceId) {
+
+        final long resultsTotal = resultRepository.countByDeviceId(deviceId);
+        final long resultsToday = resultRepository.countByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis());
+        final Set<Result> experimentsTotal = new HashSet<>();
+        final Set<Integer> experimentIdsTotal = new HashSet<>();
+        experimentsTotal.addAll(resultRepository.findDistinctExperimentIdByDeviceId(deviceId));
+        final Set<Result> experimentsToday = new HashSet<>();
+        final Set<Integer> experimentsIdsToday = new HashSet<>();
+        experimentsToday.addAll(resultRepository.findDistinctExperimentIdByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis()));
+
+        for (final Result integer : experimentsTotal) {
+            experimentIdsTotal.add(integer.getExperimentId());
+        }
+        for (final Result integer : experimentsToday) {
+            experimentsIdsToday.add(integer.getExperimentId());
+        }
+        final JSONObject obj = new JSONObject();
+        try {
+            obj.put("resultsTotal", resultsTotal);
+            obj.put("resultsToday", resultsToday);
+            obj.put("experimentsTotal", experimentIdsTotal.size());
+            obj.put("experimentsToday", experimentsIdsToday.size());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return obj.toString();
     }
 
     class RankingEntry {

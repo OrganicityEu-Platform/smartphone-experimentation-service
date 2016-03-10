@@ -41,4 +41,8 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
     long countByDeviceId(int deviceId);
 
     long countByDeviceIdAndExperimentId(int deviceId, int experimentId);
+
+    Set<Result> findDistinctExperimentIdByDeviceId(int deviceId);
+
+    Set<Result> findDistinctExperimentIdByDeviceIdAndTimestampAfter(int deviceId, long millis);
 }
