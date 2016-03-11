@@ -159,7 +159,7 @@ public class ExperimentController extends BaseController {
         if (experiment.getName() == null
                 || experiment.getDescription() == null
                 || experiment.getUrlDescription() == null
-                || experiment.getUrl() == null
+//                || experiment.getUrl() == null
 //                || experiment.getFilename() == null
                 || experiment.getSensorDependencies() == null
                 || experiment.getUserId() == null
@@ -174,7 +174,7 @@ public class ExperimentController extends BaseController {
                 errorMessage = "urlDescription cannot be null";
 //            } else if (experiment.getFilename() == null) {
 //                errorMessage = "filename cannot be null";
-//            } else if (experiment.getInstallUrl() == null) {
+//            } else if (experiment.getUrl() == null) {
 //                errorMessage = "url cannot be null";
             } else if (experiment.getSensorDependencies() == null) {
                 errorMessage = "sensorDependencies cannot be null";
