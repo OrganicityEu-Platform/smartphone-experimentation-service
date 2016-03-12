@@ -2,14 +2,12 @@ package gr.cti.android.experimentation.controller.ui;
 
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.repository.ResultRepository;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,7 +53,7 @@ public class RestDataController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "text/csv")
-    public String dataCsv(final Map<String, Object> model, @RequestParam(value = "type") final String type) throws JSONException {
+    public String dataCsv(@RequestParam(value = "type") final String type) throws JSONException {
         final StringBuilder response = new StringBuilder();
         for (final Result result : resultRepository.findAll()) {
             try {
@@ -63,7 +61,7 @@ public class RestDataController extends BaseController {
                 if (object.has(type)) {
                     response.append(object.get(type)).append("\n");
                 }
-            } catch (Exception ingore) {
+            } catch (Exception ignore) {
             }
         }
         return response.toString();
@@ -125,8 +123,8 @@ public class RestDataController extends BaseController {
         }
 
         Map<String, Map<String, Map<String, DescriptiveStatistics>>> dataAggregates = new HashMap<>();
-        String longitude = null;
-        String latitude = null;
+        String longitude;
+        String latitude;
         DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
         Map<String, Map<String, Long>> locationsHeatMap = new HashMap<>();
         for (Result result : results) {
@@ -241,8 +239,8 @@ public class RestDataController extends BaseController {
         }
 
         Map<String, Map<String, Map<String, DescriptiveStatistics>>> dataAggregates = new HashMap<>();
-        String longitude = null;
-        String latitude = null;
+        String longitude;
+        String latitude;
         DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
         Map<String, Map<String, Long>> locationsHeatMap = new HashMap<>();
         for (Result result : results) {
@@ -358,8 +356,8 @@ public class RestDataController extends BaseController {
 
         try {
             Map<Integer, Map<String, Map<String, Map<String, DescriptiveStatistics>>>> dataAggregates = new HashMap<>();
-            String longitude = null;
-            String latitude = null;
+            String longitude;
+            String latitude;
             DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
             Map<Integer, Map<String, Map<String, Long>>> locationsHeatMap = new HashMap<>();
             for (Result result : results) {
@@ -471,12 +469,18 @@ public class RestDataController extends BaseController {
         try {
             start = Long.parseLong(after);
         } catch (Exception e) {
-            if (after.equals("Today") || after.equals("today")) {
-                start = new DateTime().withMillisOfDay(0).getMillis();
-            } else if (after.equals("Yesterday") || after.equals("yesterday")) {
-                start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
-            } else {
-                start = 0;
+            switch (after) {
+                case "Today":
+                case "today":
+                    start = new DateTime().withMillisOfDay(0).getMillis();
+                    break;
+                case "Yesterday":
+                case "yesterday":
+                    start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
+                    break;
+                default:
+                    start = 0;
+                    break;
             }
         }
         final Set<Result> results;
@@ -486,7 +490,7 @@ public class RestDataController extends BaseController {
             results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(Integer.parseInt(experiment), deviceId, start);
         }
 
-        final Map<String, DescriptiveStatistics> maxValues = new HashMap<String, DescriptiveStatistics>();
+        final Map<String, DescriptiveStatistics> maxValues = new HashMap<>();
         final JSONObject maxJson = new JSONObject();
         for (Result result : results) {
             try {

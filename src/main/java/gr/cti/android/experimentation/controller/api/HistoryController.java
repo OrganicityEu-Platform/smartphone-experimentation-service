@@ -4,16 +4,15 @@ import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.HistoricData;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.TempReading;
-import gr.cti.android.experimentation.repository.ResultRepository;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -25,6 +24,19 @@ public class HistoryController extends BaseController {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(HistoryController.class);
+    private SimpleDateFormat df;
+    private SimpleDateFormat df1;
+
+    @PostConstruct
+    public void init() {
+
+        final TimeZone tz = TimeZone.getTimeZone("UTC");
+        df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        df.setTimeZone(tz);
+        df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        df1.setTimeZone(tz);
+
+    }
 
     @ResponseBody
     @RequestMapping(value = {"/api/v1/entities/{entity_id}/readings"}, method = RequestMethod.GET)
@@ -45,35 +57,13 @@ public class HistoryController extends BaseController {
         historicData.setTo(to);
         historicData.setReadings(new ArrayList<>());
 
-        final TimeZone tz = TimeZone.getTimeZone("UTC");
-        final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        df.setTimeZone(tz);
-        final SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        df1.setTimeZone(tz);
-
         final List<TempReading> tempReadings = new ArrayList<>();
         long fromLong;
         long toLong = 0;
         try {
 
-            try {
-                fromLong = Long.parseLong(from);
-            } catch (NumberFormatException e) {
-                try {
-                    fromLong = df.parse(from).getTime();
-                } catch (Exception e1) {
-                    fromLong = df1.parse(from).getTime();
-                }
-            }
-            try {
-                toLong = Long.parseLong(to);
-            } catch (NumberFormatException e) {
-                try {
-                    toLong = df.parse(to).getTime();
-                } catch (Exception e1) {
-                    toLong = df1.parse(to).getTime();
-                }
-            }
+            fromLong = stringToLong(from);
+            toLong = stringToLong(to);
 
             final String[] parts = entityId.split(":");
             final String phoneId = parts[parts.length - 1];
@@ -155,6 +145,20 @@ public class HistoryController extends BaseController {
             historicData.getReadings().add(list);
         }
         return historicData;
+    }
+
+    private long stringToLong(final String to) throws ParseException {
+        long toLong;
+        try {
+            toLong = Long.parseLong(to);
+        } catch (NumberFormatException e) {
+            try {
+                toLong = df.parse(to).getTime();
+            } catch (Exception e1) {
+                toLong = df1.parse(to).getTime();
+            }
+        }
+        return toLong;
     }
 
     private void fillMissingIntervals(TreeSet<Long> treeSet, String rollup, long toLong) {

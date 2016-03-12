@@ -5,11 +5,9 @@ import gr.cti.android.experimentation.repository.PluginRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.repository.SmartphoneRepository;
 import gr.cti.android.experimentation.service.*;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,9 +38,6 @@ public class BaseController {
     protected GCMService gcmService;
     @Autowired
     protected CityService cityService;
-
-    @Value("${plugins.dir}")
-    protected String pluginsDir;
 
     protected JSONObject ok(final HttpServletResponse servletResponse) throws JSONException {
         servletResponse.setStatus(200);

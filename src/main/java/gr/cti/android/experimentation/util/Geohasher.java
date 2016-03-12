@@ -52,7 +52,7 @@ public class Geohasher {
             LNG_BIT_VALUES[i] = lngValue;
         }
 
-        HASH_CHARS_MAP = new HashMap<Character, Integer>(HASH_CHARS_ARRAY.length);
+        HASH_CHARS_MAP = new HashMap<>(HASH_CHARS_ARRAY.length);
         for (int i = 0; i < HASH_CHARS_ARRAY.length; i++) {
             HASH_CHARS_MAP.put(HASH_CHARS_ARRAY[i], i);
         }
@@ -81,8 +81,8 @@ public class Geohasher {
 
             char[] chars = hash.toLowerCase().toCharArray();
             int offset = (chars.length - 1) * 5;
-            for (int i = 0; i < chars.length; i++) {
-                int value = HASH_CHARS_MAP.get(chars[i]).intValue();
+            for (char aChar : chars) {
+                int value = HASH_CHARS_MAP.get(aChar);
                 for (int x = 0; x < 5; x++) {
                     bits.set(offset + x, (value & 0x1) == 0x1);
                     value >>= 1;

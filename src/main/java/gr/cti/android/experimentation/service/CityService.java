@@ -1,26 +1,19 @@
 package gr.cti.android.experimentation.service;
 
-import com.amaxilatis.orion.OrionClient;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.AddressType;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import eu.organicity.entities.handler.attributes.Attribute;
-import eu.organicity.entities.handler.entities.SmartphoneDevice;
-import eu.organicity.entities.handler.metadata.Datatype;
-import eu.organicity.entities.namespace.OrganicityAttributeTypes;
-import eu.organicity.entities.namespace.OrganicityDatatypes;
-import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 
 /**

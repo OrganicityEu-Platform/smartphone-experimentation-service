@@ -2,12 +2,7 @@ package gr.cti.android.experimentation.controller;
 
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
-import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.repository.PluginRepository;
-import gr.cti.android.experimentation.service.ModelManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
@@ -27,27 +22,6 @@ public class PluginController extends BaseController {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(PluginController.class);
-
-    /**
-     * Retrieve an existing plugin.
-     *
-     * @param response   the HTTP response object.
-     * @param pluginName the name of the plugin requested
-     * @return
-     */
-    @RequestMapping(value = "/dynamixRepository/{pluginName}.jar", method = RequestMethod.GET)
-    public String downloadPlugin(@PathVariable("pluginName") final String pluginName, final HttpServletResponse response) {
-        try {
-            final InputStream is = new BufferedInputStream(new FileInputStream(new File(pluginsDir + pluginName + ".jar")));
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + pluginName + ".jar\"");
-            response.setContentType("data:text/plaincharset=utf-8");
-            FileCopyUtils.copy(is, response.getOutputStream());
-        } catch (IOException e) {
-            LOGGER.error(e, e);
-        }
-        return null;
-    }
-
 
     /**
      * Lists all available plugins in the system.

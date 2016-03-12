@@ -1,7 +1,6 @@
 package gr.cti.android.experimentation.repository;
 
 import gr.cti.android.experimentation.model.GeoResult;
-import gr.cti.android.experimentation.model.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;

@@ -1,6 +1,5 @@
 package gr.cti.android.experimentation.service;
 
-import gr.cti.android.experimentation.Application;
 import gr.cti.android.experimentation.entities.Report;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Plugin;
@@ -59,7 +58,7 @@ public class ModelManager {
         String[] smartphoneDependencies = device.getSensorsRules().split(",");
 
         Iterator<Experiment> experimentsListIterator = experimentRepository.findAll().iterator();
-        Experiment experiment = null;
+        Experiment experiment;
         do {
             experiment = experimentsListIterator.next();
         } while ((experimentsListIterator.hasNext()));
@@ -198,18 +197,14 @@ public class ModelManager {
         millis -= TimeUnit.MINUTES.toMillis(minutes);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
 
-        StringBuilder sb = new StringBuilder(64);
-        sb.append(days);
-        sb.append(" Days ");
-        sb.append(hours);
-        sb.append(" Hours ");
-        sb.append(minutes);
-        sb.append(" Minutes ");
-        sb.append(seconds);
-        sb.append(" Seconds");
-
-        return (sb.toString());
-
+        return String.valueOf(days) +
+                " Days " +
+                hours +
+                " Hours " +
+                minutes +
+                " Minutes " +
+                seconds +
+                " Seconds";
     }
 
     // returns the total number of messages produced by a single device during a specific day

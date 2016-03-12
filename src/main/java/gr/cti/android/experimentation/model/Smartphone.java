@@ -64,7 +64,7 @@ public class Smartphone implements Serializable {
         Smartphone that = (Smartphone) o;
 
         if (!Objects.equals(id, that.id)) return false;
-        if (phoneId != that.phoneId) return false;
+        if (!Objects.equals(phoneId, that.phoneId)) return false;
         return !(sensorsRules != null ? !sensorsRules.equals(that.sensorsRules) : that.sensorsRules != null);
 
     }

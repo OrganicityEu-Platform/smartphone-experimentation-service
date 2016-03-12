@@ -3,9 +3,7 @@ package gr.cti.android.experimentation.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
-import gr.cti.android.experimentation.model.Badge;
 import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.repository.BadgeRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -59,7 +57,7 @@ public class GCMService {
 
 
     private String post(final Map<String, Object> message) {
-        Entity entity = null;
+        Entity entity;
         try {
             entity = Entity.json(new ObjectMapper().writeValueAsString(message));
 

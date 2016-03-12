@@ -4,17 +4,12 @@ import gr.cti.android.experimentation.controller.api.AndroidExperimentationWS;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.BaseExperiment;
 import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.repository.PluginRepository;
-import gr.cti.android.experimentation.service.ModelManager;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

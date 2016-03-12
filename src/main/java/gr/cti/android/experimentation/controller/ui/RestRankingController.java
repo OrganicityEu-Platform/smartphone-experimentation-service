@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -95,12 +96,8 @@ public class RestRankingController extends BaseController {
         final Set<Integer> experimentsIdsToday = new HashSet<>();
         experimentsToday.addAll(resultRepository.findDistinctExperimentIdByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis()));
 
-        for (final Result integer : experimentsTotal) {
-            experimentIdsTotal.add(integer.getExperimentId());
-        }
-        for (final Result integer : experimentsToday) {
-            experimentsIdsToday.add(integer.getExperimentId());
-        }
+        experimentIdsTotal.addAll(experimentsTotal.stream().map(Result::getExperimentId).collect(Collectors.toList()));
+        experimentsIdsToday.addAll(experimentsToday.stream().map(Result::getExperimentId).collect(Collectors.toList()));
         final JSONObject obj = new JSONObject();
         try {
             obj.put("resultsTotal", resultsTotal);
@@ -139,12 +136,8 @@ public class RestRankingController extends BaseController {
             final Set<Integer> experimentsIdsToday = new HashSet<>();
             experimentsToday.addAll(resultRepository.findDistinctExperimentIdByDeviceIdAndTimestampAfter(smartphone.getId(), new DateTime().withMillisOfDay(0).getMillis()));
 
-            for (final Result integer : experimentsTotal) {
-                experimentIdsTotal.add(integer.getExperimentId());
-            }
-            for (final Result integer : experimentsToday) {
-                experimentsIdsToday.add(integer.getExperimentId());
-            }
+            experimentIdsTotal.addAll(experimentsTotal.stream().map(Result::getExperimentId).collect(Collectors.toList()));
+            experimentsIdsToday.addAll(experimentsToday.stream().map(Result::getExperimentId).collect(Collectors.toList()));
 
             smartphoneStatistics.setExperimentsTotal(experimentIdsTotal.size());
             smartphoneStatistics.setExperimentsToday(experimentsIdsToday.size());
