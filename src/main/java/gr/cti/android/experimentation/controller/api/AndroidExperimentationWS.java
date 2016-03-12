@@ -7,23 +7,19 @@ import gr.cti.android.experimentation.entities.Reading;
 import gr.cti.android.experimentation.entities.Report;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.repository.ResultRepository;
-import gr.cti.android.experimentation.repository.SmartphoneRepository;
-import gr.cti.android.experimentation.service.*;
-import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.Smartphone;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/api/v1")
@@ -138,33 +134,6 @@ public class AndroidExperimentationWS extends BaseController {
         LOGGER.info(newResult.toString());
 
         return newResult;
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/statistics/{phoneId}", method = RequestMethod.GET, produces = "application/json")
-    public Map<Long, Long> statisticsByPhone(@PathVariable("phoneId") final String phoneId,
-                                             final HttpServletResponse response) {
-
-        final Map<Long, Long> counters = new HashMap<>();
-        for (long i = 0; i <= 7; i++) {
-            counters.put(i, 0L);
-        }
-
-        final DateTime date = new DateTime().withMillisOfDay(0);
-        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfter(Integer.parseInt(phoneId), date.minusDays(7).getMillis());
-        final Map<DateTime, Long> datecounters = new HashMap<>();
-        for (final Result result : results) {
-            final DateTime index = new DateTime(result.getTimestamp()).withMillisOfDay(0);
-            if (!datecounters.containsKey(index)) {
-                datecounters.put(index, 0L);
-            }
-            datecounters.put(index, datecounters.get(index) + 1);
-        }
-
-        for (final DateTime dateTime : datecounters.keySet()) {
-            counters.put((date.getMillis() - dateTime.getMillis()) / 86400000, datecounters.get(dateTime));
-        }
-        return counters;
     }
 
     @ResponseBody
