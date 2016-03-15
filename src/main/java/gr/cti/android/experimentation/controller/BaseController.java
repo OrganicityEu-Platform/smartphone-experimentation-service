@@ -1,9 +1,7 @@
 package gr.cti.android.experimentation.controller;
 
-import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.repository.PluginRepository;
-import gr.cti.android.experimentation.repository.ResultRepository;
-import gr.cti.android.experimentation.repository.SmartphoneRepository;
+import gr.cti.android.experimentation.model.Badge;
+import gr.cti.android.experimentation.repository.*;
 import gr.cti.android.experimentation.service.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,6 +24,8 @@ public class BaseController {
     protected ExperimentRepository experimentRepository;
     @Autowired
     protected PluginRepository pluginRepository;
+    @Autowired
+    protected BadgeRepository badgeRepository;
     @Autowired
     protected ModelManager modelManager;
     @Autowired

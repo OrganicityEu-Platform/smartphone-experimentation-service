@@ -1,10 +1,7 @@
 package gr.cti.android.experimentation.controller.ui;
 
 import gr.cti.android.experimentation.controller.BaseController;
-import gr.cti.android.experimentation.model.RankingEntry;
-import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.model.Smartphone;
-import gr.cti.android.experimentation.model.SmartphoneStatistics;
+import gr.cti.android.experimentation.model.*;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
@@ -143,12 +140,32 @@ public class RestRankingController extends BaseController {
             smartphoneStatistics.setExperimentsToday(experimentsIdsToday.size());
 
             smartphoneStatistics.setLast7Days(getLast7DaysTotalReadings(smartphone));
-
-            smartphoneStatistics.setRankings(getRankings("", experimentId));
+            if (experimentId != 0) {
+                smartphoneStatistics.setRankings(getRankings("", experimentId));
+                smartphoneStatistics.setBadges(badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphone.getId()));
+            }
 
             return smartphoneStatistics;
         }
         return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/smartphone/{smartphoneId}/badge", method = RequestMethod.GET)
+    public Set<Badge> getSmartphoneBadges(
+            @PathVariable(value = "smartphoneId") final int smartphoneId) {
+        return getExperimentSmartphoneBadges(smartphoneId, 0);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/smartphone/{smartphoneId}/badge/{experimentId}", method = RequestMethod.GET)
+    public Set<Badge> getExperimentSmartphoneBadges(
+            @PathVariable(value = "smartphoneId") final int smartphoneId, @PathVariable(value = "experimentId") final int experimentId) {
+        if (experimentId == 0) {
+            return badgeRepository.findByDeviceId(smartphoneId);
+        } else {
+            return badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphoneId);
+        }
     }
 
     private Map<Long, Long> getLast7DaysTotalReadings(final Smartphone smartphone) {

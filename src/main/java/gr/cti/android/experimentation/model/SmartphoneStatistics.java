@@ -15,6 +15,7 @@ public class SmartphoneStatistics {
     private Map<Long, Long> last7Days;
     private String sensorRules;
     private Set<RankingEntry> rankings;
+    private Set<Badge> badges;
 
     public SmartphoneStatistics() {
     }
@@ -85,5 +86,13 @@ public class SmartphoneStatistics {
 
     public Set<RankingEntry> getRankings() {
         return rankings;
+    }
+
+    public void setBadges(Set<Badge> badges) {
+        this.badges = badges;
+    }
+
+    public Set<Badge> getBadges() {
+        return badges;
     }
 }
