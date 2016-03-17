@@ -5,7 +5,7 @@
     <groupId>cti.organicity</groupId>
     <artifactId>web-service</artifactId>
     <version>1.0</version>
-    <name>WebService</name>
+    <name>Smartphone Experimentation Web Service</name>
     <description>WebService for AndroidExperimentation.</description>
 
     <parent>
@@ -135,6 +135,13 @@
             <version>0.1.9</version>
         </dependency>
 
+        <!--#################################################################################################-->
+        <!--HTTP CLIENT-->
+        <dependency>
+            <groupId>cti.organicity</groupId>
+            <artifactId>web-service-model</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--#################################################################################################-->
         <!--HTTP CLIENT-->
         <dependency>
