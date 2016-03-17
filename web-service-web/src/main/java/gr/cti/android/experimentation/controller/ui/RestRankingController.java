@@ -123,27 +123,27 @@ public class RestRankingController extends BaseController {
         if (smartphone != null) {
             final SmartphoneStatistics smartphoneStatistics = new SmartphoneStatistics(smartphoneId);
             smartphoneStatistics.setSensorRules(smartphone.getSensorsRules());
-            smartphoneStatistics.setReadingsTotal(resultRepository.countByDeviceId(smartphone.getId()));
-            smartphoneStatistics.setReadingsToday(resultRepository.countByDeviceIdAndTimestampAfter(smartphone.getId(), new DateTime().withMillisOfDay(0).getMillis()));
+            smartphoneStatistics.setReadings(resultRepository.countByDeviceId(smartphone.getId()));
+            if (experimentId != 0) {
+                smartphoneStatistics.setExperimentReadings(resultRepository.countByDeviceIdAndExperimentId(smartphone.getId(), experimentId));
+            } else {
+                smartphoneStatistics.setExperimentReadings(0);
+            }
 
             final Set<Result> experimentsTotal = new HashSet<>();
             final Set<Integer> experimentIdsTotal = new HashSet<>();
             experimentsTotal.addAll(resultRepository.findDistinctExperimentIdByDeviceId(smartphone.getId()));
-            final Set<Result> experimentsToday = new HashSet<>();
-            final Set<Integer> experimentsIdsToday = new HashSet<>();
-            experimentsToday.addAll(resultRepository.findDistinctExperimentIdByDeviceIdAndTimestampAfter(smartphone.getId(), new DateTime().withMillisOfDay(0).getMillis()));
-
             experimentIdsTotal.addAll(experimentsTotal.stream().map(Result::getExperimentId).collect(Collectors.toList()));
-            experimentsIdsToday.addAll(experimentsToday.stream().map(Result::getExperimentId).collect(Collectors.toList()));
-
-            smartphoneStatistics.setExperimentsTotal(experimentIdsTotal.size());
-            smartphoneStatistics.setExperimentsToday(experimentsIdsToday.size());
+            smartphoneStatistics.setExperiments(experimentIdsTotal.size());
 
             smartphoneStatistics.setLast7Days(getLast7DaysTotalReadings(smartphone));
             if (experimentId != 0) {
-                smartphoneStatistics.setRankings(getRankings("", experimentId));
-                smartphoneStatistics.setBadges(badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphone.getId()));
+                smartphoneStatistics.setExperimentRankings(getRankings("", experimentId));
+                smartphoneStatistics.setExperimentBadges(badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphone.getId()));
             }
+            smartphoneStatistics.setBadges(badgeRepository.findByDeviceId(smartphone.getId()));
+            smartphoneStatistics.setRankings(getRankings("", 0));
+
 
             return smartphoneStatistics;
         }

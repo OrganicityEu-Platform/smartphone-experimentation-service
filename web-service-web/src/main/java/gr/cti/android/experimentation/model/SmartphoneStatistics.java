@@ -8,14 +8,15 @@ import java.util.Set;
  */
 public class SmartphoneStatistics {
     private int id;
-    private long readingsTotal;
-    private long readingsToday;
-    private int experimentsTotal;
-    private int experimentsToday;
+    private long readings;
+    private long experimentReadings;
+    private int experiments;
     private Map<Long, Long> last7Days;
     private String sensorRules;
     private Set<RankingEntry> rankings;
+    private Set<RankingEntry> experimentRankings;
     private Set<Badge> badges;
+    private Set<Badge> experimentBadges;
 
     public SmartphoneStatistics() {
     }
@@ -32,36 +33,28 @@ public class SmartphoneStatistics {
         return id;
     }
 
-    public void setReadingsTotal(final long readingsTotal) {
-        this.readingsTotal = readingsTotal;
+    public void setReadings(final long readings) {
+        this.readings = readings;
     }
 
-    public long getReadingsTotal() {
-        return readingsTotal;
+    public long getReadings() {
+        return readings;
     }
 
-    public void setReadingsToday(final long readingsToday) {
-        this.readingsToday = readingsToday;
+    public void setExperimentReadings(final long experimentReadings) {
+        this.experimentReadings = experimentReadings;
     }
 
-    public long getReadingsToday() {
-        return readingsToday;
+    public long getExperimentReadings() {
+        return experimentReadings;
     }
 
-    public void setExperimentsTotal(final int experimentsTotal) {
-        this.experimentsTotal = experimentsTotal;
+    public void setExperiments(final int experiments) {
+        this.experiments = experiments;
     }
 
-    public int getExperimentsTotal() {
-        return experimentsTotal;
-    }
-
-    public void setExperimentsToday(final int experimentsToday) {
-        this.experimentsToday = experimentsToday;
-    }
-
-    public int getExperimentsToday() {
-        return experimentsToday;
+    public int getExperiments() {
+        return experiments;
     }
 
     public void setLast7Days(final Map<Long, Long> last7Days) {
@@ -94,5 +87,21 @@ public class SmartphoneStatistics {
 
     public Set<Badge> getBadges() {
         return badges;
+    }
+
+    public void setExperimentRankings(Set<RankingEntry> experimentRankings) {
+        this.experimentRankings = experimentRankings;
+    }
+
+    public Set<RankingEntry> getExperimentRankings() {
+        return experimentRankings;
+    }
+
+    public void setExperimentBadges(Set<Badge> experimentBadges) {
+        this.experimentBadges = experimentBadges;
+    }
+
+    public Set<Badge> getExperimentBadges() {
+        return experimentBadges;
     }
 }
