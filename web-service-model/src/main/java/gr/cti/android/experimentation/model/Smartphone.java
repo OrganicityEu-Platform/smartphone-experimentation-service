@@ -19,13 +19,10 @@ public class Smartphone implements Serializable {
     @GeneratedValue
     private Integer id;
     private String deviceType;
+    private Long phoneId;
+    private String sensorsRules;
 
-    public String getDeviceType() {
-        return deviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        this.deviceType = deviceType;
+    public Smartphone() {
     }
 
     public Integer getId() {
@@ -36,7 +33,13 @@ public class Smartphone implements Serializable {
         this.id = id;
     }
 
-    private Long phoneId;
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public Long getPhoneId() {
         return phoneId;
@@ -45,8 +48,6 @@ public class Smartphone implements Serializable {
     public void setPhoneId(Long phoneId) {
         this.phoneId = phoneId;
     }
-
-    private String sensorsRules;
 
     public String getSensorsRules() {
         return sensorsRules;

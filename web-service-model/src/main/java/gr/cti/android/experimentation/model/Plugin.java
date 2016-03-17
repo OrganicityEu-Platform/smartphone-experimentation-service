@@ -19,6 +19,18 @@ public class Plugin implements Serializable {
     @Id
     @GeneratedValue
     private int id;
+    private String name;
+    private String contextType;
+    private String runtimeFactoryClass;
+    private String description;
+    private String installUrl;
+    private String imageUrl;
+    private String filename;
+    @JsonIgnore
+    private Long userId;
+
+    public Plugin() {
+    }
 
     public int getId() {
         return id;
@@ -28,8 +40,6 @@ public class Plugin implements Serializable {
         this.id = id;
     }
 
-    private String name;
-
     public String getName() {
         return name;
     }
@@ -37,8 +47,6 @@ public class Plugin implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
-
-    private String contextType;
 
     public String getContextType() {
         return contextType;
@@ -48,8 +56,6 @@ public class Plugin implements Serializable {
         this.contextType = contextType;
     }
 
-    private String runtimeFactoryClass;
-
     public String getRuntimeFactoryClass() {
         return runtimeFactoryClass;
     }
@@ -57,8 +63,6 @@ public class Plugin implements Serializable {
     public void setRuntimeFactoryClass(String runtimeFactoryClass) {
         this.runtimeFactoryClass = runtimeFactoryClass;
     }
-
-    private String description;
 
     public String getDescription() {
         return description;
@@ -68,8 +72,6 @@ public class Plugin implements Serializable {
         this.description = description;
     }
 
-    private String installUrl;
-
     public String getInstallUrl() {
         return installUrl;
     }
@@ -77,8 +79,6 @@ public class Plugin implements Serializable {
     public void setInstallUrl(String installUrl) {
         this.installUrl = installUrl;
     }
-
-    private String imageUrl;
 
     public String getImageUrl() {
         return imageUrl;
@@ -88,8 +88,6 @@ public class Plugin implements Serializable {
         this.imageUrl = imageUrl;
     }
 
-    private String filename;
-
     public String getFilename() {
         return filename;
     }
@@ -97,9 +95,6 @@ public class Plugin implements Serializable {
     public void setFilename(String filename) {
         this.filename = filename;
     }
-
-    @JsonIgnore
-    private Long userId;
 
     public Long getUserId() {
         return userId;

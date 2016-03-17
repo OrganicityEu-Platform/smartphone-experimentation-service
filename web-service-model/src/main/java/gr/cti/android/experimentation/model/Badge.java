@@ -17,22 +17,13 @@ public class Badge implements Serializable {
     @Id
     @GeneratedValue
     private int id;
-
     private long timestamp;
-
     private int experimentId;
-
-    public int getExperimentId() {
-        return experimentId;
-    }
-
-    public void setExperimentId(int experimentId) {
-        this.experimentId = experimentId;
-    }
-
     private int deviceId;
-
     private String message;
+
+    public Badge() {
+    }
 
     public int getId() {
         return id;
@@ -48,6 +39,14 @@ public class Badge implements Serializable {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public int getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(int experimentId) {
+        this.experimentId = experimentId;
     }
 
     public int getDeviceId() {

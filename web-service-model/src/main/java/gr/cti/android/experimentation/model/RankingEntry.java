@@ -5,6 +5,9 @@ public class RankingEntry {
     private long phoneId;
     private long count;
 
+    public RankingEntry() {
+    }
+
     public RankingEntry(final long phoneId, final long count) {
         this.phoneId = phoneId;
         this.count = count;
