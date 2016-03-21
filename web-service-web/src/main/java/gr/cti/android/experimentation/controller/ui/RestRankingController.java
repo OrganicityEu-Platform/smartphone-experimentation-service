@@ -1,5 +1,6 @@
 package gr.cti.android.experimentation.controller.ui;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.*;
 import org.apache.log4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -68,6 +70,87 @@ public class RestRankingController extends BaseController {
         return counters;
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = {"/results/{experimentId}"}, method = RequestMethod.GET)
+    public Set<DownloadableResult> getResults(
+            @PathVariable("experimentId") final int experimentId
+    ) {
+        final Set<DownloadableResult> externalResults = new TreeSet<>();
+        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final Set<String> headers = new HashSet<>();
+        for (final Result result : results) {
+            try {
+                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
+                headers.addAll(dataMap.keySet());
+            } catch (IOException ignore) {
+            }
+        }
+        headers.remove("org.ambientdynamix.contextplugins.Longitude");
+        headers.remove("org.ambientdynamix.contextplugins.Latitude");
+
+        for (final Result result : results) {
+            final DownloadableResult dres = new DownloadableResult();
+            dres.setDate(result.getTimestamp());
+            try {
+                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
+                dres.setLongitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Longitude"));
+                dres.setLatitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Latitude"));
+                dres.setResults(new HashMap<>());
+                for (final String key : headers) {
+                    if (dataMap.containsKey(key)) {
+                        dres.getResults().put(key, String.valueOf(dataMap.get(key)));
+                    } else {
+                        dres.getResults().put(key, null);
+                    }
+                }
+                externalResults.add(dres);
+            } catch (IOException e) {
+            }
+        }
+        return externalResults;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = {"/results/{experimentId}/csv"}, method = RequestMethod.GET, produces = "text/csv")
+    public String getResultsCsv(
+            @PathVariable("experimentId") final int experimentId
+    ) {
+        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final StringBuilder resResponse = new StringBuilder();
+        final Set<String> headers = new HashSet<>();
+        for (final Result result : results) {
+            try {
+                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
+                headers.addAll(dataMap.keySet());
+            } catch (IOException ignore) {
+            }
+        }
+        headers.remove("org.ambientdynamix.contextplugins.Longitude");
+        headers.remove("org.ambientdynamix.contextplugins.Latitude");
+
+        resResponse.append("timestamp,longitude,latitude,");
+        resResponse.append(String.join(",", headers)).append("\n");
+        for (final Result result : results) {
+            final List<String> values = new ArrayList<>();
+            values.add(String.valueOf(result.getTimestamp()));
+            try {
+                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
+                values.add(String.valueOf(dataMap.get("org.ambientdynamix.contextplugins.Longitude")));
+                values.add(String.valueOf(dataMap.get("org.ambientdynamix.contextplugins.Latitude")));
+                for (final String key : headers) {
+                    if (dataMap.containsKey(key)) {
+                        values.add(String.valueOf(dataMap.get(key)));
+                    } else {
+                        values.add(null);
+                    }
+                }
+                resResponse.append(String.join(",", values)).append("\n");
+            } catch (IOException e) {
+            }
+        }
+        return resResponse.toString();
+    }
 
     @ResponseBody
     @RequestMapping(value = {"/ranking", "/rankings"}, method = RequestMethod.GET)
