@@ -140,9 +140,11 @@ public class RestRankingController extends BaseController {
             if (experimentId != 0) {
                 smartphoneStatistics.setExperimentRankings(getRankings("", experimentId));
                 smartphoneStatistics.setExperimentBadges(badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphone.getId()));
+                smartphoneStatistics.setExperimentUsage(getExperimentParticipationTime(experimentId, smartphoneId));
             }
             smartphoneStatistics.setBadges(badgeRepository.findByDeviceId(smartphone.getId()));
             smartphoneStatistics.setRankings(getRankings("", 0));
+            smartphoneStatistics.setUsage(getExperimentParticipationTime(0, smartphoneId));
 
 
             return smartphoneStatistics;
@@ -166,6 +168,56 @@ public class RestRankingController extends BaseController {
         } else {
             return badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphoneId);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/smartphone/{smartphoneId}/time", method = RequestMethod.GET)
+    public TreeSet<UsageEntry> getExperimentParticipationTime(
+            @PathVariable(value = "smartphoneId") final int smartphoneId) {
+        return getExperimentParticipationTime(0, smartphoneId);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/smartphone/{smartphoneId}/time/{experimentId}", method = RequestMethod.GET)
+    public TreeSet<UsageEntry> getExperimentParticipationTime(
+            @PathVariable(value = "experimentId") final int experimentId, @PathVariable(value = "smartphoneId") final int smartphoneId) {
+        if (experimentId == 0) {
+            final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(smartphoneId, 0);
+            return extractUsageTimes(results);
+        } else {
+            final Set<Result> results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(experimentId, smartphoneId, 0);
+            return extractUsageTimes(results);
+        }
+    }
+
+    private TreeSet<UsageEntry> extractUsageTimes(final Set<Result> results) {
+        final Map<String, Long> res = new TreeMap<>();
+        final SortedSet<Long> timestamps = results.stream().map(Result::getTimestamp).collect(Collectors.toCollection(TreeSet::new));
+        DateTime start = null;
+        DateTime lastDay = null;
+        for (final Long timestamp : timestamps) {
+            final DateTime curDateTime = new DateTime(timestamp);
+            if (start == null) {
+                start = new DateTime(timestamp);
+            } else {
+                if (start.withMillisOfDay(0).getMillis() == curDateTime.withMillisOfDay(0).getMillis()) {
+                    lastDay = new DateTime(timestamp);
+                } else {
+                    if (lastDay != null) {
+                        long diff = (lastDay.getMillis() - start.getMillis()) / 1000 / 60;
+                        res.put(dfDay.format(lastDay.withMillisOfDay(0).getMillis()), diff);
+                    }
+                    start = null;
+                    lastDay = null;
+                }
+            }
+        }
+
+        final TreeSet<UsageEntry> sortedUsageResults = new TreeSet<>();
+        for (final String dateKey : res.keySet()) {
+            sortedUsageResults.add(new UsageEntry(dateKey, res.get(dateKey)));
+        }
+        return sortedUsageResults;
     }
 
     private Map<Long, Long> getLast7DaysTotalReadings(final Smartphone smartphone) {
