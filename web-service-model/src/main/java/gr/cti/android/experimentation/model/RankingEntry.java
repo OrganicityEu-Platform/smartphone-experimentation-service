@@ -1,6 +1,8 @@
 package gr.cti.android.experimentation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RankingEntry {
     private long phoneId;
     private long count;

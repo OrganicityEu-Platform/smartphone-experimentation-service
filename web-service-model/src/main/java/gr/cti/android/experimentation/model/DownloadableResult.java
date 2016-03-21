@@ -1,11 +1,14 @@
 package gr.cti.android.experimentation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Map;
 
 /**
  * Created by amaxilatis on 21/3/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DownloadableResult implements Comparable<DownloadableResult>, Serializable {
     private long date;
     private double longitude;

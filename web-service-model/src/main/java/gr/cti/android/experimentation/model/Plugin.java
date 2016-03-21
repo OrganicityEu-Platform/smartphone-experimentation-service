@@ -1,6 +1,7 @@
 package gr.cti.android.experimentation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * To change this template use File | Settings | File Templates.
  */
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Plugin implements Serializable {
     @Id
     @GeneratedValue
