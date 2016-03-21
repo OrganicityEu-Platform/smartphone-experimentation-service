@@ -17,6 +17,8 @@ public class SmartphoneStatistics {
     private Set<RankingEntry> experimentRankings;
     private Set<Badge> badges;
     private Set<Badge> experimentBadges;
+    private Set<UsageEntry> usage;
+    private Set<UsageEntry> experimentUsage;
 
     public SmartphoneStatistics() {
     }
@@ -103,5 +105,21 @@ public class SmartphoneStatistics {
 
     public Set<Badge> getExperimentBadges() {
         return experimentBadges;
+    }
+
+    public Set<UsageEntry> getUsage() {
+        return usage;
+    }
+
+    public void setUsage(Set<UsageEntry> usage) {
+        this.usage = usage;
+    }
+
+    public Set<UsageEntry> getExperimentUsage() {
+        return experimentUsage;
+    }
+
+    public void setExperimentUsage(Set<UsageEntry> experimentUsage) {
+        this.experimentUsage = experimentUsage;
     }
 }
