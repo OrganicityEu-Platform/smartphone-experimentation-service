@@ -94,7 +94,7 @@ public class RestRankingController extends BaseController {
             dres.setDate(result.getTimestamp());
             try {
                 final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                dres.setLongtitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Longitude"));
+                dres.setLongitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Longitude"));
                 dres.setLatitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Latitude"));
                 dres.setResults(new HashMap<>());
                 for (final String key : headers) {
