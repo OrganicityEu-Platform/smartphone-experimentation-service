@@ -1,11 +1,12 @@
 package gr.cti.android.experimentation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by amaxilatis on 28/10/2015.
- */
-public class HistoricData {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class HistoricData implements Serializable {
 
     private String entity_id;
     private String attribute_id;

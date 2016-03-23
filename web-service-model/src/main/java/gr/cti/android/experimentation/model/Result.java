@@ -1,18 +1,15 @@
 package gr.cti.android.experimentation.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 
-/**
- * Created with IntelliJ IDEA.
- * User: theodori
- * Date: 9/4/13
- * Time: 11:06 AM
- * To change this template use File | Settings | File Templates.
- */
+
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Result implements Serializable {
     @Id
     @GeneratedValue

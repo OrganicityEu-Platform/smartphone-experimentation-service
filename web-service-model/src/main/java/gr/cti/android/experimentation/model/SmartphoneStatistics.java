@@ -2,12 +2,13 @@ package gr.cti.android.experimentation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SmartphoneStatistics {
+public class SmartphoneStatistics implements Serializable {
     private int id;
     private long readings;
     private long experimentReadings;

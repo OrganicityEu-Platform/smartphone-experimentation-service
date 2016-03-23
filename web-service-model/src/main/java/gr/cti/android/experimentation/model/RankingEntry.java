@@ -2,8 +2,10 @@ package gr.cti.android.experimentation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.Serializable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RankingEntry {
+public class RankingEntry implements Serializable {
     private long phoneId;
     private long count;
 
