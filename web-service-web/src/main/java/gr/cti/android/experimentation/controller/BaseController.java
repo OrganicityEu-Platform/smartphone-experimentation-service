@@ -1,8 +1,8 @@
 package gr.cti.android.experimentation.controller;
 
-import gr.cti.android.experimentation.model.Badge;
 import gr.cti.android.experimentation.repository.*;
 import gr.cti.android.experimentation.service.*;
+import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ public class BaseController {
 
     protected static final String LATITUDE = "org.ambientdynamix.contextplugins.Latitude";
     protected static final String LONGITUDE = "org.ambientdynamix.contextplugins.Longitude";
+    protected static final String EXPERIMENT_CONTEXT_TYPE = "org.ambientdynamix.contextplugins.ExperimentPlugin";
 
     @Autowired
     protected ResultRepository resultRepository;
@@ -27,7 +28,7 @@ public class BaseController {
     @Autowired
     protected BadgeRepository badgeRepository;
     @Autowired
-    protected ModelManager modelManager;
+    protected ModelService modelService;
     @Autowired
     protected InfluxDbService influxDbService;
     @Autowired
@@ -55,4 +56,20 @@ public class BaseController {
         return res;
     }
 
+    protected long parseDateMillis(final String after) {
+        try {
+            return Long.parseLong(after);
+        } catch (Exception e) {
+            switch (after) {
+                case "Today":
+                case "today":
+                    return new DateTime().withMillisOfDay(0).getMillis();
+                case "Yesterday":
+                case "yesterday":
+                    return new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
+                default:
+                    return 0;
+            }
+        }
+    }
 }

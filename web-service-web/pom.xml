@@ -136,7 +136,7 @@
         </dependency>
 
         <!--#################################################################################################-->
-        <!--HTTP CLIENT-->
+        <!--MODEL-->
         <dependency>
             <groupId>cti.organicity</groupId>
             <artifactId>web-service-model</artifactId>

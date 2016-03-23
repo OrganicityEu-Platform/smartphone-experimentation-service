@@ -1,4 +1,4 @@
-package gr.cti.android.experimentation.entities;
+package gr.cti.android.experimentation.model;
 
 import java.util.List;
 

@@ -58,42 +58,36 @@ public class HistoryController extends BaseController {
         historicData.setReadings(new ArrayList<>());
 
         final List<TempReading> tempReadings = new ArrayList<>();
-        long fromLong;
-        long toLong = 0;
-        try {
 
-            fromLong = stringToLong(from);
-            toLong = stringToLong(to);
+        long fromLong = parseDateMillis(from);
+        long toLong = parseDateMillis(to);
 
-            final String[] parts = entityId.split(":");
-            final String phoneId = parts[parts.length - 1];
+        final String[] parts = entityId.split(":");
+        final String phoneId = parts[parts.length - 1];
 
-            LOGGER.info("phoneId: " + phoneId + " from: " + from + " to: " + to);
+        LOGGER.info("phoneId: " + phoneId + " from: " + from + " to: " + to);
 
-            final Set<Result> results = resultRepository.findByDeviceIdAndTimestampBetween(Integer.parseInt(phoneId), fromLong, toLong);
+        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampBetween(Integer.parseInt(phoneId), fromLong, toLong);
 
-            final Set<Result> resultsCleanup = new HashSet<>();
+        final Set<Result> resultsCleanup = new HashSet<>();
 
-            for (final Result result : results) {
-                try {
-                    final JSONObject readingList = new JSONObject(result.getMessage());
-                    final Iterator keys = readingList.keys();
-                    while (keys.hasNext()) {
-                        final String key = (String) keys.next();
-                        if (key.contains(attributeId)) {
-                            tempReadings.add(new TempReading(result.getTimestamp(), readingList.getDouble(key)));
-                        }
+        for (final Result result : results) {
+            try {
+                final JSONObject readingList = new JSONObject(result.getMessage());
+                final Iterator keys = readingList.keys();
+                while (keys.hasNext()) {
+                    final String key = (String) keys.next();
+                    if (key.contains(attributeId)) {
+                        tempReadings.add(new TempReading(result.getTimestamp(), readingList.getDouble(key)));
                     }
-                } catch (JSONException e) {
-                    resultsCleanup.add(result);
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
                 }
+            } catch (JSONException e) {
+                resultsCleanup.add(result);
+            } catch (Exception e) {
+                LOGGER.error(e, e);
             }
-            resultRepository.delete(resultsCleanup);
-        } catch (ParseException e) {
-            LOGGER.error(e, e);
         }
+        resultRepository.delete(resultsCleanup);
 
         List<TempReading> rolledUpTempReadings = new ArrayList<>();
 
@@ -147,19 +141,6 @@ public class HistoryController extends BaseController {
         return historicData;
     }
 
-    private long stringToLong(final String to) throws ParseException {
-        long toLong;
-        try {
-            toLong = Long.parseLong(to);
-        } catch (NumberFormatException e) {
-            try {
-                toLong = df.parse(to).getTime();
-            } catch (Exception e1) {
-                toLong = df1.parse(to).getTime();
-            }
-        }
-        return toLong;
-    }
 
     private void fillMissingIntervals(TreeSet<Long> treeSet, String rollup, long toLong) {
 

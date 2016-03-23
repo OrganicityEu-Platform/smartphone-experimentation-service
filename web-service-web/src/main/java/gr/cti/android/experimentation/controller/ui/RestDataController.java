@@ -96,25 +96,9 @@ public class RestDataController extends BaseController {
 //    }
 
     private JSONArray getExperimentData(final String experiment, final int deviceId, final String after) {
-        DecimalFormat df = new DecimalFormat("#.000");
-        long start;
-        try {
-            start = Long.parseLong(after);
-        } catch (Exception e) {
-            switch (after) {
-                case "Today":
-                case "today":
-                    start = new DateTime().withMillisOfDay(0).getMillis();
-                    break;
-                case "Yesterday":
-                case "yesterday":
-                    start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
-                    break;
-                default:
-                    start = 0;
-                    break;
-            }
-        }
+        final DecimalFormat df = new DecimalFormat("#.000");
+        final long start = parseDateMillis(after);
+
         final Set<Result> results;
         if (deviceId == 0) {
             results = resultRepository.findByExperimentIdAndTimestampAfter(Integer.parseInt(experiment), start);
@@ -122,12 +106,12 @@ public class RestDataController extends BaseController {
             results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(Integer.parseInt(experiment), deviceId, start);
         }
 
-        Map<String, Map<String, Map<String, DescriptiveStatistics>>> dataAggregates = new HashMap<>();
+        final Map<String, Map<String, Map<String, DescriptiveStatistics>>> dataAggregates = new HashMap<>();
         String longitude;
         String latitude;
-        DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
-        Map<String, Map<String, Long>> locationsHeatMap = new HashMap<>();
-        for (Result result : results) {
+        final DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
+        final Map<String, Map<String, Long>> locationsHeatMap = new HashMap<>();
+        for (final Result result : results) {
             try {
                 if (!result.getMessage().startsWith("{")) {
                     continue;
@@ -213,24 +197,8 @@ public class RestDataController extends BaseController {
 
     private JSONArray getAllData(final int deviceId, final String after) {
         DecimalFormat df = new DecimalFormat("#.000");
-        long start;
-        try {
-            start = Long.parseLong(after);
-        } catch (Exception e) {
-            switch (after) {
-                case "Today":
-                case "today":
-                    start = new DateTime().withMillisOfDay(0).getMillis();
-                    break;
-                case "Yesterday":
-                case "yesterday":
-                    start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
-                    break;
-                default:
-                    start = 0;
-                    break;
-            }
-        }
+        long start = parseDateMillis(after);
+
         final Set<Result> results;
         if (deviceId == 0) {
             results = new HashSet<>();
@@ -327,26 +295,11 @@ public class RestDataController extends BaseController {
         return addressPoints;
     }
 
+
     private JSONObject getExperimentHourlyData(final String experiment, final int deviceId, final String after) {
-        DecimalFormat df = new DecimalFormat("#.000");
-        long start;
-        try {
-            start = Long.parseLong(after);
-        } catch (Exception e) {
-            switch (after) {
-                case "Today":
-                case "today":
-                    start = new DateTime().withMillisOfDay(0).getMillis();
-                    break;
-                case "Yesterday":
-                case "yesterday":
-                    start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
-                    break;
-                default:
-                    start = 0;
-                    break;
-            }
-        }
+        final DecimalFormat df = new DecimalFormat("#.000");
+        final long start = parseDateMillis(after);
+
         final Set<Result> results;
         if (deviceId == 0) {
             results = resultRepository.findByExperimentIdAndTimestampAfter(Integer.parseInt(experiment), start);
@@ -355,12 +308,12 @@ public class RestDataController extends BaseController {
         }
 
         try {
-            Map<Integer, Map<String, Map<String, Map<String, DescriptiveStatistics>>>> dataAggregates = new HashMap<>();
+            final Map<Integer, Map<String, Map<String, Map<String, DescriptiveStatistics>>>> dataAggregates = new HashMap<>();
             String longitude;
             String latitude;
-            DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
-            Map<Integer, Map<String, Map<String, Long>>> locationsHeatMap = new HashMap<>();
-            for (Result result : results) {
+            final DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
+            final Map<Integer, Map<String, Map<String, Long>>> locationsHeatMap = new HashMap<>();
+            for (final Result result : results) {
                 try {
                     if (!result.getMessage().startsWith("{")) {
                         continue;
@@ -465,24 +418,8 @@ public class RestDataController extends BaseController {
     }
 
     private JSONObject getExperimentDataMax(final String experiment, final int deviceId, final String after) {
-        long start;
-        try {
-            start = Long.parseLong(after);
-        } catch (Exception e) {
-            switch (after) {
-                case "Today":
-                case "today":
-                    start = new DateTime().withMillisOfDay(0).getMillis();
-                    break;
-                case "Yesterday":
-                case "yesterday":
-                    start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
-                    break;
-                default:
-                    start = 0;
-                    break;
-            }
-        }
+        long start = parseDateMillis(after);
+
         final Set<Result> results;
         if (deviceId == 0) {
             results = resultRepository.findByExperimentIdAndTimestampAfter(Integer.parseInt(experiment), start);

@@ -31,7 +31,7 @@ public class SmartphoneController extends BaseController {
         try {
             LOGGER.info(smartphoneString);
             Smartphone smartphone = new ObjectMapper().readValue(smartphoneString, Smartphone.class);
-            smartphone = modelManager.registerSmartphone(smartphone);
+            smartphone = modelService.registerSmartphone(smartphone);
             LOGGER.info("register Smartphone: Device:" + smartphone.getId());
             LOGGER.info("register Smartphone: Device Sensor Rules:" + smartphone.getSensorsRules());
             LOGGER.info("register Smartphone: Device Type:" + smartphone.getDeviceType());

@@ -1,6 +1,6 @@
 package gr.cti.android.experimentation.service;
 
-import gr.cti.android.experimentation.entities.Report;
+import gr.cti.android.experimentation.model.Report;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.Result;
@@ -26,12 +26,12 @@ import java.util.concurrent.TimeUnit;
  * To change this template use File | Settings | File Templates.
  */
 @Service
-public class ModelManager {
+public class ModelService {
 
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger log = Logger.getLogger(ModelManager.class);
+    private static final Logger log = Logger.getLogger(ModelService.class);
 
     @Autowired
     PluginRepository pluginRepository;

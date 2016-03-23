@@ -48,26 +48,10 @@ public class RestRankingController extends BaseController {
     public Map<Long, Long> statisticsByPhone(@PathVariable("phoneId") final String phoneId,
                                              final HttpServletResponse response) {
 
-        final Map<Long, Long> counters = new HashMap<>();
-        for (long i = 0; i <= 7; i++) {
-            counters.put(i, 0L);
-        }
-
         final DateTime date = new DateTime().withMillisOfDay(0);
         final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfter(Integer.parseInt(phoneId), date.minusDays(7).getMillis());
-        final Map<DateTime, Long> datecounters = new HashMap<>();
-        for (final Result result : results) {
-            final DateTime index = new DateTime(result.getTimestamp()).withMillisOfDay(0);
-            if (!datecounters.containsKey(index)) {
-                datecounters.put(index, 0L);
-            }
-            datecounters.put(index, datecounters.get(index) + 1);
-        }
 
-        for (final DateTime dateTime : datecounters.keySet()) {
-            counters.put((date.getMillis() - dateTime.getMillis()) / 86400000, datecounters.get(dateTime));
-        }
-        return counters;
+        return extractCounters(results, date);
     }
 
 
@@ -86,16 +70,16 @@ public class RestRankingController extends BaseController {
             } catch (IOException ignore) {
             }
         }
-        headers.remove("org.ambientdynamix.contextplugins.Longitude");
-        headers.remove("org.ambientdynamix.contextplugins.Latitude");
+        headers.remove(LONGITUDE);
+        headers.remove(LATITUDE);
 
         for (final Result result : results) {
             final DownloadableResult dres = new DownloadableResult();
             dres.setDate(result.getTimestamp());
             try {
                 final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                dres.setLongitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Longitude"));
-                dres.setLatitude((Double) dataMap.get("org.ambientdynamix.contextplugins.Latitude"));
+                dres.setLongitude((Double) dataMap.get(LONGITUDE));
+                dres.setLatitude((Double) dataMap.get(LATITUDE));
                 dres.setResults(new HashMap<>());
                 for (final String key : headers) {
                     if (dataMap.containsKey(key)) {
@@ -126,8 +110,8 @@ public class RestRankingController extends BaseController {
             } catch (IOException ignore) {
             }
         }
-        headers.remove("org.ambientdynamix.contextplugins.Longitude");
-        headers.remove("org.ambientdynamix.contextplugins.Latitude");
+        headers.remove(LONGITUDE);
+        headers.remove(LATITUDE);
 
         resResponse.append("timestamp,longitude,latitude,");
         resResponse.append(String.join(",", headers)).append("\n");
@@ -136,8 +120,8 @@ public class RestRankingController extends BaseController {
             values.add(String.valueOf(result.getTimestamp()));
             try {
                 final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                values.add(String.valueOf(dataMap.get("org.ambientdynamix.contextplugins.Longitude")));
-                values.add(String.valueOf(dataMap.get("org.ambientdynamix.contextplugins.Latitude")));
+                values.add(String.valueOf(dataMap.get(LONGITUDE)));
+                values.add(String.valueOf(dataMap.get(LATITUDE)));
                 for (final String key : headers) {
                     if (dataMap.containsKey(key)) {
                         values.add(String.valueOf(dataMap.get(key)));
@@ -305,13 +289,17 @@ public class RestRankingController extends BaseController {
 
     private Map<Long, Long> getLast7DaysTotalReadings(final Smartphone smartphone) {
         //Readings in the past 7 days
+        final DateTime date = new DateTime().withMillisOfDay(0);
+        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfter(smartphone.getId(), date.minusDays(7).getMillis());
+
+        return extractCounters(results, date);
+    }
+
+    private Map<Long, Long> extractCounters(final Set<Result> results, final DateTime date) {
         final Map<Long, Long> counters = new HashMap<>();
         for (long i = 0; i <= 7; i++) {
             counters.put(i, 0L);
         }
-
-        final DateTime date = new DateTime().withMillisOfDay(0);
-        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfter(smartphone.getId(), date.minusDays(7).getMillis());
         final Map<DateTime, Long> datecounters = new HashMap<>();
         for (final Result result : results) {
             final DateTime index = new DateTime(result.getTimestamp()).withMillisOfDay(0);
@@ -320,10 +308,10 @@ public class RestRankingController extends BaseController {
             }
             datecounters.put(index, datecounters.get(index) + 1);
         }
-
         for (final DateTime dateTime : datecounters.keySet()) {
             counters.put((date.getMillis() - dateTime.getMillis()) / 86400000, datecounters.get(dateTime));
         }
+
         return counters;
     }
 
@@ -373,6 +361,4 @@ public class RestRankingController extends BaseController {
         }
         return list;
     }
-
-
 }

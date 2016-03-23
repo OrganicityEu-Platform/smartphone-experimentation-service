@@ -24,7 +24,6 @@ public class ExperimentController extends BaseController {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(ExperimentController.class);
-    private static final String EXPERIMENT_CONTEXT_TYPE = "org.ambientdynamix.contextplugins.ExperimentPlugin";
 
 
     @ResponseBody
@@ -36,12 +35,12 @@ public class ExperimentController extends BaseController {
                 experiements.add(experimentRepository.findById(7));
                 return experiements;
             } else {
-                return modelManager.getEnabledExperiments();
+                return modelService.getEnabledExperiments();
             }
 //            } else {
 //
 //                final Smartphone smartphone = smartphoneRepository.findById(phoneId);
-//                Experiment experiment = modelManager.getExperiment(smartphone);
+//                Experiment experiment = modelService.getExperiment(smartphone);
 //                if (phoneId == LIDIA_PHONE_ID) {
 //                    experiment = experimentRepository.findById(7);
 //                }
@@ -68,7 +67,6 @@ public class ExperimentController extends BaseController {
 
         final Experiment storedExperiment = experimentRepository.findById(experimentId);
         if (storedExperiment != null) {
-            LOGGER.info("getExperiment: " + storedExperiment);
             apiResponse.setStatus(HttpServletResponse.SC_OK);
             apiResponse.setMessage("ok");
             apiResponse.setValue(storedExperiment);

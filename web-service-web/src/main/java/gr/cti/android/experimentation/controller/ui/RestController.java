@@ -3,7 +3,6 @@ package gr.cti.android.experimentation.controller.ui;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
-import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,24 +48,8 @@ public class RestController extends BaseController {
 
     private JSONArray getExperimentData(final String experiment, final int deviceId, final String after) {
         DecimalFormat df = new DecimalFormat("#.00000000");
-        long start;
-        try {
-            start = Long.parseLong(after);
-        } catch (Exception e) {
-            switch (after) {
-                case "Today":
-                case "today":
-                    start = new DateTime().withMillisOfDay(0).getMillis();
-                    break;
-                case "Yesterday":
-                case "yesterday":
-                    start = new DateTime().withMillisOfDay(0).minusDays(1).getMillis();
-                    break;
-                default:
-                    start = 0;
-                    break;
-            }
-        }
+        long start = parseDateMillis(after);
+
         final Set<Result> results;
         if (deviceId == 0) {
             results = resultRepository.findByExperimentIdAndTimestampAfter(Integer.parseInt(experiment), start);
