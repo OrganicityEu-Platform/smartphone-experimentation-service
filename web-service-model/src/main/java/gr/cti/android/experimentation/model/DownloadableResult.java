@@ -5,22 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Map;
 
-/**
- * Created by amaxilatis on 21/3/2016.
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DownloadableResult implements Comparable<DownloadableResult>, Serializable {
     private long date;
-    private double longitude;
+    private double longtitude;
     private double latitude;
     private Map<String, Object> results;
 
     public DownloadableResult() {
     }
 
-    public DownloadableResult(long date, double longitude, double latitude, Map<String, Object> results) {
+    public DownloadableResult(long date, double longtitude, double latitude, Map<String, Object> results) {
         this.date = date;
-        this.longitude = longitude;
+        this.longtitude = longtitude;
         this.latitude = latitude;
         this.results = results;
     }
@@ -41,12 +39,12 @@ public class DownloadableResult implements Comparable<DownloadableResult>, Seria
         this.results = results;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public double getLongtitude() {
+        return longtitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLongtitude(double longtitude) {
+        this.longtitude = longtitude;
     }
 
     public double getLatitude() {

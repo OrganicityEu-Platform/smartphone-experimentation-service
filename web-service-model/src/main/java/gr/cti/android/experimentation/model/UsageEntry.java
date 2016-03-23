@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * Created by amaxilatis on 21/3/2016.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UsageEntry implements Comparable<UsageEntry>, Serializable {
     private String date;

@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Created by amaxilatis on 12/3/2016.
- */
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SmartphoneStatistics {
     private int id;
