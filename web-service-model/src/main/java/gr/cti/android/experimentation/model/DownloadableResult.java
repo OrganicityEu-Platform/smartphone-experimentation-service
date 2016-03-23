@@ -9,16 +9,16 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DownloadableResult implements Comparable<DownloadableResult>, Serializable {
     private long date;
-    private double longtitude;
+    private double longitude;
     private double latitude;
     private Map<String, Object> results;
 
     public DownloadableResult() {
     }
 
-    public DownloadableResult(long date, double longtitude, double latitude, Map<String, Object> results) {
+    public DownloadableResult(long date, double longitude, double latitude, Map<String, Object> results) {
         this.date = date;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
         this.latitude = latitude;
         this.results = results;
     }
@@ -39,12 +39,12 @@ public class DownloadableResult implements Comparable<DownloadableResult>, Seria
         this.results = results;
     }
 
-    public double getLongtitude() {
-        return longtitude;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLongtitude(double longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public double getLatitude() {
