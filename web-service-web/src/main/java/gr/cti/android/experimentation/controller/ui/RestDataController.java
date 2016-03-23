@@ -24,33 +24,6 @@ public class RestDataController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(RestDataController.class);
 
-    @RequestMapping(value = "/experiment/data/{experimentId}", method = RequestMethod.GET)
-    public String experimentView(final Map<String, Object> model, @PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
-        LOGGER.debug("experiment:" + experiment);
-        if (deviceId == 0) {
-            model.put("title", "Experiment " + experiment);
-        } else {
-            model.put("title", "Experiment " + experiment + " device:" + deviceId);
-        }
-        model.put("addressPoints", getExperimentData(experiment, deviceId, after).toString());
-        LOGGER.debug("-----------------------------------");
-        return "experiment-data";
-    }
-
-    @RequestMapping(value = "/experiment/data2/{experimentId}", method = RequestMethod.GET)
-    public String experimentView2(final Map<String, Object> model, @PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) throws JSONException {
-        LOGGER.debug("experiment:" + experiment);
-        if (deviceId == 0) {
-            model.put("title", "Experiment " + experiment);
-        } else {
-            model.put("title", "Experiment " + experiment + " device:" + deviceId);
-        }
-        model.put("addressPoints", getExperimentData(experiment, deviceId, after).toString());
-        model.put("max", getExperimentDataMax(experiment, deviceId, after).toString());
-        LOGGER.debug("-----------------------------------");
-        return "experiment-data2";
-    }
-
     @ResponseBody
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "text/csv")
     public String dataCsv(@RequestParam(value = "type") final String type) throws JSONException {
