@@ -42,20 +42,27 @@ public class RestDataController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/data", method = RequestMethod.GET, produces = "application/json")
-    public String getExperimentDataByExperimentId(@RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
-        return getAllData(deviceId, after).toString();
+    public String getExperimentDataByExperimentId(@RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
+            , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
+        return getAllData(deviceId, after, to, accuracy).toString();
     }
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/data/{experimentId}", method = RequestMethod.GET, produces = "application/json")
-    public String getExperimentDataByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
-        return getExperimentData(experiment, deviceId, after).toString();
+    public String getExperimentDataByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
+            , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
+        LOGGER.info("to:" + to);
+        return getExperimentData(experiment, deviceId, after, to, accuracy).toString();
     }
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/data/{experimentId}/hour", method = RequestMethod.GET, produces = "application/json")
-    public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
-        JSONObject data = getExperimentHourlyData(experiment, deviceId, after);
+    public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
+            , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
+        JSONObject data = getExperimentHourlyData(experiment, deviceId, after, to, accuracy);
         LOGGER.info(data);
         return data.toString();
     }
@@ -68,9 +75,12 @@ public class RestDataController extends BaseController {
 //        return data.toString();
 //    }
 
-    private JSONArray getExperimentData(final String experiment, final int deviceId, final String after) {
-        final DecimalFormat df = new DecimalFormat("#.000");
+    private JSONArray getExperimentData(final String experiment, final int deviceId, final String after, final String to, final int accuracy) {
+        final String format = getFormat(accuracy);
+        final DecimalFormat df = new DecimalFormat(format);
+        LOGGER.info("format:" + format);
         final long start = parseDateMillis(after);
+        final long end = parseDateMillis(to);
 
         final Set<Result> results;
         if (deviceId == 0) {
@@ -89,6 +99,10 @@ public class RestDataController extends BaseController {
                 if (!result.getMessage().startsWith("{")) {
                     continue;
                 }
+                if (end != 0 && result.getTimestamp() > end) {
+                    continue;
+                }
+
                 final JSONObject message = new JSONObject(result.getMessage());
 
                 if (message.has(LATITUDE) && message.has(LONGITUDE)) {
@@ -168,9 +182,12 @@ public class RestDataController extends BaseController {
         return addressPoints;
     }
 
-    private JSONArray getAllData(final int deviceId, final String after) {
-        DecimalFormat df = new DecimalFormat("#.000");
+    private JSONArray getAllData(final int deviceId, final String after, final String to, final int accuracy) {
+        final String format = getFormat(accuracy);
+
+        DecimalFormat df = new DecimalFormat(format);
         long start = parseDateMillis(after);
+        long end = parseDateMillis(to);
 
         final Set<Result> results;
         if (deviceId == 0) {
@@ -187,6 +204,9 @@ public class RestDataController extends BaseController {
         for (Result result : results) {
             try {
                 if (!result.getMessage().startsWith("{")) {
+                    continue;
+                }
+                if (end != 0 && result.getTimestamp() > end) {
                     continue;
                 }
                 final JSONObject message = new JSONObject(result.getMessage());
@@ -269,9 +289,11 @@ public class RestDataController extends BaseController {
     }
 
 
-    private JSONObject getExperimentHourlyData(final String experiment, final int deviceId, final String after) {
-        final DecimalFormat df = new DecimalFormat("#.000");
+    private JSONObject getExperimentHourlyData(final String experiment, final int deviceId, final String after, final String to, final int accuracy) {
+        final String format = getFormat(accuracy);
+        final DecimalFormat df = new DecimalFormat(format);
         final long start = parseDateMillis(after);
+        final long end = parseDateMillis(after);
 
         final Set<Result> results;
         if (deviceId == 0) {
@@ -289,6 +311,9 @@ public class RestDataController extends BaseController {
             for (final Result result : results) {
                 try {
                     if (!result.getMessage().startsWith("{")) {
+                        continue;
+                    }
+                    if (end != 0 && result.getTimestamp() > end) {
                         continue;
                     }
                     final JSONObject message = new JSONObject(result.getMessage());
@@ -392,6 +417,7 @@ public class RestDataController extends BaseController {
 
     private JSONObject getExperimentDataMax(final String experiment, final int deviceId, final String after) {
         long start = parseDateMillis(after);
+        long end = parseDateMillis(after);
 
         final Set<Result> results;
         if (deviceId == 0) {
@@ -405,6 +431,9 @@ public class RestDataController extends BaseController {
         for (Result result : results) {
             try {
                 if (!result.getMessage().startsWith("{")) {
+                    continue;
+                }
+                if (end != 0 && result.getTimestamp() > end) {
                     continue;
                 }
                 final JSONObject message = new JSONObject(result.getMessage());
@@ -427,5 +456,16 @@ public class RestDataController extends BaseController {
             }
         }
         return maxJson;
+    }
+
+    private String getFormat(int accuracy) {
+        String format = "#";
+        if (accuracy > 0) {
+            format += ".";
+            for (int i = 0; i < accuracy; i++) {
+                format += "0";
+            }
+        }
+        return format;
     }
 }
