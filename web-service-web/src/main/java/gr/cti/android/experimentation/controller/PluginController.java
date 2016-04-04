@@ -185,10 +185,10 @@ public class PluginController extends BaseController {
 
                 LOGGER.info("updatePlugin: " + plugin);
                 plugin.setId((int) pluginId);
-                if (plugin.getFilename() == null) {
+                if (plugin.getFilename() == null || plugin.getFilename().equals("")) {
                     plugin.setFilename(storedPlugin.getFilename());
                 }
-                if (plugin.getInstallUrl() == null) {
+                if (plugin.getInstallUrl() == null || plugin.getInstallUrl().equals("")) {
                     plugin.setInstallUrl(storedPlugin.getInstallUrl());
                 }
                 pluginRepository.save(plugin);
