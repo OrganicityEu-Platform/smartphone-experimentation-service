@@ -254,14 +254,13 @@ public class RestDataController extends BaseController {
                 if (end != 0 && result.getTimestamp() > end) {
                     continue;
                 }
-                String longitude;
-                String latitude;
+
 
                 final JSONObject message = new JSONObject(result.getMessage());
 
                 if (message.has(LATITUDE) && message.has(LONGITUDE)) {
-                    longitude = df.format(message.getDouble(LONGITUDE));
-                    latitude = df.format(message.getDouble(LATITUDE));
+                    final String longitude = df.format(message.getDouble(LONGITUDE));
+                    final String latitude = df.format(message.getDouble(LATITUDE));
                     if (!dataAggregates.containsKey(longitude)) {
                         dataAggregates.put(longitude, new HashMap<>());
                     }
@@ -306,25 +305,26 @@ public class RestDataController extends BaseController {
                 LOGGER.error(e, e);
             }
         }
+        
         final JSONArray addressPoints = new JSONArray();
-        for (final String longit : dataAggregates.keySet()) {
-            for (final String latit : dataAggregates.get(longit).keySet()) {
-                LOGGER.info("{" + longit + ":" + latit + "}");
+        for (final String longitude : dataAggregates.keySet()) {
+            for (final String latitude : dataAggregates.get(longitude).keySet()) {
+                LOGGER.info("{" + longitude + ":" + latitude + "}");
                 final JSONArray measurement = new JSONArray();
                 try {
-                    measurement.put(Double.parseDouble(latit));
-                    measurement.put(Double.parseDouble(longit));
-                    if (locationsHeatMap.containsKey(longit) && locationsHeatMap.get(longit).containsKey(latit)) {
-                        measurement.put(String.valueOf(locationsHeatMap.get(longit).get(latit)));
+                    measurement.put(Double.parseDouble(latitude));
+                    measurement.put(Double.parseDouble(longitude));
+                    if (locationsHeatMap.containsKey(longitude) && locationsHeatMap.get(longitude).containsKey(latitude)) {
+                        measurement.put(String.valueOf(locationsHeatMap.get(longitude).get(latitude)));
                     } else {
                         measurement.put(1);
                     }
                     final JSONObject data = new JSONObject();
                     measurement.put(data);
-                    for (final Object key : dataAggregates.get(longit).get(latit).keySet()) {
+                    for (final Object key : dataAggregates.get(longitude).get(latitude).keySet()) {
                         final String keyString = (String) key;
                         final String part = keyString.split("\\.")[keyString.split("\\.").length - 1];
-                        data.put(part, dataAggregates.get(longit).get(latit).get(keyString).getMean());
+                        data.put(part, dataAggregates.get(longitude).get(latitude).get(keyString).getMean());
                     }
                     addressPoints.put(measurement);
                 } catch (JSONException e) {
