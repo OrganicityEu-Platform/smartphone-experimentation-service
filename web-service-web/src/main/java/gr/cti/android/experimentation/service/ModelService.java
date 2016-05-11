@@ -132,7 +132,7 @@ public class ModelService {
 
 
     public Smartphone registerSmartphone(final Smartphone smartphone) {
-        if (smartphone.getId() == -1 || smartphone.getId() == 0) {
+        if (smartphone.getId() != null && (smartphone.getId() == -1 || smartphone.getId() == 0)) {
             smartphone.setId(null);
         }
         log.info("registerSmartphone: id:" + smartphone.getId() + " phoneId:" + smartphone.getPhoneId());

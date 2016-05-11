@@ -38,16 +38,17 @@ public class AndroidExperimentationWS extends BaseController {
             JSONException, IOException {
         LOGGER.info("saveExperiment Called");
 
-        final Result newResult = extractResultFromBody(body);
-
-        //store to sql
         try {
-            sqlDbService.store(newResult);
-        } catch (Exception e) {
-            LOGGER.error(e, e);
-        }
+            final Result newResult = extractResultFromBody(body);
 
-        //store to influx
+            //store to sql
+            try {
+                sqlDbService.store(newResult);
+            } catch (Exception e) {
+                LOGGER.error(e, e);
+            }
+
+            //store to influx
 //        try {
 //            boolean res = influxDbService.store(newResult);
 //            LOGGER.info(res);
@@ -55,20 +56,22 @@ public class AndroidExperimentationWS extends BaseController {
 //            LOGGER.error(e, e);
 //        }
 
-        //store to orion
-        try {
-            orionService.store(newResult);
+            //store to orion
+            try {
+                orionService.store(newResult);
+            } catch (Exception e) {
+                LOGGER.error(e, e);
+            }
+
+            //send incentive messages to phone
+            try {
+                gcmService.check(newResult);
+            } catch (Exception e) {
+                LOGGER.error(e, e);
+            }
         } catch (Exception e) {
             LOGGER.error(e, e);
         }
-
-        //send incentive messages to phone
-        try {
-            gcmService.check(newResult);
-        } catch (Exception e) {
-            LOGGER.error(e, e);
-        }
-
         response.setStatus(HttpServletResponse.SC_OK);
         final JSONObject responseObje = new JSONObject();
         responseObje.put("status", "Ok");
@@ -132,7 +135,6 @@ public class AndroidExperimentationWS extends BaseController {
         newResult.setMessage(objTotal.toString());
 
         LOGGER.info(newResult.toString());
-
         return newResult;
     }
 
