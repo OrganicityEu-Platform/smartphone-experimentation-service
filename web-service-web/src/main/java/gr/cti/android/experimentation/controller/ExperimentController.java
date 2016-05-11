@@ -1,10 +1,15 @@
 package gr.cti.android.experimentation.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import gr.cti.android.experimentation.GcmMessageData;
 import gr.cti.android.experimentation.controller.api.AndroidExperimentationWS;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.BaseExperiment;
 import gr.cti.android.experimentation.model.Experiment;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +30,29 @@ public class ExperimentController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(ExperimentController.class);
 
+
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/experiment/message", method = RequestMethod.GET, produces = "application/json")
+    public JSONObject sendMessage(HttpServletResponse response
+            , @RequestParam(value = "experimentId") final String experimentId
+            , @RequestParam(value = "message") final String message
+    ) throws JSONException {
+        gcmService.send2Experiment(Integer.parseInt(experimentId), message);
+        return ok(response);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/api/v1/smartphone/message", method = RequestMethod.GET, produces = "application/json")
+    public JSONObject sendMessageToSmartphone(HttpServletResponse response
+            , @RequestParam(value = "smartphoneId") final String smartphoneId
+            , @RequestParam(value = "message") final String message
+    ) throws JSONException, JsonProcessingException {
+        GcmMessageData data = new GcmMessageData();
+        data.setType("text");
+        data.setText(message);
+        gcmService.send2Device(Integer.parseInt(smartphoneId), new ObjectMapper().writeValueAsString(data));
+        return ok(response);
+    }
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.GET, produces = "application/json")
@@ -115,11 +143,17 @@ public class ExperimentController extends BaseController {
                 experimentObj.setName(experiment.getName());
                 experimentObj.setDescription(experiment.getDescription());
                 experimentObj.setUrlDescription(experiment.getUrl());
-                experimentObj.setFilename(experiment.getFilename());
+
+                if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
+                    experimentObj.setFilename(experiment.getFilename());
+                }
+                if (experiment.getUrl() == null || experiment.getUrl().equals("")) {
+                    experimentObj.setUrl(experiment.getUrl());
+                }
                 experimentObj.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 experimentObj.setSensorDependencies(experiment.getSensorDependencies());
                 experimentObj.setUserId(experiment.getUserId());
-                experimentObj.setUrl(experiment.getUrl());
+
                 experimentObj.setEnabled(true);
                 LOGGER.info("addExperiment: " + experiment);
                 experimentObj.setTimestamp(System.currentTimeMillis());
@@ -181,18 +215,17 @@ public class ExperimentController extends BaseController {
                 storedExperiment.setName(experiment.getName());
                 storedExperiment.setDescription(experiment.getDescription());
                 storedExperiment.setUrlDescription(experiment.getUrlDescription());
-                if (experiment.getUrl() != null) {
-                    storedExperiment.setUrl(experiment.getUrl());
-                }
-                if (experiment.getFilename() != null) {
+                if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
                     storedExperiment.setFilename(experiment.getFilename());
+                }
+                if (experiment.getUrl() == null || experiment.getUrl().equals("")) {
+                    storedExperiment.setUrl(experiment.getUrl());
                 }
                 storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 storedExperiment.setSensorDependencies(experiment.getSensorDependencies());
                 storedExperiment.setUserId(experiment.getUserId());
                 LOGGER.info("updateExperiment: " + experiment);
                 //setInstall Url
-                storedExperiment.setEnabled(false);
                 storedExperiment.setTimestamp(System.currentTimeMillis());
                 experimentRepository.save(storedExperiment);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);

@@ -6,6 +6,7 @@ package gr.cti.android.experimentation;
 public class GcmMessageData {
     private String type;
     private Integer count;
+    private String text;
 
     public String getType() {
         return type;
@@ -21,5 +22,13 @@ public class GcmMessageData {
 
     public void setCount(Integer count) {
         this.count = count;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
