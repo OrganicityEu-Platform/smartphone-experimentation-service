@@ -40,12 +40,16 @@ public class BaseController {
     @Autowired
     protected CityService cityService;
 
-    protected JSONObject ok(final HttpServletResponse servletResponse) throws JSONException {
-        servletResponse.setStatus(200);
+    protected JSONObject ok() throws JSONException {
         final JSONObject response = new JSONObject();
         response.put("status", "Ok");
         response.put("code", 200);
         return response;
+    }
+
+    protected JSONObject ok(final HttpServletResponse servletResponse) throws JSONException {
+        servletResponse.setStatus(200);
+        return ok();
     }
 
     protected JSONObject internalServerError(final HttpServletResponse response) throws JSONException {

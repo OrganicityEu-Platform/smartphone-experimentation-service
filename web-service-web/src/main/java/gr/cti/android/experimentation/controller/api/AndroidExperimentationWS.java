@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/api/v1")
@@ -29,8 +30,6 @@ public class AndroidExperimentationWS extends BaseController {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(AndroidExperimentationWS.class);
-    public static final int LIDIA_PHONE_ID = 11;
-    public static final int MYLONAS_PHONE_ID = -6;//6
 
     @ResponseBody
     @RequestMapping(value = "/data", method = RequestMethod.POST, produces = "application/json", consumes = "text/plain")
@@ -58,7 +57,8 @@ public class AndroidExperimentationWS extends BaseController {
 
             //store to orion
             try {
-                orionService.store(newResult);
+                Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
+                orionService.store(newResult, experiment);
             } catch (Exception e) {
                 LOGGER.error(e, e);
             }
@@ -82,6 +82,7 @@ public class AndroidExperimentationWS extends BaseController {
     private Result extractResultFromBody(String body) throws JSONException, IOException {
 
         body = body.replaceAll("atributeType", "attributeType")
+                .replaceAll("org.ambientdynamix.contextplugins.NoiseLevel", OrganicityAttributeTypes.Types.SOUND_PRESSURE_LEVEL.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.sound", OrganicityAttributeTypes.Types.SOUND_PRESSURE_LEVEL.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.10pm", OrganicityAttributeTypes.Types.PARTICLES10.getUrn())
                 .replaceAll("org.ambientdynamix.contextplugins.25pm", OrganicityAttributeTypes.Types.PARTICLES25.getUrn())

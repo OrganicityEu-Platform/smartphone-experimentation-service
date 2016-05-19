@@ -8,6 +8,7 @@ import eu.organicity.entities.handler.entities.SmartphoneDevice;
 import eu.organicity.entities.handler.metadata.Datatype;
 import eu.organicity.entities.namespace.OrganicityAttributeTypes;
 import eu.organicity.entities.namespace.OrganicityDatatypes;
+import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -32,7 +33,7 @@ public class OrionService {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(OrionService.class);
-    private static final String ORION_SMARTPHONE_ID_FORMAT = "urn:oc:entity:%s:smartphone:phone:%s";
+    private static final String ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT = "urn:oc:entity:experimenters:%s:%s:%s";
 
     @Value("${siteName:london}")
     private String siteName;
@@ -48,11 +49,11 @@ public class OrionService {
 
     @PostConstruct
     public void init() {
-        orionClient = new OrionClient("http://localhost:1026", "", "organicity", "/");
+        orionClient = new OrionClient("http://localhost:1026", "", "smartphones", "/");
     }
 
     @Async
-    public void store(Result newResult) {
+    public void store(Result newResult, Experiment experiment) {
         LOGGER.info("store-orion:" + newResult.getDeviceId());
 
         final SmartphoneDevice phoneEntity = new SmartphoneDevice();
@@ -134,29 +135,22 @@ public class OrionService {
                     phoneEntity.addAttribute(a);
                 }
             }
-            if (longitude != null && latitude != null) {
-                try {
-                    final String locationName =
-                            cityService.findLocation(Double.parseDouble(latitude), Double.parseDouble(longitude));
 
-                    String uri;
-                    if (locationName != null) {
-                        uri = String.format(ORION_SMARTPHONE_ID_FORMAT, locationName, newResult.getDeviceId());
-                    } else {
-                        uri = String.format(ORION_SMARTPHONE_ID_FORMAT, siteName, newResult.getDeviceId());
-                    }
-                    LOGGER.info(uri);
 
-                    phoneEntity.setId(uri);
-                    phoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
+            final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
+                    experiment.getUserId(), newResult.getExperimentId(), newResult.getDeviceId());
+            phoneEntity.setId(uri);
+            phoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
+            phoneEntity.setDatasource(false, "http://set.organicity.eu");
 
-                    final OrionContextElement entity = phoneEntity.getContextElement();
-                    LOGGER.info((new ObjectMapper()).writeValueAsString(entity));
-                    final String res = orionClient.postContextEntity(uri, entity);
-                    LOGGER.info(res.replaceAll("\n", ""));
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
-                }
+            try {
+                final OrionContextElement entity = phoneEntity.getContextElement();
+                String string = (new ObjectMapper()).writeValueAsString(entity);
+                LOGGER.info(string);
+                final String res = orionClient.postContextEntity(uri, entity);
+                LOGGER.info(res.replaceAll("\n", ""));
+            } catch (Exception e) {
+                LOGGER.error(e, e);
             }
 
         } catch (JSONException e) {

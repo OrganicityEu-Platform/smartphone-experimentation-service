@@ -33,57 +33,28 @@ public class ExperimentController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/message", method = RequestMethod.GET, produces = "application/json")
-    public JSONObject sendMessage(HttpServletResponse response
-            , @RequestParam(value = "experimentId") final String experimentId
-            , @RequestParam(value = "message") final String message
-    ) throws JSONException {
+    public JSONObject sendMessage(@RequestParam(value = "experimentId") final String experimentId
+            , @RequestParam(value = "message") final String message) throws JSONException {
         gcmService.send2Experiment(Integer.parseInt(experimentId), message);
-        return ok(response);
+        return ok();
     }
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/smartphone/message", method = RequestMethod.GET, produces = "application/json")
-    public JSONObject sendMessageToSmartphone(HttpServletResponse response
-            , @RequestParam(value = "smartphoneId") final String smartphoneId
+    public JSONObject sendMessageToSmartphone(@RequestParam(value = "smartphoneId") final String smartphoneId
             , @RequestParam(value = "message") final String message
     ) throws JSONException, JsonProcessingException {
-        GcmMessageData data = new GcmMessageData();
+        final GcmMessageData data = new GcmMessageData();
         data.setType("text");
         data.setText(message);
         gcmService.send2Device(Integer.parseInt(smartphoneId), new ObjectMapper().writeValueAsString(data));
-        return ok(response);
+        return ok();
     }
 
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.GET, produces = "application/json")
-    public List<Experiment> getExperiment(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        try {
-            if (phoneId == AndroidExperimentationWS.LIDIA_PHONE_ID || phoneId == AndroidExperimentationWS.MYLONAS_PHONE_ID) {
-                ArrayList<Experiment> experiements = new ArrayList<>();
-                experiements.add(experimentRepository.findById(7));
-                return experiements;
-            } else {
-                return modelService.getEnabledExperiments();
-            }
-//            } else {
-//
-//                final Smartphone smartphone = smartphoneRepository.findById(phoneId);
-//                Experiment experiment = modelService.getExperiment(smartphone);
-//                if (phoneId == LIDIA_PHONE_ID) {
-//                    experiment = experimentRepository.findById(7);
-//                }
-//                LOGGER.debug("getExperiment: Device:" + phoneId);
-//                LOGGER.debug("getExperiment:" + experiment);
-//                LOGGER.debug("-----------------------------------");
-//                final ArrayList<Experiment> list = new ArrayList<Experiment>();
-//                list.add(experiment);
-//                return list;
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.debug(e.getMessage());
-        }
-        return null;
+    public List<Experiment> listExperiments(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
+        return modelService.getEnabledExperiments();
     }
 
     @ResponseBody
