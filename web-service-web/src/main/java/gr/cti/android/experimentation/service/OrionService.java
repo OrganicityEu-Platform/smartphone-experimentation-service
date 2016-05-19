@@ -13,7 +13,6 @@ import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -35,17 +34,7 @@ public class OrionService {
     private static final Logger LOGGER = Logger.getLogger(OrionService.class);
     private static final String ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT = "urn:oc:entity:experimenters:%s:%s:%s";
 
-    @Value("${siteName:london}")
-    private String siteName;
-
-    @Autowired
-    CityService cityService;
-
     private OrionClient orionClient;
-
-    private void setName(String siteName) {
-        this.siteName = siteName;
-    }
 
     @PostConstruct
     public void init() {

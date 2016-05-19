@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -16,14 +17,24 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.TimeZone;
 
+import static springfox.documentation.builders.PathSelectors.regex;
 
+
+@SpringBootApplication
 @Configuration
 @ComponentScan(basePackages = "gr.cti.android.experimentation")
 @PropertySource("classpath:application.properties")
 @EnableAsync
+@EnableSwagger2
 @EnableScheduling
 @EnableJpaRepositories
 @EnableAutoConfiguration
@@ -68,5 +79,24 @@ public class Application implements CommandLineRunner {
                     }
                 }
         );
+    }
+
+
+    @Bean
+    public Docket smartphoneApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("smartphone")
+                .apiInfo(apiInfo())
+                .select()
+                .paths(regex("/api/v1/smartphone/.*"))
+                .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder().title("Organicity Smartphone Experimentation API")
+                .description("Organicity Smartphone Experimentation API")
+                .termsOfServiceUrl("http://www.organicity.eu")
+                .contact(new Contact("Organicity Helpdesk", "https://support.zoho.com/portal/organicity/home", "helpdesk@organicity.eu)"))
+                .version("1").build();
     }
 }

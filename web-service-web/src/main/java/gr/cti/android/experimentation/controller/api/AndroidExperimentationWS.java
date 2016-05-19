@@ -33,27 +33,23 @@ public class AndroidExperimentationWS extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = "/data", method = RequestMethod.POST, produces = "application/json", consumes = "text/plain")
-    public JSONObject saveExperiment(@RequestBody String body, final HttpServletResponse response) throws
+    public JSONObject data(@RequestBody String body, final HttpServletResponse response) throws
             JSONException, IOException {
-        LOGGER.info("saveExperiment Called");
 
+        Result newResult = null;
         try {
-            final Result newResult = extractResultFromBody(body);
+            newResult = extractResultFromBody(body);
+        } catch (Exception e) {
+            LOGGER.error(e, e);
 
+        }
+        if (newResult != null) {
             //store to sql
             try {
                 sqlDbService.store(newResult);
             } catch (Exception e) {
                 LOGGER.error(e, e);
             }
-
-            //store to influx
-//        try {
-//            boolean res = influxDbService.store(newResult);
-//            LOGGER.info(res);
-//        } catch (Exception e) {
-//            LOGGER.error(e, e);
-//        }
 
             //store to orion
             try {
@@ -69,14 +65,12 @@ public class AndroidExperimentationWS extends BaseController {
             } catch (Exception e) {
                 LOGGER.error(e, e);
             }
-        } catch (Exception e) {
-            LOGGER.error(e, e);
         }
         response.setStatus(HttpServletResponse.SC_OK);
-        final JSONObject responseObje = new JSONObject();
-        responseObje.put("status", "Ok");
-        responseObje.put("code", 202);
-        return responseObje;
+        final JSONObject responseObject = new JSONObject();
+        responseObject.put("status", "Ok");
+        responseObject.put("code", 202);
+        return responseObject;
     }
 
     private Result extractResultFromBody(String body) throws JSONException, IOException {

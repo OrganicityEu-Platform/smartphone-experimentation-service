@@ -3,19 +3,16 @@ package gr.cti.android.experimentation.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
-import gr.cti.android.experimentation.controller.api.AndroidExperimentationWS;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.BaseExperiment;
 import gr.cti.android.experimentation.model.Experiment;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -32,23 +29,34 @@ public class ExperimentController extends BaseController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment/message", method = RequestMethod.GET, produces = "application/json")
-    public JSONObject sendMessage(@RequestParam(value = "experimentId") final String experimentId
-            , @RequestParam(value = "message") final String message) throws JSONException {
-        gcmService.send2Experiment(Integer.parseInt(experimentId), message);
-        return ok();
+    @RequestMapping(value = "/api/v1/contact/experiment", method = RequestMethod.POST, produces = "application/json")
+    public String contactExperiment(final HttpServletResponse response,
+                                    @RequestParam(value = "experimentId") final String experimentId,
+                                    @RequestParam(value = "message") final String message)
+            throws JSONException {
+        try {
+            gcmService.send2Experiment(Integer.parseInt(experimentId), message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ok(response).toString();
     }
 
     @ResponseBody
-    @RequestMapping(value = "/api/v1/smartphone/message", method = RequestMethod.GET, produces = "application/json")
-    public JSONObject sendMessageToSmartphone(@RequestParam(value = "smartphoneId") final String smartphoneId
-            , @RequestParam(value = "message") final String message
-    ) throws JSONException, JsonProcessingException {
+    @RequestMapping(value = "/api/v1/contact/smartphone", method = RequestMethod.POST, produces = "application/json")
+    public String contactSmartphone(final HttpServletResponse response,
+                                    @RequestParam(value = "smartphoneId") final String smartphoneId,
+                                    @RequestParam(value = "message") final String message)
+            throws JSONException, JsonProcessingException {
         final GcmMessageData data = new GcmMessageData();
         data.setType("text");
         data.setText(message);
-        gcmService.send2Device(Integer.parseInt(smartphoneId), new ObjectMapper().writeValueAsString(data));
-        return ok();
+        try {
+            gcmService.send2Device(Integer.parseInt(smartphoneId), new ObjectMapper().writeValueAsString(data));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ok(response).toString();
     }
 
     @ResponseBody

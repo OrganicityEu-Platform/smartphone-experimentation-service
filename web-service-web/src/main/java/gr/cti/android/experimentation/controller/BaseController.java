@@ -27,18 +27,15 @@ public class BaseController {
     protected PluginRepository pluginRepository;
     @Autowired
     protected BadgeRepository badgeRepository;
+
     @Autowired
     protected ModelService modelService;
-    @Autowired
-    protected InfluxDbService influxDbService;
     @Autowired
     protected SqlDbService sqlDbService;
     @Autowired
     protected OrionService orionService;
     @Autowired
     protected GCMService gcmService;
-    @Autowired
-    protected CityService cityService;
 
     protected JSONObject ok() throws JSONException {
         final JSONObject response = new JSONObject();

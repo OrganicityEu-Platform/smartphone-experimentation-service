@@ -153,6 +153,23 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
+
+        <!--#################################################################################################-->
+        <!--Swagger-->
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!--#################################################################################################-->
         <!--Tests-->
 
@@ -194,6 +211,14 @@
                 <version>2.18.1</version>
                 <configuration>
                     <skipTests>false</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.gaul</groupId>
+                <artifactId>modernizer-maven-plugin</artifactId>
+                <version>1.4.0</version>
+                <configuration>
+                    <javaVersion>1.8</javaVersion>
                 </configuration>
             </plugin>
         </plugins>

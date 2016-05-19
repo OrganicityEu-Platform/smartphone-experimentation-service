@@ -4,6 +4,7 @@ import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.HistoricData;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.TempReading;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -38,6 +39,7 @@ public class HistoryController extends BaseController {
 
     }
 
+    @ApiOperation(value = "experiment")
     @ResponseBody
     @RequestMapping(value = {"/api/v1/entities/{entity_id}/readings"}, method = RequestMethod.GET)
     public HistoricData experimentView(@PathVariable("entity_id") final String entityId,
