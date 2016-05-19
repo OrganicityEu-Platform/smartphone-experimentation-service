@@ -132,13 +132,4 @@ public class AndroidExperimentationWS extends BaseController {
         LOGGER.info(newResult.toString());
         return newResult;
     }
-
-    @ResponseBody
-    @RequestMapping(value = "/ping", method = RequestMethod.GET, produces = "text/plain")
-    public JSONObject ping(final String pingJson, final HttpServletResponse response) throws JSONException {
-        LOGGER.debug("Ping:" + pingJson);
-        LOGGER.debug("-----------------------------------");
-        return ok(response);
-    }
-
 }
