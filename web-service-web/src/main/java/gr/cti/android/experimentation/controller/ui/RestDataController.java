@@ -185,8 +185,15 @@ public class RestDataController extends BaseController {
                                     dataAggregates.get(hour).get(longitude).get(latitude).put(key, new DescriptiveStatistics());
                                 }
                                 try {
-                                    dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(message.getDouble(key));
-                                    wholeDataStatistics.addValue(message.getDouble(key));
+                                    String data = message.getString(key);
+                                    try {
+                                        final double doubleData = Double.parseDouble(data);
+                                        dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(doubleData);
+                                        wholeDataStatistics.addValue(doubleData);
+                                    } catch (NumberFormatException ignore) {
+                                        dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(1);
+                                        wholeDataStatistics.addValue(1);
+                                    }
                                 } catch (Exception e) {
                                     LOGGER.error(e, e);
                                 }
@@ -217,7 +224,14 @@ public class RestDataController extends BaseController {
                             for (final Object key : dataAggregates.get(hour).get(longit).get(latit).keySet()) {
                                 final String keyString = (String) key;
                                 final String part = keyString.split("\\.")[keyString.split("\\.").length - 1];
-                                data.put(part, dataAggregates.get(hour).get(longit).get(latit).get(keyString).getMean());
+                                double value = dataAggregates.get(hour).get(longit).get(latit).get(keyString).getMean();
+                                LOGGER.info("value: " + value);
+                                if (Double.isFinite(value) && value != 1) {
+                                    data.put(part, value);
+                                } else {
+                                    value = dataAggregates.get(hour).get(longit).get(latit).get(keyString).getValues().length;
+                                    data.put(part, value);
+                                }
                             }
                             addressPoints.put(measurement);
                         } catch (JSONException e) {
@@ -291,10 +305,15 @@ public class RestDataController extends BaseController {
                                 dataAggregates.get(longitude).get(latitude).put(key, new DescriptiveStatistics());
                             }
                             try {
-                                dataAggregates.get(longitude).get(latitude).get(key).addValue(
-                                        message.getDouble(key)
-                                );
-                                wholeDataStatistics.addValue(message.getDouble(key));
+                                String data = message.getString(key);
+                                try {
+                                    final double doubleData = Double.parseDouble(data);
+                                    dataAggregates.get(longitude).get(latitude).get(key).addValue(doubleData);
+                                    wholeDataStatistics.addValue(doubleData);
+                                } catch (NumberFormatException ignore) {
+                                    dataAggregates.get(longitude).get(latitude).get(key).addValue(1);
+                                    wholeDataStatistics.addValue(1);
+                                }
                             } catch (Exception e) {
                                 LOGGER.error(e, e);
                             }
@@ -305,7 +324,7 @@ public class RestDataController extends BaseController {
                 LOGGER.error(e, e);
             }
         }
-        
+
         final JSONArray addressPoints = new JSONArray();
         for (final String longitude : dataAggregates.keySet()) {
             for (final String latitude : dataAggregates.get(longitude).keySet()) {
@@ -324,7 +343,14 @@ public class RestDataController extends BaseController {
                     for (final Object key : dataAggregates.get(longitude).get(latitude).keySet()) {
                         final String keyString = (String) key;
                         final String part = keyString.split("\\.")[keyString.split("\\.").length - 1];
-                        data.put(part, dataAggregates.get(longitude).get(latitude).get(keyString).getMean());
+                        double value = dataAggregates.get(longitude).get(latitude).get(keyString).getMean();
+                        LOGGER.info("value: " + value);
+                        if (Double.isFinite(value) && value != 1) {
+                            data.put(part, value);
+                        } else {
+                            value = dataAggregates.get(longitude).get(latitude).get(keyString).getValues().length;
+                            data.put(part, value);
+                        }
                     }
                     addressPoints.put(measurement);
                 } catch (JSONException e) {
