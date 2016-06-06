@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,9 +42,14 @@ public interface ResultRepository extends CrudRepository<Result, Long> {
 
     long countByDeviceId(int deviceId);
 
+    long countByExperimentId(int experimentId);
+
     long countByDeviceIdAndExperimentId(int deviceId, int experimentId);
 
     Set<Result> findDistinctExperimentIdByDeviceId(int deviceId);
 
     Set<Result> findDistinctExperimentIdByDeviceIdAndTimestampAfter(int deviceId, long millis);
+
+    List<Result> findTimestampByExperimentId(int experimentId);
+
 }

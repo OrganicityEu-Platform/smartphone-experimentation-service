@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Organicity SET: Metrics and Statistics</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h4>Count by Experiment</h4>
+        <div class="col-md-3">
+            <table>
+                <thead>
+                <th>experimentId</th>
+                <th>count</th>
+                </thead>
+                <tbody>
+                <th:block th:each="item : ${experimentCount}" th:unless="${item.value==0}">
+                    <tr>
+                        <td th:text="${item.key}"></td>
+                        <td th:text="${item.value}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-9">
+            <div id="experimentCount"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <hr/>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Count by User</h4>
+            <table>
+                <thead>
+                <th>userId</th>
+                <th>count</th>
+                </thead>
+                <tbody>
+                <th:block th:each="item : ${userCount}" th:unless="${item.value==0}">
+                    <tr>
+                        <td th:text="${item.key}"></td>
+                        <td th:text="${item.value}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-9">
+            <div id="countByUser"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <hr/>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Count by Date</h4>
+            <!--<table>-->
+            <!--<thead>-->
+            <!--<th>date</th>-->
+            <!--<th>count</th>-->
+            <!--</thead>-->
+            <!--<tbody>-->
+            <!--<th:block th:each="item : ${totalDateCounts}">-->
+            <!--<tr>-->
+            <!--<td th:text="${item.key}"></td>-->
+            <!--<td th:text="${item.value}"></td>-->
+            <!--</tr>-->
+            <!--</th:block>-->
+            <!--</tbody>-->
+            <!--</table>-->
+        </div>
+        <div class="col-md-9">
+            <div id="totalDateCounts"></div>
+        </div>
+    </div>
+
+</div>
+
+</body>
+
+<script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI="
+        crossorigin="anonymous"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+        integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+        crossorigin="anonymous"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var experimentCount = /*[[${experimentCount}]]*/ [];
+    /*]]>*/
+
+    experimentCountSeries = [];
+    for (var i = 0; i != Object.keys(experimentCount).length; i++) {
+        var val = experimentCount[Object.keys(experimentCount)[i]];
+        if (val != 0) {
+            experimentCountSeries.push({
+                name: 'Experiment ' + Object.keys(experimentCount)[i],
+                y: val
+            });
+        }
+    }
+
+    $(function () {
+        // Create the chart
+        $('#experimentCount').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                type: ''
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y}'
+                    }
+                }
+            },
+            series: [{
+                name: 'Measurements',
+                colorByPoint: true,
+                data: experimentCountSeries
+            }]
+        });
+    });
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userCount = /*[[${userCount}]]*/ [];
+    /*]]>*/
+
+    countByUserSeries = [];
+    for (var i = 0; i != Object.keys(userCount).length; i++) {
+        var val = userCount[Object.keys(userCount)[i]];
+        if (val != 0) {
+            countByUserSeries.push({
+                name: 'Volunteer ' + i,
+                y: val
+            });
+        }
+    }
+
+    $(function () {
+        // Create the chart
+        $('#countByUser').highcharts({
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                type: ''
+            },
+            yAxis: {
+                title: {
+                    text: ''
+                }
+
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y}'
+                    }
+                }
+            },
+            series: [{
+                name: 'Measurements',
+                colorByPoint: true,
+                data: countByUserSeries
+            }]
+        });
+    });
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var totalDateCounts = /*[[${totalDateCounts}]]*/ [];
+    var experimentDateCounts = /*[[${experimentDateCounts}]]*/ [];
+    /*]]>*/
+
+    allSeries = [];
+    totalDateCountsSeries = [];
+    for (var i = 0; i != Object.keys(totalDateCounts).length; i++) {
+        var val = totalDateCounts[Object.keys(totalDateCounts)[i]];
+        if (val != 0) {
+            totalDateCountsSeries.push([
+                parseInt(Object.keys(totalDateCounts)[i]),
+                val
+            ]);
+        }
+    }
+
+    allSeries.push({
+        name: 'Total',
+        // Define the data points. All series have a dummy year
+        // of 1970/71 in order to be compared on the same x axis. Note
+        // that in JavaScript, months start at 0 for January, 1 for February etc.
+        data: totalDateCountsSeries.sort(function (a, b) {
+            return (a[0] - b[0]);
+        })
+    });
+
+    for (var j = 0; j != Object.keys(experimentDateCounts).length; j++) {
+        cExperimentSeries = [];
+        var experimentMap = experimentDateCounts[Object.keys(experimentDateCounts)[j]];
+        for (var i = 0; i != Object.keys(experimentMap).length; i++) {
+            var val = experimentMap[Object.keys(experimentMap)[i]];
+            if (val != 0) {
+                cExperimentSeries.push([
+                    parseInt(Object.keys(experimentMap)[i]),
+                    val
+                ]);
+            }
+        }
+        allSeries.push({
+//            name: 'Experiment ' + Object.keys(experimentDateCounts)[j],
+            name: 'Experiment ' + j,
+            // Define the data points. All series have a dummy year
+            // of 1970/71 in order to be compared on the same x axis. Note
+            // that in JavaScript, months start at 0 for January, 1 for February etc.
+            data: cExperimentSeries.sort(function (a, b) {
+                return (a[0] - b[0]);
+            })
+        });
+    }
+
+
+    $(function () {
+        $('#totalDateCounts').highcharts({
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                type: 'datetime',
+                title: {
+                    text: 'Date'
+                }
+            },
+            yAxis: {
+                title: {
+                    text: 'Measurements'
+                },
+                min: 0
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        enabled: true
+                    }
+                }
+            },
+            series: allSeries
+        })
+        ;
+    });
+</script>
+</html>
