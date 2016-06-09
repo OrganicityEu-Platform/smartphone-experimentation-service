@@ -90,12 +90,6 @@ public class SqlDbService {
             LOGGER.info("saveExperiment: FAILEd" + e.getMessage(), e);
             LOGGER.info("-----------------------------------");
         }
-
-//        try {
-//            storeGeo(newResult);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Async
