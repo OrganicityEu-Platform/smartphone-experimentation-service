@@ -51,20 +51,6 @@ public class AndroidExperimentationWS extends BaseController {
                 LOGGER.error(e, e);
             }
 
-            //store to orion
-            try {
-                Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
-                orionService.store(newResult, experiment);
-            } catch (Exception e) {
-                LOGGER.error(e, e);
-            }
-
-            //send incentive messages to phone
-            try {
-                gcmService.check(newResult);
-            } catch (Exception e) {
-                LOGGER.error(e, e);
-            }
         }
         response.setStatus(HttpServletResponse.SC_OK);
         final JSONObject responseObject = new JSONObject();

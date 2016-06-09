@@ -1,6 +1,7 @@
 package gr.cti.android.experimentation.service;
 
 import com.google.maps.model.LatLng;
+import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.GeoResult;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
@@ -41,6 +42,10 @@ public class SqlDbService {
     SmartphoneRepository smartphoneRepository;
     @Autowired
     ExperimentRepository experimentRepository;
+    @Autowired
+    GCMService gcmService;
+    @Autowired
+    OrionService orionService;
     private DecimalFormat df;
 
     @PostConstruct
@@ -57,23 +62,40 @@ public class SqlDbService {
                 final Set<Result> res = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(newResult.getExperimentId(), newResult.getDeviceId(), newResult.getTimestamp(), newResult.getMessage());
                 if (res == null || (res.isEmpty())) {
                     resultRepository.save(newResult);
+
+                    LOGGER.info("saveExperiment: OK");
+                    LOGGER.info("saveExperiment: Stored:");
+                    LOGGER.info("-----------------------------------");
+
+                    //send incentive messages to phone
+                    try {
+                        gcmService.check(newResult);
+                    } catch (Exception e) {
+                        LOGGER.error(e, e);
+                    }
+
+                    //store to orion
+                    try {
+                        Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
+                        orionService.store(newResult, experiment);
+                    } catch (Exception e) {
+                        LOGGER.error(e, e);
+                    }
+
                 }
             } catch (Exception e) {
-                resultRepository.save(newResult);
+
             }
-            LOGGER.info("saveExperiment: OK");
-            LOGGER.info("saveExperiment: Stored:");
-            LOGGER.info("-----------------------------------");
         } catch (Exception e) {
             LOGGER.info("saveExperiment: FAILEd" + e.getMessage(), e);
             LOGGER.info("-----------------------------------");
         }
 
-        try {
-            storeGeo(newResult);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            storeGeo(newResult);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @Async
