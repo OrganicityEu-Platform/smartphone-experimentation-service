@@ -51,34 +51,30 @@ public class RestRankingController extends BaseController {
     ) {
         final Set<DownloadableResult> externalResults = new TreeSet<>();
         final Set<Result> results = resultRepository.findByExperimentId(experimentId);
-        final Set<String> headers = new HashSet<>();
+        LOGGER.info("Will try to convert " + results.size() + " results.");
         for (final Result result : results) {
             try {
-                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                headers.addAll(dataMap.keySet());
-            } catch (IOException ignore) {
-            }
-        }
-        headers.remove(LONGITUDE);
-        headers.remove(LATITUDE);
-
-        for (final Result result : results) {
-            final DownloadableResult dres = new DownloadableResult();
-            dres.setDate(result.getTimestamp());
-            try {
-                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                dres.setLongitude((Double) dataMap.get(LONGITUDE));
-                dres.setLatitude((Double) dataMap.get(LATITUDE));
-                dres.setResults(new HashMap<>());
-                for (final String key : headers) {
-                    if (dataMap.containsKey(key)) {
-                        dres.getResults().put(key, String.valueOf(dataMap.get(key)));
-                    } else {
-                        dres.getResults().put(key, null);
+                final DownloadableResult dres = new DownloadableResult();
+                dres.setDate(result.getTimestamp());
+                try {
+                    final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
+                    if (dataMap.containsKey(LONGITUDE) && dataMap.containsKey(LATITUDE)) {
+                        dres.setLongitude((Double) dataMap.get(LONGITUDE));
+                        dres.setLatitude((Double) dataMap.get(LATITUDE));
+                        dres.setResults(new HashMap<>());
+                        for (final String key : dataMap.keySet()) {
+                            if (key.equals(LATITUDE) || key.contains(LONGITUDE)) {
+                                //do nothing
+                            } else {
+                                dres.getResults().put(key, String.valueOf(dataMap.get(key)));
+                            }
+                        }
                     }
+                    externalResults.add(dres);
+                } catch (IOException e) {
                 }
-                externalResults.add(dres);
-            } catch (IOException e) {
+            } catch (Exception e) {
+                LOGGER.error(e, e);
             }
         }
         return externalResults;
