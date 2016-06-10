@@ -7,71 +7,148 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 
+/**
+ * Entity that describes an award badge given to users for gathering data.
+ */
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Badge implements Serializable {
+    /**
+     * Id of the entity.
+     */
     @Id
     @GeneratedValue
     private int id;
+    /**
+     * Timestamp of when the badge was awarded.
+     */
     private long timestamp;
+    /**
+     * Id of the {@see Experiment} the badge was awarded for.
+     */
     private int experimentId;
+    /**
+     * Id of the {@see Smartphone} used to collect the data the badge was awarded for.
+     */
     private int deviceId;
+    /**
+     * Message of the badge. Used to describe the action awarded for.
+     */
     private String message;
 
+    /**
+     * Default Constructor.
+     */
     public Badge() {
     }
 
+    /**
+     * Returns the unique id of the badge.
+     *
+     * @return the unique id of the badge.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Sets the unique id of the badge.
+     *
+     * @param id the unique id of the badge.
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Returns the timestamp the badge was awarded at.
+     *
+     * @return the timestamp the badge was awarded at.
+     */
     public long getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Sets the timestamp the badge was awarded at.
+     *
+     * @param timestamp the timestamp the badge was awarded at.
+     */
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 
+    /**
+     * Returns the Id of the {@see Experiment} the badge was awarded for.
+     *
+     * @return the Id of the {@see Experiment} the badge was awarded for.
+     */
     public int getExperimentId() {
         return experimentId;
     }
 
+    /**
+     * Sets the Id of the {@see Experiment} the badge was awarded for.
+     *
+     * @param experimentId the Id of the {@see Experiment} the badge was awarded for.
+     */
     public void setExperimentId(int experimentId) {
         this.experimentId = experimentId;
     }
 
+    /**
+     * Returns the Id of the {@see Smartphone} used to collect the data the badge was awarded for.
+     *
+     * @return the Id of the {@see Smartphone} used to collect the data the badge was awarded for.
+     */
     public int getDeviceId() {
         return deviceId;
     }
 
+    /**
+     * Sets the Id of the {@see Smartphone} used to collect the data the badge was awarded for.
+     *
+     * @param deviceId the Id of the {@see Smartphone} used to collect the data the badge was awarded for.
+     */
     public void setDeviceId(int deviceId) {
         this.deviceId = deviceId;
     }
 
+    /**
+     * Returns the message of the badge. Used to describe the action awarded for.
+     *
+     * @return the message of the badge. Used to describe the action awarded for.
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * Sets the message of the badge. Used to describe the action awarded for.
+     *
+     * @param message the message of the badge. Used to describe the action awarded for.
+     */
     public void setMessage(String message) {
         this.message = message;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-        Badge badge = (Badge) o;
+        final Badge badge = (Badge) o;
 
-        if (id != badge.id) return false;
-        if (timestamp != badge.timestamp) return false;
-        if (experimentId != badge.experimentId) return false;
-        if (deviceId != badge.deviceId) return false;
+        if (id != badge.id
+                || timestamp != badge.timestamp
+                || experimentId != badge.experimentId
+                || deviceId != badge.deviceId) {
+            return false;
+        }
         return message.equals(badge.message);
 
     }
