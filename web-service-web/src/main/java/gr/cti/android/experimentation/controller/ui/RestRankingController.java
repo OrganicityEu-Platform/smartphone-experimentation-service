@@ -10,12 +10,8 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -56,24 +52,17 @@ public class RestRankingController extends BaseController {
             try {
                 final DownloadableResult dres = new DownloadableResult();
                 dres.setDate(result.getTimestamp());
-                try {
-                    final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                    if (dataMap.containsKey(LONGITUDE) && dataMap.containsKey(LATITUDE)) {
-                        dres.setLongitude((Double) dataMap.get(LONGITUDE));
-                        dres.setLatitude((Double) dataMap.get(LATITUDE));
-                        dres.setResults(new HashMap<>());
-                        for (final String key : dataMap.keySet()) {
-                            if (key.equals(LATITUDE) || key.contains(LONGITUDE)) {
-                                //do nothing
-                            } else {
-                                dres.getResults().put(key, String.valueOf(dataMap.get(key)));
-                            }
-                        }
-                    }
-                    if (dres.getResults() != null) {
-                        externalResults.add(dres);
-                    }
-                } catch (IOException e) {
+                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
+                if (dataMap.containsKey(LONGITUDE) && dataMap.containsKey(LATITUDE)) {
+                    dres.setLongitude((Double) dataMap.get(LONGITUDE));
+                    dres.setLatitude((Double) dataMap.get(LATITUDE));
+                    dres.setResults(new HashMap<>());
+                    dataMap.keySet().stream().filter(key -> !key.equals(LATITUDE) && !key.contains(LONGITUDE)).forEach(key -> {
+                        dres.getResults().put(key, String.valueOf(dataMap.get(key)));
+                    });
+                }
+                if (dres.getResults() != null) {
+                    externalResults.add(dres);
                 }
             } catch (Exception e) {
                 LOGGER.error(e, e);
@@ -118,6 +107,7 @@ public class RestRankingController extends BaseController {
                 }
                 resResponse.append(String.join(",", values)).append("\n");
             } catch (IOException e) {
+                LOGGER.warn(e, e);
             }
         }
         return resResponse.toString();

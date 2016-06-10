@@ -157,11 +157,7 @@ public class SmartphoneController extends BaseController {
             }
         }
 
-        final TreeSet<UsageEntry> sortedUsageResults = new TreeSet<>();
-        for (final String dateKey : res.keySet()) {
-            sortedUsageResults.add(new UsageEntry(dateKey, res.get(dateKey)));
-        }
-        return sortedUsageResults;
+        return res.keySet().stream().map(dateKey -> new UsageEntry(dateKey, res.get(dateKey))).collect(Collectors.toCollection(TreeSet::new));
     }
 
     private Map<Long, Long> getLast7DaysTotalReadings(final Smartphone smartphone) {

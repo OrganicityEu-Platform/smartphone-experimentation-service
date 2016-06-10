@@ -18,13 +18,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created with IntelliJ IDEA.
- * User: theodori
- * Date: 9/4/13
- * Time: 11:18 AM
- * To change this template use File | Settings | File Templates.
- */
 @Service
 public class ModelService {
 

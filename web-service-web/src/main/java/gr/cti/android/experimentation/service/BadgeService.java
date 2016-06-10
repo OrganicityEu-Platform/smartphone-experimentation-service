@@ -4,22 +4,20 @@ import gr.cti.android.experimentation.model.Badge;
 import gr.cti.android.experimentation.repository.BadgeRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 /**
  * Provides operations on badges.
  */
-@Controller
+@Service
 public class BadgeService {
     /**
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(BadgeService.class);
 
-
     @Autowired
     BadgeRepository badgeRepository;
-
 
     /**
      * Adds a new badge to the specific device.

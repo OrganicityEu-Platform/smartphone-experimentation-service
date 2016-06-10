@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Provides connection to the gcm service for sending messages to the clients.
  */
-@Controller
+@Service
 public class GCMService {
     /**
      * a log4j logger to print messages.

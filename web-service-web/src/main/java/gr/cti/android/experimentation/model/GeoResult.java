@@ -71,12 +71,9 @@ public class GeoResult implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GeoResult geoResult = (GeoResult) o;
+        final GeoResult geoResult = (GeoResult) o;
 
-        if (id != geoResult.id) return false;
-        if (Double.compare(geoResult.latitude, latitude) != 0) return false;
-        if (Double.compare(geoResult.longitude, longitude) != 0) return false;
-        return timestamp == geoResult.timestamp;
+        return id != geoResult.id ? false : Double.compare(geoResult.latitude, latitude) != 0 ? false : Double.compare(geoResult.longitude, longitude) != 0 ? false : timestamp == geoResult.timestamp;
 
     }
 

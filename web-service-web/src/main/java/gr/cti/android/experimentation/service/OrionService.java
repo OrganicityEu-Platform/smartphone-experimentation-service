@@ -130,17 +130,19 @@ public class OrionService {
             final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
                     experiment.getUserId(), newResult.getExperimentId(), newResult.getDeviceId());
             phoneEntity.setId(uri);
-            phoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
-            phoneEntity.setDatasource(false, "http://set.organicity.eu");
+            if (latitude != null && longitude != null) {
+                phoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                phoneEntity.setDatasource(false, "http://set.organicity.eu");
 
-            try {
-                final OrionContextElement entity = phoneEntity.getContextElement();
-                String string = mapper.writeValueAsString(entity);
-                LOGGER.info(string);
-                final String res = orionClient.postContextEntity(uri, entity);
-                LOGGER.info(res.replaceAll("\n", ""));
-            } catch (Exception e) {
-                LOGGER.error(e, e);
+                try {
+                    final OrionContextElement entity = phoneEntity.getContextElement();
+                    String string = mapper.writeValueAsString(entity);
+                    LOGGER.info(string);
+                    final String res = orionClient.postContextEntity(uri, entity);
+                    LOGGER.info(res.replaceAll("\n", ""));
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
+                }
             }
 
         } catch (JSONException e) {

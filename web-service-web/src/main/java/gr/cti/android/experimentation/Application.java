@@ -1,7 +1,6 @@
 package gr.cti.android.experimentation;
 
 
-import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.AbstractHttp11Protocol;
 import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
@@ -64,19 +63,16 @@ public class Application implements CommandLineRunner {
     @Bean
     public EmbeddedServletContainerCustomizer servletContainerCustomizer() {
         return servletContainer -> ((TomcatEmbeddedServletContainerFactory) servletContainer).addConnectorCustomizers(
-                new TomcatConnectorCustomizer() {
-                    @Override
-                    public void customize(Connector connector) {
-                        AbstractHttp11Protocol httpProtocol = (AbstractHttp11Protocol) connector.getProtocolHandler();
-                        httpProtocol.setCompression("on");
-                        httpProtocol.setCompressionMinSize(256);
-                        String mimeTypes = httpProtocol.getCompressableMimeTypes();
-                        String mimeTypesWithJson = mimeTypes
-                                + "," + MediaType.APPLICATION_JSON_VALUE
-                                + "," + MediaType.IMAGE_PNG + "," + MediaType.IMAGE_GIF + "," + MediaType.IMAGE_JPEG
-                                + "," + "application/javascript" + "," + "text/css";
-                        httpProtocol.setCompressableMimeTypes(mimeTypesWithJson);
-                    }
+                (TomcatConnectorCustomizer) connector -> {
+                    AbstractHttp11Protocol httpProtocol = (AbstractHttp11Protocol) connector.getProtocolHandler();
+                    httpProtocol.setCompression("on");
+                    httpProtocol.setCompressionMinSize(256);
+                    String mimeTypes = httpProtocol.getCompressableMimeTypes();
+                    String mimeTypesWithJson = mimeTypes
+                            + "," + MediaType.APPLICATION_JSON_VALUE
+                            + "," + MediaType.IMAGE_PNG + "," + MediaType.IMAGE_GIF + "," + MediaType.IMAGE_JPEG
+                            + "," + "application/javascript" + "," + "text/css";
+                    httpProtocol.setCompressableMimeTypes(mimeTypesWithJson);
                 }
         );
     }

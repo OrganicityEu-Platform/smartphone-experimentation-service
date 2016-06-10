@@ -5,10 +5,9 @@ import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.Smartphone;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +27,6 @@ public class StatsController extends BaseController {
     @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = "application/json")
     public String getStats(final Map<String, Object> model) {
 
-        final DateTimeFormatter df = DateTimeFormat.forPattern("yyyy-MM-dd");
         final Map<Integer, Long> experimentCount = new HashMap<>();
         model.put("experimentCount", experimentCount);
         final Map<Long, Long> totalDateCounts = new HashMap<>();
