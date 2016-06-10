@@ -134,6 +134,7 @@ public class ExperimentController extends BaseController {
                 experimentObj.setUserId(experiment.getUserId());
 
                 experimentObj.setEnabled(true);
+                experimentObj.setStatus("1");
                 LOGGER.info("addExperiment: " + experiment);
                 experimentObj.setTimestamp(System.currentTimeMillis());
                 experimentRepository.save(experimentObj);
