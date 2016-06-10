@@ -9,7 +9,12 @@ import gr.cti.android.experimentation.model.Experiment;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,48 +32,78 @@ public class ExperimentController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(ExperimentController.class);
 
-
+    /**
+     * Sends a message using GCM to all volunteers participating in a specific {@see Experiment}.
+     *
+     * @param response     the {@see HttpServletResponse}.
+     * @param experimentId the Id of the {@see Experiment}.
+     * @param message      the message to send to the volunteers.
+     * @return
+     * @throws JSONException
+     */
     @ResponseBody
     @RequestMapping(value = "/api/v1/contact/experiment", method = RequestMethod.POST, produces = "application/json")
     public String contactExperiment(final HttpServletResponse response,
                                     @RequestParam(value = "experimentId") final String experimentId,
-                                    @RequestParam(value = "message") final String message)
-            throws JSONException {
+                                    @RequestParam(value = "message") final String message) throws JSONException {
         try {
             gcmService.send2Experiment(Integer.parseInt(experimentId), message);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e, e);
         }
         return ok(response).toString();
     }
 
+    /**
+     * Sends a message using GCM to the volunteer participating with a specific {@see Smartphone}.
+     *
+     * @param response     the {@see HttpServletResponse}.
+     * @param smartphoneId the Id of the {@see Smartphone}.
+     * @param message      the message to send to the volunteer.
+     * @return
+     * @throws JSONException
+     */
     @ResponseBody
     @RequestMapping(value = "/api/v1/contact/smartphone", method = RequestMethod.POST, produces = "application/json")
     public String contactSmartphone(final HttpServletResponse response,
                                     @RequestParam(value = "smartphoneId") final String smartphoneId,
-                                    @RequestParam(value = "message") final String message)
-            throws JSONException, JsonProcessingException {
+                                    @RequestParam(value = "message") final String message) throws JSONException {
         final GcmMessageData data = new GcmMessageData();
         data.setType("text");
         data.setText(message);
         try {
             gcmService.send2Device(Integer.parseInt(smartphoneId), new ObjectMapper().writeValueAsString(data));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e, e);
         }
         return ok(response).toString();
     }
 
+    /**
+     * Lists all available and enabled {@see Experiment}.
+     *
+     * @param phoneId the Id of the {@see Smartphone} that will be used.
+     * @return A list of {@see Experiment}.
+     */
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.GET, produces = "application/json")
     public List<Experiment> listExperiments(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
         return modelService.getEnabledExperiments();
     }
 
+    /**
+     * Returns the information of a specific {@see Experiment}.
+     *
+     * @param response     the {@see HttpServletResponse}.
+     * @param experimentId the Id of the {@see Experiment}.
+     * @return the information of a specific {@see Experiment}.
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
     public ApiResponse getExperiment(HttpServletResponse response,
-                                     @PathVariable(value = "experimentId") final int experimentId) throws IOException {
+                                     @PathVariable(value = "experimentId") final int experimentId)
+            throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
 
@@ -84,9 +119,18 @@ public class ExperimentController extends BaseController {
         return null;
     }
 
+    /**
+     * Adds a new {@see Experiment} to the system.
+     *
+     * @param response   the {@see HttpServletResponse}.
+     * @param experiment the information about the {@see Experiment}.
+     * @return the information of the {@see Experiment} added.
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.POST, produces = "application/json")
-    public ApiResponse addExperiment(HttpServletResponse response, @ModelAttribute BaseExperiment experiment) throws IOException {
+    public ApiResponse addExperiment(HttpServletResponse response, @ModelAttribute BaseExperiment experiment)
+            throws IOException {
         final ApiResponse apiResponse = new ApiResponse();
         LOGGER.info("addExperiment " + experiment);
         if (experiment.getName() == null
@@ -152,15 +196,16 @@ public class ExperimentController extends BaseController {
 
 
     /**
-     * Update an existing experiment.
+     * Update an existing {@see Experiment}.
      *
-     * @param response     the HTTP response object.
-     * @param experiment   the experiment object to update.
-     * @param experimentId the id of the experiment to update.
+     * @param response     the {@see HttpServletResponse}.
+     * @param experiment   the {@see Experiment} object to update.
+     * @param experimentId the id of the {@see Experiment} to update.
+     * @return the updated information of the {@see Experiment}.
      */
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
-    public Object updateExperiment(HttpServletResponse response, @ModelAttribute final BaseExperiment experiment, @PathVariable("experimentId") final long experimentId) throws IOException {
+    public ApiResponse updateExperiment(HttpServletResponse response, @ModelAttribute final BaseExperiment experiment, @PathVariable("experimentId") final long experimentId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
         if (experiment.getName() == null
@@ -220,6 +265,14 @@ public class ExperimentController extends BaseController {
         return null;
     }
 
+    /**
+     * Removes an Experiment from the system.
+     *
+     * @param response     the {@see HttpServletResponse}.
+     * @param experimentId the Id of the {@see Experiment}.
+     * @return the removed {@see Experiment}.
+     * @throws IOException
+     */
     @ResponseBody
     @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.DELETE, produces = "application/json")
     public ApiResponse deleteExperiment(HttpServletResponse response,
