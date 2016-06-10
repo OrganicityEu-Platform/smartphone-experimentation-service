@@ -58,33 +58,28 @@ public class SqlDbService {
 
         LOGGER.info("saving result");
         try {
-            try {
-                final Set<Result> res = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(newResult.getExperimentId(), newResult.getDeviceId(), newResult.getTimestamp(), newResult.getMessage());
-                if (res == null || (res.isEmpty())) {
-                    resultRepository.save(newResult);
+            final Set<Result> res = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(newResult.getExperimentId(), newResult.getDeviceId(), newResult.getTimestamp(), newResult.getMessage());
+            if (res == null || res.isEmpty()) {
+                resultRepository.save(newResult);
 
-                    LOGGER.info("saveExperiment: OK");
-                    LOGGER.info("saveExperiment: Stored:");
-                    LOGGER.info("-----------------------------------");
+                LOGGER.info("saveExperiment: OK");
+                LOGGER.info("saveExperiment: Stored:");
+                LOGGER.info("-----------------------------------");
 
-                    //send incentive messages to phone
-                    try {
-                        gcmService.check(newResult);
-                    } catch (Exception e) {
-                        LOGGER.error(e, e);
-                    }
-
-                    //store to orion
-                    try {
-                        Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
-                        orionService.store(newResult, experiment);
-                    } catch (Exception e) {
-                        LOGGER.error(e, e);
-                    }
-
+                //send incentive messages to phone
+                try {
+                    gcmService.check(newResult);
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
                 }
-            } catch (Exception e) {
 
+                //store to orion
+                try {
+                    Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
+                    orionService.store(newResult, experiment);
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
+                }
             }
         } catch (Exception e) {
             LOGGER.info("saveExperiment: FAILEd" + e.getMessage(), e);

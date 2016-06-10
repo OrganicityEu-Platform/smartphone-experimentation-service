@@ -4,12 +4,11 @@ import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
 import java.util.Set;
 
 /**

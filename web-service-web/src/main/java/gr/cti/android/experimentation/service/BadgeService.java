@@ -29,6 +29,7 @@ public class BadgeService {
      * @param message      the message of the badge.
      */
     public void addBadge(int experimentId, int deviceId, String message) {
+        LOGGER.debug("addBadge expId:" + experimentId + " devId: " + deviceId + " message: " + message);
         final Badge b = new Badge();
         b.setDeviceId(deviceId);
         b.setExperimentId(experimentId);

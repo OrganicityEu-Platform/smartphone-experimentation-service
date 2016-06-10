@@ -70,7 +70,9 @@ public class RestRankingController extends BaseController {
                             }
                         }
                     }
-                    externalResults.add(dres);
+                    if (dres.getResults() != null) {
+                        externalResults.add(dres);
+                    }
                 } catch (IOException e) {
                 }
             } catch (Exception e) {

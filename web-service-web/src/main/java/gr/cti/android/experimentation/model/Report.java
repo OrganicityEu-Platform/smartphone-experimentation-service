@@ -59,10 +59,10 @@ public class Report{
     }
 
     public String toJson(){
-        return (new Gson()).toJson(this);
+        return new Gson().toJson(this);
     }
 
     public static Report fromJson(String json){
-        return (new Gson()).fromJson(json, Report.class);
+        return new Gson().fromJson(json, Report.class);
     }
 }

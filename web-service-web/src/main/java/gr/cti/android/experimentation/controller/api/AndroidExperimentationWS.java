@@ -3,11 +3,7 @@ package gr.cti.android.experimentation.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.organicity.entities.namespace.OrganicityAttributeTypes;
 import gr.cti.android.experimentation.controller.BaseController;
-import gr.cti.android.experimentation.model.Reading;
-import gr.cti.android.experimentation.model.Report;
-import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.model.Smartphone;
+import gr.cti.android.experimentation.model.*;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,10 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Set;
 
 @Controller
 @RequestMapping(value = "/api/v1")

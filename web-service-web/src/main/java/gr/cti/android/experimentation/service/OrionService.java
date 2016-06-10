@@ -13,7 +13,6 @@ import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +34,12 @@ public class OrionService {
     private static final String ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT = "urn:oc:entity:experimenters:%s:%s:%s";
 
     private OrionClient orionClient;
+    private ObjectMapper mapper;
 
     @PostConstruct
     public void init() {
         orionClient = new OrionClient("http://localhost:1026", "", "smartphones", "/");
+        mapper = new ObjectMapper();
     }
 
     @Async
@@ -134,7 +135,7 @@ public class OrionService {
 
             try {
                 final OrionContextElement entity = phoneEntity.getContextElement();
-                String string = (new ObjectMapper()).writeValueAsString(entity);
+                String string = mapper.writeValueAsString(entity);
                 LOGGER.info(string);
                 final String res = orionClient.postContextEntity(uri, entity);
                 LOGGER.info(res.replaceAll("\n", ""));
