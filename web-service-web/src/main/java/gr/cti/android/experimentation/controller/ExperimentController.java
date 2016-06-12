@@ -237,7 +237,7 @@ public class ExperimentController extends BaseController {
                 if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
                     storedExperiment.setFilename(experiment.getFilename());
                 }
-                if (experiment.getUrl() == null || experiment.getUrl().equals("")) {
+                if (experiment.getUrl() != null && !experiment.getUrl().equals("")) {
                     storedExperiment.setUrl(experiment.getUrl());
                 }
                 storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
