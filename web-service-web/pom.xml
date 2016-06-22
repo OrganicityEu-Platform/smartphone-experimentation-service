@@ -158,6 +158,15 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
+        <!--#################################################################################################-->
+        <!--HTTP CLIENT-->
+        <dependency>
+            <groupId>de.meggsimum.w3w</groupId>
+            <artifactId>w3w-java-wrapper</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/w3w-java-wrapper-1.0-SNAPSHOT-jar-with-dependencies.jar</systemPath>-->
+        </dependency>
 
         <!--#################################################################################################-->
         <!--Swagger-->
