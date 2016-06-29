@@ -89,10 +89,10 @@ public class ModelService {
 
     public List<Experiment> getEnabledExperiments() {
 
-        Iterator<Experiment> experimentsListIterator = experimentRepository.findAll().iterator();
-        List<Experiment> experimentsList = new ArrayList<>();
+        final Iterator<Experiment> experimentsListIterator = experimentRepository.findAll().iterator();
+        final List<Experiment> experimentsList = new ArrayList<>();
         while (experimentsListIterator.hasNext()) {
-            Experiment experiment = experimentsListIterator.next();
+            final Experiment experiment = experimentsListIterator.next();
             if (experiment.getEnabled()) {
                 experimentsList.add(experiment);
             }
