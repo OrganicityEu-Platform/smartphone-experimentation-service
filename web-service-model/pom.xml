@@ -18,8 +18,8 @@
             <url>https://jitpack.io/</url>
         </repository>
         <repository>
-            <id>sparkworks</id>
-            <url>http://nexus.sparkworks.net/nexus/content/repositories/snapshots</url>
+            <id>organicity</id>
+            <url>http://maven.organicity.eu/content/repositories/snapshots</url>
         </repository>
     </repositories>
 
@@ -58,5 +58,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>organicity</id>
+            <url>https://maven.organicity.eu/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
