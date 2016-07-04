@@ -7,16 +7,16 @@ import java.util.Map;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DownloadableResult implements Comparable<DownloadableResult>, Serializable {
+public class DownloadableResultDTO implements Comparable<DownloadableResultDTO>, Serializable {
     private long date;
     private double longitude;
     private double latitude;
     private Map<String, Object> results;
 
-    public DownloadableResult() {
+    public DownloadableResultDTO() {
     }
 
-    public DownloadableResult(long date, double longitude, double latitude, Map<String, Object> results) {
+    public DownloadableResultDTO(long date, double longitude, double latitude, Map<String, Object> results) {
         this.date = date;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -56,7 +56,7 @@ public class DownloadableResult implements Comparable<DownloadableResult>, Seria
     }
 
     @Override
-    public int compareTo(DownloadableResult o) {
+    public int compareTo(DownloadableResultDTO o) {
         return (int) (o.getDate() - date);
     }
 }

@@ -42,15 +42,15 @@ public class RestRankingController extends BaseController {
 
     @ResponseBody
     @RequestMapping(value = {"/results/{experimentId}"}, method = RequestMethod.GET)
-    public Set<DownloadableResult> getResults(
+    public Set<DownloadableResultDTO> getResults(
             @PathVariable("experimentId") final int experimentId
     ) {
-        final Set<DownloadableResult> externalResults = new TreeSet<>();
+        final Set<DownloadableResultDTO> externalResults = new TreeSet<>();
         final Set<Result> results = resultRepository.findByExperimentId(experimentId);
         LOGGER.info("Will try to convert " + results.size() + " results.");
         for (final Result result : results) {
             try {
-                final DownloadableResult dres = new DownloadableResult();
+                final DownloadableResultDTO dres = new DownloadableResultDTO();
                 dres.setDate(result.getTimestamp());
                 final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
                 if (dataMap.containsKey(LONGITUDE) && dataMap.containsKey(LATITUDE)) {

@@ -1,7 +1,7 @@
 package gr.cti.android.experimentation.controller.api;
 
 import gr.cti.android.experimentation.controller.BaseController;
-import gr.cti.android.experimentation.model.HistoricData;
+import gr.cti.android.experimentation.model.HistoricDataDTO;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.TempReading;
 import io.swagger.annotations.ApiOperation;
@@ -41,22 +41,22 @@ public class HistoryController extends BaseController {
     @ApiOperation(value = "experiment")
     @ResponseBody
     @RequestMapping(value = {"/api/v1/entities/{entity_id}/readings"}, method = RequestMethod.GET)
-    public HistoricData experimentView(@PathVariable("entity_id") final String entityId,
-                                       @RequestParam(value = "attribute_id") final String attributeId,
-                                       @RequestParam(value = "from") final String from,
-                                       @RequestParam(value = "to") final String to,
-                                       @RequestParam(value = "all_intervals", required = false, defaultValue = "true") final boolean allIntervals,
-                                       @RequestParam(value = "rollup", required = false, defaultValue = "") final String rollup,
-                                       @RequestParam(value = "function", required = false, defaultValue = "avg") final String function) {
+    public HistoricDataDTO experimentView(@PathVariable("entity_id") final String entityId,
+                                          @RequestParam(value = "attribute_id") final String attributeId,
+                                          @RequestParam(value = "from") final String from,
+                                          @RequestParam(value = "to") final String to,
+                                          @RequestParam(value = "all_intervals", required = false, defaultValue = "true") final boolean allIntervals,
+                                          @RequestParam(value = "rollup", required = false, defaultValue = "") final String rollup,
+                                          @RequestParam(value = "function", required = false, defaultValue = "avg") final String function) {
 
-        final HistoricData historicData = new HistoricData();
-        historicData.setEntity_id(entityId);
-        historicData.setAttribute_id(attributeId);
-        historicData.setFunction(function);
-        historicData.setRollup(rollup);
-        historicData.setFrom(from);
-        historicData.setTo(to);
-        historicData.setReadings(new ArrayList<>());
+        final HistoricDataDTO historicDataDTO = new HistoricDataDTO();
+        historicDataDTO.setEntity_id(entityId);
+        historicDataDTO.setAttribute_id(attributeId);
+        historicDataDTO.setFunction(function);
+        historicDataDTO.setRollup(rollup);
+        historicDataDTO.setFrom(from);
+        historicDataDTO.setTo(to);
+        historicDataDTO.setReadings(new ArrayList<>());
 
         final List<TempReading> tempReadings = new ArrayList<>();
 
@@ -137,9 +137,9 @@ public class HistoryController extends BaseController {
             List<Object> list = new ArrayList<>();
             list.add(df.format(tempReading.getTimestamp()));
             list.add(tempReading.getValue());
-            historicData.getReadings().add(list);
+            historicDataDTO.getReadings().add(list);
         }
-        return historicData;
+        return historicDataDTO;
     }
 
 

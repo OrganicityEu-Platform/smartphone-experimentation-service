@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cti.organicity</groupId>
-    <artifactId>web-service</artifactId>
+    <artifactId>web-service-web</artifactId>
     <version>1.0</version>
     <name>Smartphone Experimentation Web Service</name>
     <description>WebService for AndroidExperimentation.</description>

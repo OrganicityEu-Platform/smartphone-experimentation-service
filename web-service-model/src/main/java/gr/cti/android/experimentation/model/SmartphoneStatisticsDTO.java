@@ -8,7 +8,7 @@ import java.util.Set;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SmartphoneStatistics implements Serializable {
+public class SmartphoneStatisticsDTO implements Serializable {
     private int id;
     private long readings;
     private long experimentReadings;
@@ -17,15 +17,15 @@ public class SmartphoneStatistics implements Serializable {
     private String sensorRules;
     private Set<RankingEntry> rankings;
     private Set<RankingEntry> experimentRankings;
-    private Set<Badge> badges;
-    private Set<Badge> experimentBadges;
+    private Set<BadgeDTO> badges;
+    private Set<BadgeDTO> experimentBadges;
     private Set<UsageEntry> usage;
     private Set<UsageEntry> experimentUsage;
 
-    public SmartphoneStatistics() {
+    public SmartphoneStatisticsDTO() {
     }
 
-    public SmartphoneStatistics(final int id) {
+    public SmartphoneStatisticsDTO(final int id) {
         this.id = id;
     }
 
@@ -85,11 +85,11 @@ public class SmartphoneStatistics implements Serializable {
         return rankings;
     }
 
-    public void setBadges(Set<Badge> badges) {
+    public void setBadges(Set<BadgeDTO> badges) {
         this.badges = badges;
     }
 
-    public Set<Badge> getBadges() {
+    public Set<BadgeDTO> getBadges() {
         return badges;
     }
 
@@ -101,11 +101,11 @@ public class SmartphoneStatistics implements Serializable {
         return experimentRankings;
     }
 
-    public void setExperimentBadges(Set<Badge> experimentBadges) {
+    public void setExperimentBadges(Set<BadgeDTO> experimentBadges) {
         this.experimentBadges = experimentBadges;
     }
 
-    public Set<Badge> getExperimentBadges() {
+    public Set<BadgeDTO> getExperimentBadges() {
         return experimentBadges;
     }
 

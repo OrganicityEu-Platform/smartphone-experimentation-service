@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class HistoricData implements Serializable {
+public class HistoricDataDTO implements Serializable {
 
     private String entity_id;
     private String attribute_id;
