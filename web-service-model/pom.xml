@@ -89,6 +89,7 @@
         </plugins>
     </build>
 
+
     <distributionManagement>
         <snapshotRepository>
             <id>organicity</id>
