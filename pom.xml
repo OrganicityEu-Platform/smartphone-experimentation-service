@@ -14,9 +14,9 @@
 
 
     <modules>
-        <module>web-service-model</module>
-        <module>web-service-client</module>
-        <module>web-service-client-android</module>
+        <module>common</module>
+        <module>client</module>
+        <module>client-android</module>
         <module>web-service-web</module>
     </modules>
     <build>

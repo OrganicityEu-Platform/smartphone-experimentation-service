@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cti.organicity</groupId>
-    <artifactId>web-service-client</artifactId>
+    <artifactId>client</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>Smartphone Experimentation Client</name>
 

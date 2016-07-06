@@ -1,0 +1,11 @@
+gr/cti/android/experimentation/model/DownloadableResultDTO.class
+gr/cti/android/experimentation/model/HistoricDataDTO.class
+gr/cti/android/experimentation/model/SmartphoneStatisticsDTO.class
+gr/cti/android/experimentation/model/UsageEntry.class
+gr/cti/android/experimentation/model/Smartphone.class
+gr/cti/android/experimentation/model/Experiment.class
+gr/cti/android/experimentation/model/ExperimentDTO.class
+gr/cti/android/experimentation/model/BadgeDTO.class
+gr/cti/android/experimentation/model/Result.class
+gr/cti/android/experimentation/model/PluginDTO.class
+gr/cti/android/experimentation/model/RankingEntry.class

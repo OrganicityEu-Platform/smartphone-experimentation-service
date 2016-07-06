@@ -1,0 +1,11 @@
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/Smartphone.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/UsageEntry.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/HistoricDataDTO.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/BadgeDTO.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/ExperimentDTO.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/PluginDTO.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/Experiment.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/SmartphoneStatisticsDTO.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/Result.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/DownloadableResultDTO.java
+/srv/home/amaxilatis/repositories/cti-organicity/WebService/web-service-model/src/main/java/gr/cti/android/experimentation/model/RankingEntry.java
