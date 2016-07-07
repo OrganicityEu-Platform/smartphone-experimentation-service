@@ -23,12 +23,11 @@ package gr.cti.android.experimentation.controller.api;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.*;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
@@ -38,7 +37,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = {"/api/v1", "/v1"})
 public class SmartphoneController extends BaseController {
 
     /**
@@ -57,16 +56,16 @@ public class SmartphoneController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = Smartphone.class)})
     @ResponseBody
-    public Smartphone registerSmartphone(@RequestBody String smartphoneString) {
+    public SmartphoneDTO registerSmartphone(@RequestBody SmartphoneDTO smartphoneDTO) {
         try {
-            LOGGER.info(smartphoneString);
-            Smartphone smartphone = new ObjectMapper().readValue(smartphoneString, Smartphone.class);
+            LOGGER.info(smartphoneDTO);
+            Smartphone smartphone = newSmartphone(smartphoneDTO);
             smartphone = modelService.registerSmartphone(smartphone);
             LOGGER.info("register Smartphone: Device:" + smartphone.getId());
             LOGGER.info("register Smartphone: Device Sensor Rules:" + smartphone.getSensorsRules());
             LOGGER.info("register Smartphone: Device Type:" + smartphone.getDeviceType());
             LOGGER.info("----------------------.-------------");
-            return smartphone;
+            return newSmartphoneDTO(smartphone);
         } catch (Exception e) {
             LOGGER.error(e, e);
             LOGGER.debug(e.getMessage());

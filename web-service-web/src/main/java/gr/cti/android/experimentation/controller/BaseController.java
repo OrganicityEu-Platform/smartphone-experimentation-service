@@ -26,6 +26,7 @@ package gr.cti.android.experimentation.controller;
 import gr.cti.android.experimentation.model.RankingEntry;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.Smartphone;
+import gr.cti.android.experimentation.model.SmartphoneDTO;
 import gr.cti.android.experimentation.repository.*;
 import gr.cti.android.experimentation.service.*;
 import org.joda.time.DateTime;
@@ -182,5 +183,24 @@ public class BaseController {
             }
         }
         return list;
+    }
+
+
+    protected SmartphoneDTO newSmartphoneDTO(Smartphone smartphone) {
+        final SmartphoneDTO dto = new SmartphoneDTO();
+        dto.setDeviceType(smartphone.getDeviceType());
+        dto.setId(smartphone.getId());
+        dto.setPhoneId(smartphone.getPhoneId());
+        dto.setSensorsRules(smartphone.getSensorsRules());
+        return dto;
+    }
+
+    protected Smartphone newSmartphone(SmartphoneDTO dto) {
+        final Smartphone smartphone = new Smartphone();
+        smartphone.setDeviceType(dto.getDeviceType());
+        smartphone.setId(dto.getId());
+        smartphone.setPhoneId(dto.getPhoneId());
+        smartphone.setSensorsRules(dto.getSensorsRules());
+        return smartphone;
     }
 }

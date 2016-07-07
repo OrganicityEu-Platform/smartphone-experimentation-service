@@ -38,6 +38,7 @@ import java.util.Set;
  * @author Dimitrios Amaxilatis.
  */
 @Controller
+@RequestMapping(value = {"/api/v1", "/v1"})
 public class PluginController extends BaseController {
 
     /**
@@ -52,7 +53,7 @@ public class PluginController extends BaseController {
      * @return a json list of all available plugins in the system.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/plugin", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/plugin", method = RequestMethod.GET, produces = "application/json")
     public Set<Plugin> getPluginList(
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
             @RequestParam(value = "userId", required = false) final Long userId,
@@ -71,7 +72,7 @@ public class PluginController extends BaseController {
      * @param plugin   the plugin object to register.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/plugin", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/plugin", method = RequestMethod.POST, produces = "application/json")
     public Object addPlugin(HttpServletRequest request, HttpServletResponse response, @ModelAttribute final Plugin plugin) throws IOException {
         LOGGER.info(request.getRemoteAddr());
 
@@ -130,7 +131,7 @@ public class PluginController extends BaseController {
      * @param pluginId the id of the plugin to update.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.GET, produces = "application/json")
     public Object getPlugin(HttpServletResponse response, @PathVariable("pluginId") final long pluginId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
@@ -156,7 +157,7 @@ public class PluginController extends BaseController {
      * @param pluginId the id of the plugin to update.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
     public Object addPlugin(HttpServletResponse response, @ModelAttribute final Plugin plugin, @PathVariable("pluginId") final long pluginId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
@@ -233,7 +234,7 @@ public class PluginController extends BaseController {
      * @param pluginId the id of the plugin to delete.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/plugin/{pluginId}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.DELETE, produces = "application/json")
     public Object deletePlugin(HttpServletRequest request, HttpServletResponse response, @PathVariable("pluginId") final int pluginId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();

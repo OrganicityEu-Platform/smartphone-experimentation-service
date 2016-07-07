@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * @author Dimitrios Amaxilatis.
  */
 @Controller
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = {"/api/v1", "/v1"})
 public class RestRankingController extends BaseController {
     /**
      * a log4j logger to print messages.

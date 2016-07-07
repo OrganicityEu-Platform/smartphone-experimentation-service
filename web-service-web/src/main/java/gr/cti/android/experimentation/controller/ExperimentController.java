@@ -42,6 +42,7 @@ import java.util.Set;
  * @author Dimitrios Amaxilatis.
  */
 @Controller
+@RequestMapping(value = {"/api/v1", "/v1"})
 public class ExperimentController extends BaseController {
 
     /**
@@ -59,7 +60,7 @@ public class ExperimentController extends BaseController {
      * @throws JSONException
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/contact/experiment", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/contact/experiment", method = RequestMethod.POST, produces = "application/json")
     public String contactExperiment(final HttpServletResponse response,
                                     @RequestParam(value = "experimentId") final String experimentId,
                                     @RequestParam(value = "message") final String message) throws JSONException {
@@ -81,7 +82,7 @@ public class ExperimentController extends BaseController {
      * @throws JSONException
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/contact/smartphone", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/contact/smartphone", method = RequestMethod.POST, produces = "application/json")
     public String contactSmartphone(final HttpServletResponse response,
                                     @RequestParam(value = "smartphoneId") final String smartphoneId,
                                     @RequestParam(value = "message") final String message) throws JSONException {
@@ -103,7 +104,7 @@ public class ExperimentController extends BaseController {
      * @return A list of {@see Experiment}.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces = "application/json")
     public List<Experiment> listExperiments(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
         return modelService.getEnabledExperiments();
     }
@@ -117,7 +118,7 @@ public class ExperimentController extends BaseController {
      * @throws IOException
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
     public ApiResponse getExperiment(HttpServletResponse response,
                                      @PathVariable(value = "experimentId") final int experimentId)
             throws IOException {
@@ -145,7 +146,7 @@ public class ExperimentController extends BaseController {
      * @throws IOException
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/experiment", method = RequestMethod.POST, produces = "application/json")
     public ApiResponse addExperiment(HttpServletResponse response, @ModelAttribute BaseExperiment experiment)
             throws IOException {
         final ApiResponse apiResponse = new ApiResponse();
@@ -221,7 +222,7 @@ public class ExperimentController extends BaseController {
      * @return the updated information of the {@see Experiment}.
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
     public ApiResponse updateExperiment(HttpServletResponse response, @ModelAttribute final BaseExperiment experiment, @PathVariable("experimentId") final long experimentId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
@@ -291,7 +292,7 @@ public class ExperimentController extends BaseController {
      * @throws IOException
      */
     @ResponseBody
-    @RequestMapping(value = "/api/v1/experiment/{experimentId}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.DELETE, produces = "application/json")
     public ApiResponse deleteExperiment(HttpServletResponse response,
                                         @PathVariable(value = "experimentId") final int experimentId) throws IOException {
 

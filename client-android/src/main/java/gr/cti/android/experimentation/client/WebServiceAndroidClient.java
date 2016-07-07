@@ -23,16 +23,13 @@ package gr.cti.android.experimentation.client;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.ExperimentDTO;
-import gr.cti.android.experimentation.model.PluginDTO;
-import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
+import gr.cti.android.experimentation.model.*;
 import org.springframework.web.client.RestTemplate;
 
 public class WebServiceAndroidClient {
     private final RestTemplate restTemplate;
 
-    private static final String BASE_URL = "http://api.smartphone-experimentation.eu/api/v1/";
+    private static final String BASE_URL = "http://api.smartphone-experimentation.eu/v1/";
     private String token;
 
     public WebServiceAndroidClient() {
@@ -76,6 +73,10 @@ public class WebServiceAndroidClient {
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId, final int experimentId) {
         return restTemplate.getForEntity(BASE_URL + "/smartphone/" + smartphoneId + "/statistics/" + experimentId, SmartphoneStatisticsDTO.class).getBody();
+    }
+
+    public SmartphoneDTO postSmartphone(final SmartphoneDTO smartphone) {
+        return restTemplate.postForEntity(BASE_URL + "/smartphone", smartphone, SmartphoneDTO.class).getBody();
     }
 
 }

@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.util.Set;
 
 @Controller
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = {"/api/v1", "/v1"})
 public class AndroidExperimentationWS extends BaseController {
 
     /**

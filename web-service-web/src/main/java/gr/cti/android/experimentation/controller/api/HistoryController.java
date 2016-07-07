@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
+@RequestMapping(value = {"/api/v1", "/v1"})
 public class HistoryController extends BaseController {
 
     /**
@@ -63,7 +64,7 @@ public class HistoryController extends BaseController {
 
     @ApiOperation(value = "experiment")
     @ResponseBody
-    @RequestMapping(value = {"/api/v1/entities/{entity_id}/readings"}, method = RequestMethod.GET)
+    @RequestMapping(value = {"/entities/{entity_id}/readings"}, method = RequestMethod.GET)
     public HistoricDataDTO experimentView(@PathVariable("entity_id") final String entityId,
                                           @RequestParam(value = "attribute_id") final String attributeId,
                                           @RequestParam(value = "from") final String from,
