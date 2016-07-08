@@ -23,10 +23,7 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.RankingEntry;
-import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.model.Smartphone;
-import gr.cti.android.experimentation.model.SmartphoneDTO;
+import gr.cti.android.experimentation.model.*;
 import gr.cti.android.experimentation.repository.*;
 import gr.cti.android.experimentation.service.*;
 import org.joda.time.DateTime;
@@ -58,6 +55,8 @@ public class BaseController {
     protected PluginRepository pluginRepository;
     @Autowired
     protected BadgeRepository badgeRepository;
+    @Autowired
+    protected RegionRepository regionRepository;
 
     @Autowired
     protected ModelService modelService;
@@ -202,5 +201,37 @@ public class BaseController {
         smartphone.setPhoneId(dto.getPhoneId());
         smartphone.setSensorsRules(dto.getSensorsRules());
         return smartphone;
+    }
+
+    protected RegionDTO newRegionDTO(final Region region) {
+        final RegionDTO dto = new RegionDTO();
+        dto.setId(region.getId());
+        dto.setCoordinates(region.getCoordinates());
+        dto.setStartDate(region.getStartDate());
+        dto.setEndDate(region.getEndDate());
+        dto.setStartTime(region.getStartTime());
+        dto.setEndTime(region.getEndTime());
+        dto.setExperimentRegionId(region.getExperimentRegionId());
+        dto.setMaxMeasurements(region.getMaxMeasurements());
+        dto.setMinMeasurements(region.getMinMeasurements());
+        dto.setWeight(region.getWeight());
+        dto.setName(region.getName());
+        return dto;
+    }
+
+    protected Region newRegion(final RegionDTO dto) {
+        final Region region = new Region();
+        region.setId(dto.getId());
+        region.setCoordinates(dto.getCoordinates());
+        region.setStartDate(dto.getStartDate());
+        region.setEndDate(dto.getEndDate());
+        region.setStartTime(dto.getStartTime());
+        region.setEndTime(dto.getEndTime());
+        region.setExperimentRegionId(dto.getExperimentRegionId());
+        region.setMaxMeasurements(dto.getMaxMeasurements());
+        region.setMinMeasurements(dto.getMinMeasurements());
+        region.setWeight(dto.getWeight());
+        region.setName(dto.getName());
+        return region;
     }
 }
