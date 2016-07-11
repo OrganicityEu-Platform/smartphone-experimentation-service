@@ -58,6 +58,7 @@ public class RegionController extends BaseController {
     public RegionListDTO getExperimentRegions(@PathVariable(value = "experimentId") final int experimentId)
             throws IOException {
         final RegionListDTO list = new RegionListDTO();
+        LOGGER.info("get regions for " + experimentId);
         list.setRegions(new ArrayList<>());
 
         final Experiment experiment = experimentRepository.findById(experimentId);
@@ -113,12 +114,18 @@ public class RegionController extends BaseController {
             throws IOException {
 
         final Experiment experiment = experimentRepository.findById(experimentId);
+
+
         if (experiment != null) {
             Region existingRegion = regionRepository.findById(regionId);
             if (existingRegion != null) {
                 final Region region = newRegion(regionDTO);
-                region.setExperimentRegionId(experimentId);
-                regionRepository.save(region);
+                if (region.getCoordinates() != null) {
+                    existingRegion.setCoordinates(region.getCoordinates());
+                }
+                LOGGER.info("Region: " + region);
+                existingRegion.setExperimentRegionId(experimentId);
+                regionRepository.save(existingRegion);
             }
         }
 
