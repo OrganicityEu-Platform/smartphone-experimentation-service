@@ -85,7 +85,7 @@ public class GCMService {
             entity = Entity.json(new ObjectMapper().writeValueAsString(message));
 
             Response response = ClientBuilder.newClient()
-                    .target("https://gcm-http.googleapis.com")
+                    .target("https://fcm.googleapis.com")
                     .path("gcm/send")
                     .request()
                     .header("Content-Type", "application/json")
