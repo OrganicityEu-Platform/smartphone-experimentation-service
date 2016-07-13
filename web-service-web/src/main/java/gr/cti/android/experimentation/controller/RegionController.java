@@ -84,10 +84,16 @@ public class RegionController extends BaseController {
     public RegionListDTO postRegion2Experiment(@PathVariable(value = "experimentId") final int experimentId
             , @RequestBody final RegionListDTO regionListDTO)
             throws IOException {
+
         final Experiment experiment = experimentRepository.findById(experimentId);
         if (experiment != null) {
+            int count = getExperimentRegions(experimentId).getRegions().size() + 1;
             for (final RegionDTO regionDTO : regionListDTO.getRegions()) {
                 final Region region = newRegion(regionDTO);
+                if (region.getName() == null) {
+                    region.setName("Region " + count);
+                }
+                region.setExperimentId(experimentId);
                 region.setExperimentRegionId(experimentId);
                 regionRepository.save(region);
             }
@@ -96,6 +102,31 @@ public class RegionController extends BaseController {
         return getExperimentRegions(experimentId);
     }
 
+
+    /**
+     * Get a {@see Region} entity of a specific {@see Experiment}.
+     *
+     * @param experimentId the Id of the {@see Experiment}.
+     * @param regionId     the Id of the {@see Region}.
+     * @return the {@see RegionDTO} element.
+     * @throws IOException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.GET, produces = "application/json")
+    public RegionDTO getExperimentRegion(@PathVariable(value = "experimentId") final int experimentId
+            , @PathVariable(value = "regionId") final int regionId)
+            throws IOException {
+
+//        final Experiment experiment = experimentRepository.findById(experimentId);
+//
+//        if (experiment != null) {
+        Region existingRegion = regionRepository.findById(regionId);
+        if (existingRegion != null) {
+            return newRegionDTO(existingRegion);
+        }
+//        }
+        return null;
+    }
 
     /**
      * Updates a {@see Region} entity of a specific {@see Experiment}.
@@ -120,10 +151,35 @@ public class RegionController extends BaseController {
             Region existingRegion = regionRepository.findById(regionId);
             if (existingRegion != null) {
                 final Region region = newRegion(regionDTO);
+                LOGGER.info("Region: " + regionDTO);
                 if (region.getCoordinates() != null) {
                     existingRegion.setCoordinates(region.getCoordinates());
                 }
-                LOGGER.info("Region: " + region);
+                if (region.getWeight() != null) {
+                    existingRegion.setWeight(region.getWeight());
+                }
+                if (region.getStartDate() != null) {
+                    existingRegion.setStartDate(region.getStartDate());
+                }
+                if (region.getEndDate() != null) {
+                    existingRegion.setEndDate(region.getEndDate());
+                }
+                if (region.getStartTime() != null) {
+                    existingRegion.setStartTime(region.getStartTime());
+                }
+                if (region.getEndTime() != null) {
+                    existingRegion.setEndTime(region.getEndTime());
+                }
+                if (region.getName() != null) {
+                    existingRegion.setName(region.getName());
+                }
+                if (region.getMaxMeasurements() != null) {
+                    existingRegion.setMaxMeasurements(region.getMaxMeasurements());
+                }
+                if (region.getMinMeasurements() != null) {
+                    existingRegion.setMinMeasurements(region.getMinMeasurements());
+                }
+                LOGGER.info("Region: " + existingRegion);
                 existingRegion.setExperimentRegionId(experimentId);
                 regionRepository.save(existingRegion);
             }

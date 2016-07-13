@@ -45,7 +45,7 @@ public class Region implements Serializable {
 
     private String name;
 
-    private int experimentRegionId;
+    private Integer experimentRegionId;
 
     private String startDate;
 
@@ -55,15 +55,15 @@ public class Region implements Serializable {
 
     private String endTime;
 
-    private int minMeasurements;
+    private Integer minMeasurements;
 
-    private int maxMeasurements;
+    private Integer maxMeasurements;
 
     private String weight;
 
     private String coordinates;
 
-    private int experimentId;
+    private Integer experimentId;
 
     public int getId() {
         return id;
@@ -121,19 +121,19 @@ public class Region implements Serializable {
         this.endTime = endTime;
     }
 
-    public int getMinMeasurements() {
+    public Integer getMinMeasurements() {
         return minMeasurements;
     }
 
-    public void setMinMeasurements(int minMeasurements) {
+    public void setMinMeasurements(Integer minMeasurements) {
         this.minMeasurements = minMeasurements;
     }
 
-    public int getMaxMeasurements() {
+    public Integer getMaxMeasurements() {
         return maxMeasurements;
     }
 
-    public void setMaxMeasurements(int maxMeasurements) {
+    public void setMaxMeasurements(Integer maxMeasurements) {
         this.maxMeasurements = maxMeasurements;
     }
 

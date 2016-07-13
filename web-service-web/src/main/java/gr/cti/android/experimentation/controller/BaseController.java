@@ -212,6 +212,7 @@ public class BaseController {
         dto.setStartTime(region.getStartTime());
         dto.setEndTime(region.getEndTime());
         dto.setExperimentRegionId(region.getExperimentRegionId());
+        dto.setExperimentId(region.getExperimentId());
         dto.setMaxMeasurements(region.getMaxMeasurements());
         dto.setMinMeasurements(region.getMinMeasurements());
         dto.setWeight(region.getWeight());

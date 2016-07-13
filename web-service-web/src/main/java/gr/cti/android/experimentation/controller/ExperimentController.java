@@ -154,9 +154,9 @@ public class ExperimentController extends BaseController {
         if (experiment.getName() == null
                 || experiment.getDescription() == null
                 || experiment.getUrlDescription() == null
-                || experiment.getUrl() == null
-                || experiment.getFilename() == null
-                || experiment.getSensorDependencies() == null
+//                || experiment.getUrl() == null
+//                || experiment.getFilename() == null
+//                || experiment.getSensorDependencies() == null
                 || experiment.getUserId() == null
                 ) {
             LOGGER.info("wrong data: " + experiment);
@@ -167,12 +167,12 @@ public class ExperimentController extends BaseController {
                 errorMessage = "description cannot be null";
             } else if (experiment.getUrlDescription() == null) {
                 errorMessage = "urlDescription cannot be null";
-            } else if (experiment.getFilename() == null) {
-                errorMessage = "filename cannot be null";
-            } else if (experiment.getUrl() == null) {
-                errorMessage = "url cannot be null";
-            } else if (experiment.getSensorDependencies() == null) {
-                errorMessage = "sensorDependencies cannot be null";
+//            } else if (experiment.getFilename() == null) {
+//                errorMessage = "filename cannot be null";
+//            } else if (experiment.getUrl() == null) {
+//                errorMessage = "url cannot be null";
+//            } else if (experiment.getSensorDependencies() == null) {
+//                errorMessage = "sensorDependencies cannot be null";
             } else if (experiment.getUserId() == null) {
                 errorMessage = "userId cannot be null";
             }
@@ -226,60 +226,70 @@ public class ExperimentController extends BaseController {
     public ApiResponse updateExperiment(HttpServletResponse response, @ModelAttribute final BaseExperiment experiment, @PathVariable("experimentId") final long experimentId) throws IOException {
 
         final ApiResponse apiResponse = new ApiResponse();
-        if (experiment.getName() == null
-                || experiment.getDescription() == null
-                || experiment.getUrlDescription() == null
+//        if (experiment.getName() == null
+//                || experiment.getDescription() == null
+//                || experiment.getUrlDescription() == null
 //                || experiment.getUrl() == null
 //                || experiment.getFilename() == null
-                || experiment.getSensorDependencies() == null
-                || experiment.getUserId() == null
-                ) {
-            LOGGER.info("wrong data: " + experiment);
-            String errorMessage = "error";
-            if (experiment.getName() == null) {
-                errorMessage = "name cannot be null";
-            } else if (experiment.getDescription() == null) {
-                errorMessage = "description cannot be null";
-            } else if (experiment.getUrlDescription() == null) {
-                errorMessage = "urlDescription cannot be null";
+//                || experiment.getSensorDependencies() == null
+//                || experiment.getUserId() == null
+//                ) {
+//            LOGGER.info("wrong data: " + experiment);
+//            String errorMessage = "error";
+//            if (experiment.getName() == null) {
+//                errorMessage = "name cannot be null";
+//            } else if (experiment.getDescription() == null) {
+//                errorMessage = "description cannot be null";
+//            } else if (experiment.getUrlDescription() == null) {
+//                errorMessage = "urlDescription cannot be null";
 //            } else if (experiment.getFilename() == null) {
 //                errorMessage = "filename cannot be null";
 //            } else if (experiment.getUrl() == null) {
 //                errorMessage = "url cannot be null";
-            } else if (experiment.getSensorDependencies() == null) {
-                errorMessage = "sensorDependencies cannot be null";
-            } else if (experiment.getUserId() == null) {
-                errorMessage = "userId cannot be null";
-            }
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
-        } else {
-            final Experiment storedExperiment = experimentRepository.findById((int) experimentId);
-            if (storedExperiment != null) {
+//            } else if (experiment.getSensorDependencies() == null) {
+//                errorMessage = "sensorDependencies cannot be null";
+//            } else if (experiment.getUserId() == null) {
+//                errorMessage = "userId cannot be null";
+//            }
+//            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
+//        } else {
+        final Experiment storedExperiment = experimentRepository.findById((int) experimentId);
+        if (storedExperiment != null) {
+            if (experiment.getName() != null) {
                 storedExperiment.setName(experiment.getName());
-                storedExperiment.setDescription(experiment.getDescription());
-                storedExperiment.setUrlDescription(experiment.getUrlDescription());
-                if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
-                    storedExperiment.setFilename(experiment.getFilename());
-                }
-                if (experiment.getUrl() != null && !experiment.getUrl().equals("")) {
-                    storedExperiment.setUrl(experiment.getUrl());
-                }
-                storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
-                storedExperiment.setSensorDependencies(experiment.getSensorDependencies());
-                storedExperiment.setUserId(experiment.getUserId());
-                LOGGER.info("updateExperiment: " + experiment);
-                //setInstall Url
-                storedExperiment.setTimestamp(System.currentTimeMillis());
-                experimentRepository.save(storedExperiment);
-                apiResponse.setStatus(HttpServletResponse.SC_OK);
-                apiResponse.setMessage("ok");
-                apiResponse.setValue(storedExperiment);
-                return apiResponse;
-            } else {
-                LOGGER.error("experiment not found: " + experiment);
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "an experiment with this id does not exist");
             }
+            if (experiment.getDescription() != null) {
+                storedExperiment.setDescription(experiment.getDescription());
+            }
+            if (experiment.getUrlDescription() != null) {
+                storedExperiment.setUrlDescription(experiment.getUrlDescription());
+            }
+            if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
+                storedExperiment.setFilename(experiment.getFilename());
+            }
+            if (experiment.getUrl() != null && !experiment.getUrl().equals("")) {
+                storedExperiment.setUrl(experiment.getUrl());
+            }
+            storedExperiment.setContextType(EXPERIMENT_CONTEXT_TYPE);
+            if (experiment.getSensorDependencies() != null) {
+                storedExperiment.setSensorDependencies(experiment.getSensorDependencies());
+            }
+            if (experiment.getUserId() != null) {
+                storedExperiment.setUserId(experiment.getUserId());
+            }
+            LOGGER.info("updateExperiment: " + experiment);
+            //setInstall Url
+            storedExperiment.setTimestamp(System.currentTimeMillis());
+            experimentRepository.save(storedExperiment);
+            apiResponse.setStatus(HttpServletResponse.SC_OK);
+            apiResponse.setMessage("ok");
+            apiResponse.setValue(storedExperiment);
+            return apiResponse;
+        } else {
+            LOGGER.error("experiment not found: " + experiment);
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "an experiment with this id does not exist");
         }
+//        }
         return null;
     }
 
