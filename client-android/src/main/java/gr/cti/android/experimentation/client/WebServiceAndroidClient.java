@@ -79,4 +79,9 @@ public class WebServiceAndroidClient {
         return restTemplate.postForEntity(BASE_URL + "/smartphone", smartphone, SmartphoneDTO.class).getBody();
     }
 
+    public RegionListDTO getExperimentRegions(final int experimentId) {
+        return restTemplate.getForEntity(BASE_URL + "/experiment/" + experimentId + "/region", RegionListDTO.class).getBody();
+    }
+
+
 }

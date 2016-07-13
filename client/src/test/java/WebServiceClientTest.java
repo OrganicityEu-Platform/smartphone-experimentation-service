@@ -20,10 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * #L%
  */
+
 import gr.cti.android.experimentation.client.WebServiceAndroidClient;
-import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.PluginDTO;
-import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
+import gr.cti.android.experimentation.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -86,6 +85,14 @@ public class WebServiceClientTest {
     public void testGetSmartphoneStatistics2() throws Exception {
         final SmartphoneStatisticsDTO smartphoneStatistics = client.getSmartphoneStatistics(15, 22);
         System.out.println(smartphoneStatistics);
+    }
+
+    @Test
+    public void testGetExperimentRegions() throws Exception {
+        final RegionListDTO regions = client.getExperimentRegions(22);
+        for (RegionDTO dto : regions.getRegions()) {
+            System.out.println(dto);
+        }
     }
 
 }
