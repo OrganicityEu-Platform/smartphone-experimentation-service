@@ -41,6 +41,8 @@ public class RegionDTO implements Serializable {
 
     private int experimentRegionId;
 
+    private int experimentId;
+
     private String startDate;
 
     private String endDate;
@@ -79,6 +81,14 @@ public class RegionDTO implements Serializable {
 
     public void setExperimentRegionId(int experimentRegionId) {
         this.experimentRegionId = experimentRegionId;
+    }
+
+    public int getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(int experimentId) {
+        this.experimentId = experimentId;
     }
 
     public String getStartDate() {
