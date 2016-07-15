@@ -20,11 +20,28 @@
 
     <repositories>
         <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>http://repo.spring.io/milestone</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>org.jboss.repository.releases</id>
+            <name>JBoss Maven Release Repository</name>
+            <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
+        </repository>
+        <repository>
+            <id>sparkworks</id>
+            <url>http://nexus.sparkworks.net/nexus/content/repositories/snapshots</url>
+        </repository>
+        <repository>
             <id>jitpack</id>
             <url>https://jitpack.io/</url>
         </repository>
         <repository>
-            <id>itm</id>
+            <id>organicity</id>
             <url>https://maven.organicity.eu/content/repositories/snapshots</url>
         </repository>
     </repositories>
@@ -41,25 +58,49 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--#################################################################################################-->
+        <!--Logging-->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <groupId>org.slf4j</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--#################################################################################################-->
+        <!--Swagger-->
+
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.4.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <!--#################################################################################################-->
+        <!--DATA-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -68,9 +109,11 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
+        <!--#################################################################################################-->
+        <!--jackson-->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -82,17 +125,6 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.influxdb</groupId>
-            <artifactId>influxdb-java</artifactId>
-            <version>influxdb-java-2.0</version>
         </dependency>
 
         <dependency>
@@ -133,11 +165,11 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.google.maps</groupId>
-            <artifactId>google-maps-services</artifactId>
-            <version>0.1.9</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.maps</groupId>-->
+            <!--<artifactId>google-maps-services</artifactId>-->
+            <!--<version>0.1.9</version>-->
+        <!--</dependency>-->
 
         <!--#################################################################################################-->
         <!--common-->
@@ -146,6 +178,7 @@
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+
         <!--#################################################################################################-->
         <!--HTTP CLIENT-->
         <dependency>
@@ -158,40 +191,32 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
         </dependency>
+
         <!--#################################################################################################-->
         <!--HTTP CLIENT-->
         <dependency>
             <groupId>de.meggsimum.w3w</groupId>
             <artifactId>w3w-java-wrapper</artifactId>
             <version>1.0-SNAPSHOT</version>
-            <!--<scope>system</scope>-->
-            <!--<systemPath>${project.basedir}/lib/w3w-java-wrapper-1.0-SNAPSHOT-jar-with-dependencies.jar</systemPath>-->
         </dependency>
 
-        <!--#################################################################################################-->
-        <!--Swagger-->
-
+        <!-- https://mvnrepository.com/artifact/com.vividsolutions/jts -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.4.0</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.4.0</version>
-            <scope>compile</scope>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
         </dependency>
 
         <!--#################################################################################################-->
         <!--Tests-->
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
 
@@ -218,14 +243,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
-                <configuration>
-                    <skipTests>false</skipTests>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.gaul</groupId>
