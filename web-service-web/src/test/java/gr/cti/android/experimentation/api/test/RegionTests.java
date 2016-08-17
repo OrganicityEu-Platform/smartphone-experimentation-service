@@ -1,4 +1,4 @@
-package gr.cti.android.experimentation.test;
+package gr.cti.android.experimentation.api.test;
 
 /*-
  * #%L
@@ -30,6 +30,7 @@ import gr.cti.android.experimentation.model.RegionDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.RegionRepository;
+import gr.cti.android.experimentation.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

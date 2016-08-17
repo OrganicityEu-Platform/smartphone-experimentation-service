@@ -61,8 +61,8 @@ public class WebServiceClientTest {
 
     @Test
     public void testListPlugins() throws Exception {
-        final PluginDTO[] plugins = client.listPlugins();
-        for (final PluginDTO plugin : plugins) {
+        final PluginListDTO pluginList = client.listPlugins();
+        for (final PluginDTO plugin : pluginList.getPlugins()) {
             System.out.println(plugin);
         }
     }

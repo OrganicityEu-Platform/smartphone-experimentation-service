@@ -1,4 +1,4 @@
-package gr.cti.android.experimentation.test;
+package gr.cti.android.experimentation.util.test;
 
 /*-
  * #%L

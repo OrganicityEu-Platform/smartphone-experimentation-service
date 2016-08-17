@@ -235,4 +235,18 @@ public class BaseController {
         region.setName(dto.getName());
         return region;
     }
+
+    protected PluginDTO newPluginDTO(final Plugin plugin) {
+        final PluginDTO dto = new PluginDTO();
+        dto.setId(plugin.getId());
+        dto.setUserId(plugin.getUserId());
+        dto.setImageUrl(plugin.getImageUrl());
+        dto.setInstallUrl(plugin.getInstallUrl());
+        dto.setContextType(plugin.getContextType());
+        dto.setDescription(plugin.getDescription());
+        dto.setName(plugin.getName());
+        dto.setFilename(plugin.getFilename());
+        dto.setRuntimeFactoryClass(plugin.getRuntimeFactoryClass());
+        return dto;
+    }
 }

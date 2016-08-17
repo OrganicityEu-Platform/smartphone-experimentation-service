@@ -63,8 +63,8 @@ public class WebServiceAndroidClient {
         return restTemplate.getForEntity(BASE_URL + "experiment/" + id, ExperimentDTO.class).getBody().getValue();
     }
 
-    public PluginDTO[] listPlugins() {
-        return restTemplate.getForEntity(BASE_URL + "plugin", PluginDTO[].class).getBody();
+    public PluginListDTO listPlugins() {
+        return restTemplate.getForEntity(BASE_URL + "plugin", PluginListDTO.class).getBody();
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId) {

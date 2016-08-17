@@ -25,6 +25,7 @@ package gr.cti.android.experimentation.controller;
 
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
+import gr.cti.android.experimentation.model.PluginListDTO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -54,15 +56,24 @@ public class PluginController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/plugin", method = RequestMethod.GET, produces = "application/json")
-    public Set<Plugin> getPluginList(
+    public PluginListDTO getPluginList(
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
             @RequestParam(value = "userId", required = false) final Long userId,
             @RequestParam(value = "type", required = false, defaultValue = "live") final String type) {
+        PluginListDTO pluginListDTO = new PluginListDTO();
+        pluginListDTO.setPlugins(new ArrayList<>());
         if (userId != null) {
-            return pluginRepository.findByUserId(userId);
+            final Set<Plugin> plugins = pluginRepository.findByUserId(userId);
+            for (Plugin plugin : plugins) {
+                pluginListDTO.getPlugins().add(newPluginDTO(plugin));
+            }
         } else {
-            return pluginRepository.findAll();
+            final Set<Plugin> plugins = pluginRepository.findAll();
+            for (Plugin plugin : plugins) {
+                pluginListDTO.getPlugins().add(newPluginDTO(plugin));
+            }
         }
+        return pluginListDTO;
     }
 
     /**

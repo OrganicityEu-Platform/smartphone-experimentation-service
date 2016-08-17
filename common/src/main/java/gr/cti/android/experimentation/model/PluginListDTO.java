@@ -2,7 +2,7 @@ package gr.cti.android.experimentation.model;
 
 /*-
  * #%L
- * Smartphone Experimentation Web Service
+ * Smartphone Experimentation Model
  * $Id:$
  * $HeadURL:$
  * %%
@@ -24,40 +24,27 @@ package gr.cti.android.experimentation.model;
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
-/**
- * Created by amaxilatis on 19/1/2016.
- */
+import java.io.Serializable;
+import java.util.List;
+
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse {
+public class PluginListDTO implements Serializable {
+    private List<PluginDTO> plugins;
 
-    private int status;
-    private String message;
-    private Object value;
-
-    public int getStatus() {
-        return status;
+    public List<PluginDTO> getPlugins() {
+        return plugins;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
+    public void setPlugins(List<PluginDTO> plugins) {
+        this.plugins = plugins;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
+    @Override
+    public String toString() {
+        return "PluginListDTO{" +
+                "plugins=" + plugins +
+                '}';
     }
 }
