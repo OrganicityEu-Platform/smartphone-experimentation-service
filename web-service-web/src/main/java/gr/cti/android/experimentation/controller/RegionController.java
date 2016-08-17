@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -89,6 +90,42 @@ public class RegionController extends BaseController {
         if (experiment != null) {
             int count = getExperimentRegions(experimentId).getRegions().size() + 1;
             for (final RegionDTO regionDTO : regionListDTO.getRegions()) {
+                final Region region = newRegion(regionDTO);
+                if (region.getName() == null) {
+                    region.setName("Region " + count);
+                }
+                region.setExperimentId(experimentId);
+                region.setExperimentRegionId(experimentId);
+                regionRepository.save(region);
+            }
+        }
+
+        return getExperimentRegions(experimentId);
+    }
+
+    /**
+     * Replace the list of {@see Region} entities of a specific {@see Experiment}.
+     *
+     * @param experimentId  the Id of the {@see Experiment}.
+     * @param regionListDTO a list of {@see RegionDTO} elements.
+     * @return the {@see Region} entities of a specific {@see Experiment}.
+     * @throws IOException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.PUT, produces = "application/json")
+    public RegionListDTO putRegion2Experiment(@PathVariable(value = "experimentId") final int experimentId
+            , @RequestBody final RegionListDTO regionListDTO)
+            throws IOException {
+
+        final Experiment experiment = experimentRepository.findById(experimentId);
+        if (experiment != null) {
+            //remove old regions
+            final Set<Region> oldRegions = regionRepository.findByExperimentId(experimentId);
+            regionRepository.delete(oldRegions);
+            //add new regions
+            int count = 0;
+            for (final RegionDTO regionDTO : regionListDTO.getRegions()) {
+                count++;
                 final Region region = newRegion(regionDTO);
                 if (region.getName() == null) {
                     region.setName("Region " + count);
