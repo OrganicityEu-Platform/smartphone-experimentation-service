@@ -24,6 +24,10 @@ package gr.cti.android.experimentation.client;
  */
 
 import gr.cti.android.experimentation.model.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 public class WebServiceAndroidClient {
@@ -33,13 +37,13 @@ public class WebServiceAndroidClient {
     private String token;
 
     public WebServiceAndroidClient() {
-        this.token = "";
-        restTemplate = new RestTemplate();
+        this("");
     }
 
     public WebServiceAndroidClient(final String token) {
         this.token = token;
         restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
     }
 
     public String getToken() {
@@ -64,7 +68,13 @@ public class WebServiceAndroidClient {
     }
 
     public PluginListDTO listPlugins() {
-        return restTemplate.getForEntity(BASE_URL + "plugin", PluginListDTO.class).getBody();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+        if (!"".equals(token)) {
+            headers.add("Authorization", String.format("Bearer %s", token));
+        }
+        HttpEntity<String> requestEntity = new HttpEntity<String>("", headers);
+        return restTemplate.exchange(BASE_URL + "plugin", HttpMethod.GET, requestEntity, PluginListDTO.class).getBody();
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId) {
