@@ -1,0 +1,12 @@
+{
+  "realm": "organicity",
+  "realm-public-key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAo5N0GZOWFPrRCOhsFzT+heK1sb+4EjhvmlF6DGBI+JKkiznYb8bBALWNk822pviaMBO1S2t5ITITH5gKly6dYRK/r422nZviOtZxoWQhXvYfoc32jjL0qJ0BU4R3FVsjb8JbnR9hzMaEBylqHeLjlOfBqhqy3aak41fBktV49eoja32LxI7XMhVl2P2QyDQ5e4UcuzDRNtzfJhB7j86hU3H+fnWwGDQ4vbC4ReWuI71Y74VT4KyS22WHndKH8SCKBsmve3XtEdcqgngfjmu/XacE5NFm5lGC5fMgVObs6lECZGODIZP88KHVdjpb4xcTq6KbZU9fn0Jr5KNCUV+8vQIDAQAB",
+  "auth-server-url": "https://accounts.organicity.eu",
+  "ssl-required": "external",
+  "bearer-only": false,
+  "resource": "resource",
+  "credentials": {
+    "secret": "secret"
+  },
+  "principal-attribute": "email"
+}

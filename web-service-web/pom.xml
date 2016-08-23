@@ -77,6 +77,20 @@
         </dependency>
 
         <!--#################################################################################################-->
+        <!--Security-->
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-tomcat8-adapter</artifactId>
+            <version>2.1.0.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-security-adapter</artifactId>
+            <version>2.1.0.Final</version>
+        </dependency>
+
+        <!--#################################################################################################-->
         <!--Swagger-->
 
         <dependency>
