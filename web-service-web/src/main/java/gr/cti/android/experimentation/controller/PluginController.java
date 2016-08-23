@@ -23,6 +23,8 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
+import gr.cti.android.experimentation.exception.NotAuthorizedException;
+import gr.cti.android.experimentation.exception.PluginNotFoundException;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.PluginListDTO;
@@ -30,9 +32,9 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -51,15 +53,20 @@ public class PluginController extends BaseController {
     /**
      * Lists all available plugins in the system.
      *
-     * @param phoneId the id of the phone requesting the list of available plugins.
+     * @param principal the user principal.
+     * @param phoneId   the id of the phone requesting the list of available plugins.
      * @return a json list of all available plugins in the system.
      */
     @ResponseBody
     @RequestMapping(value = "/plugin", method = RequestMethod.GET, produces = "application/json")
     public PluginListDTO getPluginList(
+            final Principal principal,
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
             @RequestParam(value = "userId", required = false) final Long userId,
-            @RequestParam(value = "type", required = false, defaultValue = "live") final String type) {
+            @RequestParam(value = "type", required = false, defaultValue = "live") final String type)
+            throws NotAuthorizedException {
+        LOGGER.debug(String.format("GET /plugin %s", principal));
+
         PluginListDTO pluginListDTO = new PluginListDTO();
         pluginListDTO.setPlugins(new ArrayList<>());
         if (userId != null) {
@@ -79,13 +86,15 @@ public class PluginController extends BaseController {
     /**
      * Register a new plugin to the backend.
      *
-     * @param response the HTTP response object.
-     * @param plugin   the plugin object to register.
+     * @param principal the user principal.
+     * @param response  the HTTP response object.
+     * @param plugin    the plugin object to register.
      */
     @ResponseBody
     @RequestMapping(value = "/plugin", method = RequestMethod.POST, produces = "application/json")
-    public Object addPlugin(HttpServletRequest request, HttpServletResponse response, @ModelAttribute final Plugin plugin) throws IOException {
-        LOGGER.info(request.getRemoteAddr());
+    public Object addPlugin(final Principal principal, HttpServletResponse response,
+                            @ModelAttribute final Plugin plugin) throws IOException {
+        LOGGER.debug(String.format("POST /plugin %s", principal));
 
         final ApiResponse apiResponse = new ApiResponse();
         final String contextType = plugin.getContextType();
@@ -138,12 +147,14 @@ public class PluginController extends BaseController {
     /**
      * Get an existing plugin.
      *
-     * @param response the HTTP response object.
-     * @param pluginId the id of the plugin to update.
+     * @param principal the user principal.
+     * @param pluginId  the id of the plugin to update.
      */
     @ResponseBody
     @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.GET, produces = "application/json")
-    public Object getPlugin(HttpServletResponse response, @PathVariable("pluginId") final long pluginId) throws IOException {
+    public Object getPlugin(final Principal principal, @PathVariable("pluginId") final long pluginId)
+            throws PluginNotFoundException {
+        LOGGER.debug(String.format("GET /plugin/%d %s", pluginId, principal));
 
         final ApiResponse apiResponse = new ApiResponse();
 
@@ -155,21 +166,24 @@ public class PluginController extends BaseController {
             apiResponse.setValue(storedPlugin);
             return apiResponse;
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "no plugin found with the given id");
+            throw new PluginNotFoundException();
         }
-        return null;
     }
 
     /**
      * Update an existing plugin.
      *
-     * @param response the HTTP response object.
-     * @param plugin   the plugin object to update.
-     * @param pluginId the id of the plugin to update.
+     * @param principal the user principal.
+     * @param response  the HTTP response object.
+     * @param plugin    the plugin object to update.
+     * @param pluginId  the id of the plugin to update.
      */
     @ResponseBody
     @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
-    public Object addPlugin(HttpServletResponse response, @ModelAttribute final Plugin plugin, @PathVariable("pluginId") final long pluginId) throws IOException {
+    public Object addPlugin(final Principal principal, HttpServletResponse response,
+                            @ModelAttribute final Plugin plugin,
+                            @PathVariable("pluginId") final long pluginId) throws IOException, PluginNotFoundException {
+        LOGGER.debug(String.format("POST /plugin/%d %s", pluginId, principal));
 
         final ApiResponse apiResponse = new ApiResponse();
         final String contextType = plugin.getContextType();
@@ -231,8 +245,7 @@ public class PluginController extends BaseController {
                 apiResponse.setValue(plugin);
                 return apiResponse;
             } else {
-                LOGGER.error("plugin not found: " + plugin);
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "a plugin with this id does not exist");
+                throw new PluginNotFoundException();
             }
         }
         return null;
@@ -241,18 +254,25 @@ public class PluginController extends BaseController {
     /**
      * Delete an existing plugin.
      *
-     * @param response the HTTP response object.
-     * @param pluginId the id of the plugin to delete.
+     * @param principal the user principal.
+     * @param response  the HTTP response object.
+     * @param pluginId  the id of the plugin to delete.
      */
     @ResponseBody
     @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.DELETE, produces = "application/json")
-    public Object deletePlugin(HttpServletRequest request, HttpServletResponse response, @PathVariable("pluginId") final int pluginId) throws IOException {
+    public Object deletePlugin(final Principal principal,
+                               HttpServletResponse response, @PathVariable("pluginId") final int pluginId)
+            throws NotAuthorizedException, PluginNotFoundException {
+        if (principal == null) {
+            throw new NotAuthorizedException();
+        }
+
+        LOGGER.debug(String.format("DELETE /plugin/%d %s", pluginId, principal));
 
         final ApiResponse apiResponse = new ApiResponse();
         final Plugin plugin = pluginRepository.findById(pluginId);
         if (plugin == null) {
-            final String errorMessage = "no plugin found with this id";
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMessage);
+            throw new PluginNotFoundException();
         } else {
             pluginRepository.delete(plugin);
             apiResponse.setStatus(HttpServletResponse.SC_OK);
@@ -260,6 +280,5 @@ public class PluginController extends BaseController {
             apiResponse.setValue(plugin);
             return apiResponse;
         }
-        return null;
     }
 }
