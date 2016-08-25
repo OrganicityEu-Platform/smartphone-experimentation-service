@@ -35,6 +35,8 @@ public class WebServiceAndroidClient {
 
     private static final String BASE_URL = "http://api.smartphone-experimentation.eu/v1/";
     private String token;
+    private HttpHeaders headers;
+    private HttpEntity<String> req;
 
     public WebServiceAndroidClient() {
         this("");
@@ -44,54 +46,67 @@ public class WebServiceAndroidClient {
         this.token = token;
         restTemplate = new RestTemplate();
         restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        req = new HttpEntity<>("", headers);
     }
 
-    public String getToken() {
-        return token;
+    public void clearToken() {
+        this.token = "";
+        headers.remove(HttpHeaders.AUTHORIZATION);
     }
 
     public void setToken(final String token) {
         this.token = token;
-
+        if (!"".equals(token)) {
+            headers.add(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", token));
+        }
+        req = new HttpEntity<>("", headers);
     }
 
     public Experiment[] listExperiments() {
-        return restTemplate.getForEntity(BASE_URL + "experiment", Experiment[].class).getBody();
+        return restTemplate.exchange(BASE_URL + "experiment",
+                HttpMethod.GET, req, Experiment[].class).getBody();
     }
 
     public Experiment[] listExperiments(final int smartphoneId) {
-        return restTemplate.getForEntity(BASE_URL + "experiment?phoneId=" + smartphoneId, Experiment[].class).getBody();
+        return restTemplate.exchange(BASE_URL + "experiment?phoneId=" + smartphoneId,
+                HttpMethod.GET, req, Experiment[].class).getBody();
     }
 
     public Experiment getExperiment(final Integer id) {
-        return restTemplate.getForEntity(BASE_URL + "experiment/" + id, ExperimentDTO.class).getBody().getValue();
+        return restTemplate.exchange(BASE_URL + "experiment/" + id,
+                HttpMethod.GET, req, ExperimentDTO.class).getBody().getValue();
     }
 
     public PluginListDTO listPlugins() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        if (!"".equals(token)) {
-            headers.add("Authorization", String.format("Bearer %s", token));
-        }
-        HttpEntity<String> requestEntity = new HttpEntity<String>("", headers);
-        return restTemplate.exchange(BASE_URL + "plugin", HttpMethod.GET, requestEntity, PluginListDTO.class).getBody();
+        return restTemplate.exchange(BASE_URL + "plugin",
+                HttpMethod.GET, req, PluginListDTO.class).getBody();
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId) {
-        return restTemplate.getForEntity(BASE_URL + "/smartphone/" + smartphoneId + "/statistics", SmartphoneStatisticsDTO.class).getBody();
+        return restTemplate.exchange(BASE_URL + "/smartphone/" + smartphoneId + "/statistics",
+                HttpMethod.GET, req, SmartphoneStatisticsDTO.class).getBody();
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId, final int experimentId) {
-        return restTemplate.getForEntity(BASE_URL + "/smartphone/" + smartphoneId + "/statistics/" + experimentId, SmartphoneStatisticsDTO.class).getBody();
+        return restTemplate.exchange(BASE_URL + "/smartphone/" + smartphoneId + "/statistics/" + experimentId,
+                HttpMethod.GET, req, SmartphoneStatisticsDTO.class).getBody();
     }
 
     public SmartphoneDTO postSmartphone(final SmartphoneDTO smartphone) {
-        return restTemplate.postForEntity(BASE_URL + "/smartphone", smartphone, SmartphoneDTO.class).getBody();
+        return restTemplate.exchange(BASE_URL + "/smartphone",
+                HttpMethod.POST, new HttpEntity<>(smartphone, headers), SmartphoneDTO.class).getBody();
     }
 
     public RegionListDTO getExperimentRegions(final int experimentId) {
-        return restTemplate.getForEntity(BASE_URL + "/experiment/" + experimentId + "/region", RegionListDTO.class).getBody();
+        return restTemplate.exchange(BASE_URL + "/experiment/" + experimentId + "/region",
+                HttpMethod.GET, req, RegionListDTO.class).getBody();
     }
 
+    public ResponseDTO postExperimentResults(final ResultListDTO resultListDTO) {
+        return restTemplate.exchange(BASE_URL + "/data/multiple",
+                HttpMethod.POST, new HttpEntity<>(resultListDTO, headers), ResponseDTO.class).getBody();
+    }
 
 }

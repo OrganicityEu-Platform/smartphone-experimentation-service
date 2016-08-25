@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Set;
 
 @Controller
@@ -75,6 +76,89 @@ public class AndroidExperimentationWS extends BaseController {
         responseObject.put("status", "Ok");
         responseObject.put("code", 202);
         return responseObject;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/data/multiple", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    public ResponseDTO data(@RequestBody final ResultListDTO resultList, final HttpServletResponse response,
+                            Principal principal) throws
+            JSONException, IOException {
+        LOGGER.info("POST /data/multiple " + principal);
+        for (final Report resultDTO : resultList.getResultList()) {
+            final Result result = newResult(resultDTO);
+
+            if (result != null) {
+                //store to sql
+                try {
+                    sqlDbService.store(result);
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
+                }
+            }
+        }
+
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        final ResponseDTO r = new ResponseDTO();
+        r.setCode(202);
+        r.setStatus("Ok");
+        return r;
+    }
+
+    protected Result newResult(final Report dto) throws IOException, JSONException {
+
+        LOGGER.info("saving for deviceId:" + dto.getDeviceId() + " jobName:" + dto.getJobName());
+        final Smartphone phone = smartphoneRepository.findById(dto.getDeviceId());
+        final Experiment experiment = experimentRepository.findById(Integer.parseInt(dto.getJobName()));
+        LOGGER.info("saving for PhoneId:" + phone.getPhoneId() + " ExperimentName:" + experiment.getName());
+
+        final Result newResult = new Result();
+        final JSONObject objTotal = new JSONObject();
+
+        for (String jobResult : dto.getJobResults()) {
+            jobResult = jobResult.replaceAll("atributeType", "attributeType")
+                    .replaceAll("org.ambientdynamix.contextplugins.NoiseLevel", OrganicityAttributeTypes.Types.SOUND_PRESSURE_LEVEL.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.sound", OrganicityAttributeTypes.Types.SOUND_PRESSURE_LEVEL.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.10pm", OrganicityAttributeTypes.Types.PARTICLES10.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.25pm", OrganicityAttributeTypes.Types.PARTICLES25.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.co", OrganicityAttributeTypes.Types.CARBON_MONOXIDE.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.lpg", OrganicityAttributeTypes.Types.LPG.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.ch4", OrganicityAttributeTypes.Types.METHANE.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.temperature", OrganicityAttributeTypes.Types.TEMPERATURE.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.battery%", OrganicityAttributeTypes.Types.BATTERY_LEVEL.getUrn())
+                    .replaceAll("org.ambientdynamix.contextplugins.batteryv", OrganicityAttributeTypes.Types.BATTERY_VOLTAGE.getUrn());
+
+            LOGGER.info(jobResult);
+            if (jobResult.isEmpty()) {
+                continue;
+            }
+            final Reading readingObj = new ObjectMapper().readValue(jobResult, Reading.class);
+            final String value = readingObj.getValue();
+            final long readingTime = readingObj.getTimestamp();
+
+            try {
+                final Set<Result> res =
+                        resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(experiment.getId(), phone.getId(), readingTime, value);
+                if (!res.isEmpty()) {
+                    continue;
+                }
+            } catch (Exception e) {
+                LOGGER.error(e, e);
+            }
+            LOGGER.info(jobResult);
+            newResult.setDeviceId(phone.getId());
+            newResult.setExperimentId(experiment.getId());
+            final JSONObject obj = new JSONObject(value);
+            for (final String key : JSONObject.getNames(obj)) {
+                objTotal.put(key, obj.get(key));
+            }
+            newResult.setTimestamp(readingTime);
+        }
+
+        newResult.setMessage(objTotal.toString());
+
+        LOGGER.info(newResult.toString());
+        return newResult;
     }
 
     private Result extractResultFromBody(String body) throws JSONException, IOException {

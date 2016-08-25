@@ -23,10 +23,12 @@ package gr.cti.android.experimentation.model;
  * #L%
  */
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.Gson;
 
+import java.util.List;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Report{
 
     private String jobName;
