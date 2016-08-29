@@ -64,19 +64,24 @@ public class WebServiceAndroidClient {
         req = new HttpEntity<>("", headers);
     }
 
-    public Experiment[] listExperiments() {
+    public ExperimentListDTO listExperiments() {
         return restTemplate.exchange(BASE_URL + "experiment",
-                HttpMethod.GET, req, Experiment[].class).getBody();
+                HttpMethod.GET, req, ExperimentListDTO.class).getBody();
     }
 
-    public Experiment[] listExperiments(final int smartphoneId) {
+    public ExperimentListDTO listLiveExperiments() {
+        return restTemplate.exchange(BASE_URL + "experiment/live",
+                HttpMethod.GET, req, ExperimentListDTO.class).getBody();
+    }
+
+    public ExperimentListDTO listExperiments(final int smartphoneId) {
         return restTemplate.exchange(BASE_URL + "experiment?phoneId=" + smartphoneId,
-                HttpMethod.GET, req, Experiment[].class).getBody();
+                HttpMethod.GET, req, ExperimentListDTO.class).getBody();
     }
 
-    public Experiment getExperiment(final Integer id) {
+    public ExperimentDTO getExperiment(final String id) {
         return restTemplate.exchange(BASE_URL + "experiment/" + id,
-                HttpMethod.GET, req, ExperimentDTO.class).getBody().getValue();
+                HttpMethod.GET, req, ExperimentDTO.class).getBody();
     }
 
     public PluginListDTO listPlugins() {

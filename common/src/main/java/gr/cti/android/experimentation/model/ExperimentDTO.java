@@ -32,31 +32,120 @@ import java.io.Serializable;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ExperimentDTO implements Serializable {
 
-    private int status;
-    private String message;
-    private Experiment value;
+    private String id;
+    private String description;
+    private String urlDescription;
+    private Long timestamp;
+    private String name;
+    private String contextType;
+    private String sensorDependencies;
+    private String status;
+    private String userId;
+    private String url;
+    private String filename;
 
-    public int getStatus() {
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContextType() {
+        return contextType;
+    }
+
+    public void setContextType(String contextType) {
+        this.contextType = contextType;
+    }
+
+    public String getSensorDependencies() {
+        return sensorDependencies;
+    }
+
+    public void setSensorDependencies(String sensorDependencies) {
+        this.sensorDependencies = sensorDependencies;
+    }
+
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public Experiment getValue() {
-        return value;
+    public String getUrl() {
+        return url;
     }
 
-    public void setValue(Experiment value) {
-        this.value = value;
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getUrlDescription() {
+        return urlDescription;
+    }
+
+    public void setUrlDescription(String urlDescription) {
+        this.urlDescription = urlDescription;
+    }
+
+    @Override
+    public String toString() {
+        return "ExperimentDTO{" +
+                "id='" + id + '\'' +
+                ", description='" + description + '\'' +
+                ", urlDescription='" + urlDescription + '\'' +
+                ", timestamp=" + timestamp +
+                ", name='" + name + '\'' +
+                ", contextType='" + contextType + '\'' +
+                ", sensorDependencies='" + sensorDependencies + '\'' +
+                ", status='" + status + '\'' +
+                ", userId='" + userId + '\'' +
+                ", url='" + url + '\'' +
+                ", filename='" + filename + '\'' +
+                '}';
     }
 }

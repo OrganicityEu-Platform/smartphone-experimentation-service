@@ -109,7 +109,7 @@ public class AndroidExperimentationWS extends BaseController {
 
         LOGGER.info("saving for deviceId:" + dto.getDeviceId() + " jobName:" + dto.getJobName());
         final Smartphone phone = smartphoneRepository.findById(dto.getDeviceId());
-        final Experiment experiment = experimentRepository.findById(Integer.parseInt(dto.getJobName()));
+        final Experiment experiment = experimentRepository.findByExperimentId(dto.getJobName());
         LOGGER.info("saving for PhoneId:" + phone.getPhoneId() + " ExperimentName:" + experiment.getName());
 
         final Result newResult = new Result();
@@ -179,7 +179,7 @@ public class AndroidExperimentationWS extends BaseController {
         Report result = new ObjectMapper().readValue(body, Report.class);
         LOGGER.info("saving for deviceId:" + result.getDeviceId() + " jobName:" + result.getJobName());
         final Smartphone phone = smartphoneRepository.findById(result.getDeviceId());
-        final Experiment experiment = experimentRepository.findById(Integer.parseInt(result.getJobName()));
+        final Experiment experiment = experimentRepository.findByExperimentId(result.getJobName());
         LOGGER.info("saving for PhoneId:" + phone.getPhoneId() + " ExperimentName:" + experiment.getName());
 
         final Result newResult = new Result();

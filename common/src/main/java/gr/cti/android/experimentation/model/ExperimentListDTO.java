@@ -1,8 +1,8 @@
-package gr.cti.android.experimentation.repository;
+package gr.cti.android.experimentation.model;
 
 /*-
  * #%L
- * Smartphone Experimentation Web Service
+ * Smartphone Experimentation Model
  * $Id:$
  * $HeadURL:$
  * %%
@@ -23,27 +23,30 @@ package gr.cti.android.experimentation.repository;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.Experiment;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.CrudRepository;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.Set;
+import java.io.Serializable;
+import java.util.List;
 
-/**
- * @author Dimitrios Amaxilatis.
- */
-public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class ExperimentListDTO implements Serializable {
 
-    Page<Experiment> findAll(Pageable pageable);
+    private List<ExperimentDTO> experiments;
 
-    Experiment findById(String id);
+    public List<ExperimentDTO> getExperiments() {
+        return experiments;
+    }
 
-    Experiment findByExperimentId(String experimentId);
+    public void setExperiments(List<ExperimentDTO> experiments) {
+        this.experiments = experiments;
+    }
 
-    Set<Experiment> findByName(String name);
-
-    Set<Experiment> findByEnabled(boolean enabled);
-
-    Set<Experiment> findByNameAndUserId(String name, String userId);
+    @Override
+    public String toString() {
+        return "ExperimentListDTO{" +
+                "experiments=" + experiments +
+                '}';
+    }
 }

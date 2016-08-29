@@ -203,7 +203,7 @@ public class BaseController {
         return smartphone;
     }
 
-    protected RegionDTO newRegionDTO(final Region region) {
+    protected RegionDTO newRegionDTO(final Region region,final String experimentId) {
         final RegionDTO dto = new RegionDTO();
         dto.setId(region.getId());
         dto.setCoordinates(region.getCoordinates());
@@ -212,7 +212,7 @@ public class BaseController {
         dto.setStartTime(region.getStartTime());
         dto.setEndTime(region.getEndTime());
         dto.setExperimentRegionId(region.getExperimentRegionId());
-        dto.setExperimentId(region.getExperimentId());
+        dto.setExperimentId(experimentId);
         dto.setMaxMeasurements(region.getMaxMeasurements());
         dto.setMinMeasurements(region.getMinMeasurements());
         dto.setWeight(region.getWeight());
@@ -249,4 +249,20 @@ public class BaseController {
         dto.setRuntimeFactoryClass(plugin.getRuntimeFactoryClass());
         return dto;
     }
+
+    protected ExperimentDTO newExperimentDTO(final Experiment experiment) {
+        final ExperimentDTO dto = new ExperimentDTO();
+        dto.setId(experiment.getExperimentId());
+        dto.setUserId(experiment.getUserId());
+        dto.setName(experiment.getName());
+        dto.setUrl(experiment.getUrl());
+        dto.setUrlDescription(experiment.getUrlDescription());
+        dto.setTimestamp(experiment.getTimestamp());
+        dto.setContextType(experiment.getContextType());
+        dto.setStatus(experiment.getStatus());
+        dto.setSensorDependencies(experiment.getSensorDependencies());
+        dto.setDescription(experiment.getDescription());
+        return dto;
+    }
+
 }

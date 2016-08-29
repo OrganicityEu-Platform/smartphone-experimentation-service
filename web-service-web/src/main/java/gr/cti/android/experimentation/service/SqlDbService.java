@@ -92,7 +92,7 @@ public class SqlDbService {
 
                 //store to orion
                 try {
-                    Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
+                    Experiment experiment = experimentRepository.findById(String.valueOf(newResult.getExperimentId()));
                     orionService.store(newResult, experiment);
                 } catch (Exception e) {
                     LOGGER.error(e, e);

@@ -34,8 +34,10 @@ public class TestUtils {
         newExperiment.setTimestamp(System.currentTimeMillis());
         newExperiment.setUrl("http://experiment.url");
         newExperiment.setUrlDescription("http://url.description.com");
-        newExperiment.setStatus("TEST EXPERIMENT");
+        newExperiment.setStatus("1");
+        newExperiment.setUserId("amaxilat@cti.gr");
         newExperiment.setSensorDependencies("sensor1,sensor2,sensor3");
+        newExperiment.setExperimentId("asdbjkasdl213lksd");
         newExperiment.setName("TEST EXPERIMENT");
         newExperiment.setContextType("urn:oc:experiment");
         newExperiment.setFilename("my-file");
@@ -50,7 +52,7 @@ public class TestUtils {
         return regionList;
     }
 
-    public static RegionDTO newTestRegion1(final int experimentId) {
+    public static RegionDTO newTestRegion1(final String experimentId) {
         final RegionDTO region = new RegionDTO();
         region.setExperimentId(experimentId);
         region.setName("TestRegion");

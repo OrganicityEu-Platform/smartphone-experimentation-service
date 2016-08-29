@@ -73,7 +73,7 @@ public class RegionTests {
 
         regionList = TestUtils.newRegionList1();
 
-        final RegionDTO region = TestUtils.newTestRegion1(experiment.getId());
+        final RegionDTO region = TestUtils.newTestRegion1(experiment.getExperimentId());
 
         regionList.getRegions().add(region);
 
@@ -82,15 +82,16 @@ public class RegionTests {
 
     @Test
     public void testGetRegions() throws Exception {
-        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getId() + "/region");
+        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getExperimentId() + "/region");
+        System.out.println(experiment);
         final ResponseEntity<RegionListDTO> response = template.getForEntity(url.toString(), RegionListDTO.class);
-
+        System.out.println(response.getBody());
         assertEquals(0, response.getBody().getRegions().size());
     }
 
     @Test
     public void testAddRegion() throws Exception {
-        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getId() + "/region");
+        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getExperimentId() + "/region");
         final ResponseEntity<RegionListDTO> response = template.postForEntity(url.toString(), regionList, RegionListDTO.class);
 
         assertEquals(1, response.getBody().getRegions().size());
@@ -105,11 +106,11 @@ public class RegionTests {
 
     @Test
     public void testDeleteRegion() throws Exception {
-        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getId() + "/region");
+        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getExperimentId() + "/region");
         final ResponseEntity<RegionListDTO> response = template.postForEntity(url.toString(), regionList, RegionListDTO.class);
 
         final int regionId = response.getBody().getRegions().get(0).getId();
-        final URL urlDelete = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getId() + "/region/" + regionId);
+        final URL urlDelete = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getExperimentId() + "/region/" + regionId);
         template.delete(urlDelete.toString());
 
         final ResponseEntity<RegionListDTO> response2 = template.getForEntity(url.toString(), RegionListDTO.class);

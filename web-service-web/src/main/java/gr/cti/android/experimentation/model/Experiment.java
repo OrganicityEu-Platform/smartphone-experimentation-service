@@ -23,7 +23,6 @@ package gr.cti.android.experimentation.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -31,7 +30,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Objects;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -41,6 +39,7 @@ public class Experiment implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    private String experimentId;
     private String description;
     private String urlDescription;
     private Long timestamp;
@@ -48,11 +47,18 @@ public class Experiment implements Serializable {
     private String contextType;
     private String sensorDependencies;
     private String status;
-    private Integer userId;
+    private String userId;
     private String url;
     private String filename;
-    @JsonIgnore
     private Boolean enabled;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public long getTimestamp() {
         return timestamp;
@@ -70,12 +76,12 @@ public class Experiment implements Serializable {
         this.description = description;
     }
 
-    public Integer getId() {
-        return id;
+    public String getExperimentId() {
+        return experimentId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setExperimentId(String experimentId) {
+        this.experimentId = experimentId;
     }
 
     public String getName() {
@@ -110,11 +116,11 @@ public class Experiment implements Serializable {
         this.status = status;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -142,7 +148,6 @@ public class Experiment implements Serializable {
         this.urlDescription = urlDescription;
     }
 
-
     public Boolean getEnabled() {
         return enabled;
     }
@@ -152,27 +157,56 @@ public class Experiment implements Serializable {
     }
 
     @Override
+    public String toString() {
+        return "Experiment{" +
+                "id=" + id +
+                ", experimentId='" + experimentId + '\'' +
+                ", description='" + description + '\'' +
+                ", urlDescription='" + urlDescription + '\'' +
+                ", timestamp=" + timestamp +
+                ", name='" + name + '\'' +
+                ", contextType='" + contextType + '\'' +
+                ", sensorDependencies='" + sensorDependencies + '\'' +
+                ", status='" + status + '\'' +
+                ", userId=" + userId +
+                ", url='" + url + '\'' +
+                ", filename='" + filename + '\'' +
+                ", enabled=" + enabled +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Experiment that = (Experiment) o;
 
-        if (!Objects.equals(id, that.id)) return false;
-        if (contextType != null ? !contextType.equals(that.contextType) : that.contextType != null) return false;
-        if (filename != null ? !filename.equals(that.filename) : that.filename != null) return false;
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (experimentId != null ? !experimentId.equals(that.experimentId) : that.experimentId != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (urlDescription != null ? !urlDescription.equals(that.urlDescription) : that.urlDescription != null)
+            return false;
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (contextType != null ? !contextType.equals(that.contextType) : that.contextType != null) return false;
         if (sensorDependencies != null ? !sensorDependencies.equals(that.sensorDependencies) : that.sensorDependencies != null)
             return false;
         if (status != null ? !status.equals(that.status) : that.status != null) return false;
+        if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
-        return !(userId != null ? !userId.equals(that.userId) : that.userId != null);
+        if (filename != null ? !filename.equals(that.filename) : that.filename != null) return false;
+        return enabled != null ? enabled.equals(that.enabled) : that.enabled == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (experimentId != null ? experimentId.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (urlDescription != null ? urlDescription.hashCode() : 0);
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (contextType != null ? contextType.hashCode() : 0);
         result = 31 * result + (sensorDependencies != null ? sensorDependencies.hashCode() : 0);
@@ -180,6 +214,7 @@ public class Experiment implements Serializable {
         result = 31 * result + (userId != null ? userId.hashCode() : 0);
         result = 31 * result + (url != null ? url.hashCode() : 0);
         result = 31 * result + (filename != null ? filename.hashCode() : 0);
+        result = 31 * result + (enabled != null ? enabled.hashCode() : 0);
         return result;
     }
 }

@@ -23,11 +23,7 @@ package gr.cti.android.experimentation.service;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.Report;
-import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.Plugin;
-import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.model.Smartphone;
+import gr.cti.android.experimentation.model.*;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.PluginRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
@@ -47,7 +43,7 @@ public class ModelService {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger log = Logger.getLogger(ModelService.class);
+    private static final Logger LOGGER = Logger.getLogger(ModelService.class);
 
     @Autowired
     PluginRepository pluginRepository;
@@ -59,7 +55,7 @@ public class ModelService {
     ResultRepository resultRepository;
 
     public Set<Plugin> getPlugins() {
-        log.info("getPlugins Called");
+        LOGGER.info("getPlugins Called");
         return pluginRepository.findAll();
     }
 
@@ -85,7 +81,7 @@ public class ModelService {
                 return experiment;
             }
         }
-        log.info("getExperiment Called");
+        LOGGER.info("getExperiment Called");
         return null;
     }
 
@@ -95,7 +91,7 @@ public class ModelService {
         for (Experiment exp : experimentsList) {
             if (exp.getStatus().equals("active")) return exp;
         }
-        log.info("getExperiment Called");
+        LOGGER.info("getExperiment Called");
         return null;
     }
 
@@ -106,21 +102,7 @@ public class ModelService {
         while (experimentsListIterator.hasNext()) {
             experimentsList.add(experimentsListIterator.next());
         }
-        log.info("getExperiment Called");
-        return experimentsList;
-    }
-
-    public List<Experiment> getEnabledExperiments() {
-
-        final Iterator<Experiment> experimentsListIterator = experimentRepository.findAll().iterator();
-        final List<Experiment> experimentsList = new ArrayList<>();
-        while (experimentsListIterator.hasNext()) {
-            final Experiment experiment = experimentsListIterator.next();
-            if (experiment.getEnabled()) {
-                experimentsList.add(experiment);
-            }
-        }
-        log.info("getExperiment Called");
+        LOGGER.info("getExperiment Called");
         return experimentsList;
     }
 
@@ -142,7 +124,7 @@ public class ModelService {
     }
 
     public void saveExperiment(Experiment experiment) {
-        log.info("saveExperiment Called");
+        LOGGER.info("saveExperiment Called");
         experimentRepository.save(experiment);
     }
 
@@ -151,9 +133,9 @@ public class ModelService {
         if (smartphone.getId() != null && (smartphone.getId() == -1 || smartphone.getId() == 0)) {
             smartphone.setId(null);
         }
-        log.info("registerSmartphone: id:" + smartphone.getId() + " phoneId:" + smartphone.getPhoneId());
+        LOGGER.info("registerSmartphone: id:" + smartphone.getId() + " phoneId:" + smartphone.getPhoneId());
         final Smartphone phone = smartphoneRepository.findByPhoneId(smartphone.getPhoneId());
-        log.info("registerSmartphone: phone:" + phone);
+        LOGGER.info("registerSmartphone: phone:" + phone);
         if (phone == null) {
             return smartphoneRepository.save(smartphone);
         } else {
@@ -164,11 +146,11 @@ public class ModelService {
     }
 
     public void reportResults(final Report report) {
-        final String expId = report.getName();
+        final String experimentId = report.getName();
         final List<String> experimentResults = report.getResults();
-        System.out.println("experiment Id: " + expId);
+        System.out.println("experiment Id: " + experimentId);
 
-        final Experiment experiment = experimentRepository.findById(Integer.parseInt(expId));
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
 
         for (final String result : experimentResults) {
             final Result resultsEntity = new Result();

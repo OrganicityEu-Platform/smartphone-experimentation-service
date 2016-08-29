@@ -1,24 +1,40 @@
+# port of the server
 server.port: 8080
+# caching of html templates
 spring.thymeleaf.cache: false
 
+# embedded server response compression
+server.compression:
+  enabled: true
+  mime-types: application/json,text/html,text/plain
+
+# profiles
 ---
 spring:
   profiles: develop
+  # jpa schema auto update
   jpa.hibernate.ddl-auto: update
+  # jpa database dialect
   jpa.database-platform: org.hibernate.dialect.MySQLDialect
+  # datasource connection information
   datasource:
     url: jdbc:mysql://smartphone-experimentation.eu:3306/androidExperimentation
     driver-class-name: com.mysql.jdbc.Driver
+    # use the two following lines to avoid closed connections
     test-on-borrow: true
     validationQuery: SELECT 1
 ---
 spring:
   profiles: production
+  # jpa schema auto update
   jpa.hibernate.ddl-auto: update
+  # jpa database dialect
   jpa.database-platform: org.hibernate.dialect.MySQLDialect
+  # datasource connection information
   datasource:
     url: jdbc:mysql://localhost:3306/androidExperimentation
     driver-class-name: com.mysql.jdbc.Driver
+    # use the two following lines to avoid closed connections
     test-on-borrow: true
     validationQuery: SELECT 1
 ---

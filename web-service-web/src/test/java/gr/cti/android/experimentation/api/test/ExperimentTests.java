@@ -27,6 +27,7 @@ package gr.cti.android.experimentation.api.test;
 import gr.cti.android.experimentation.Application;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.ExperimentDTO;
+import gr.cti.android.experimentation.model.ExperimentListDTO;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.TestUtils;
 import org.junit.Before;
@@ -62,6 +63,8 @@ public class ExperimentTests {
 
     @Before
     public void setUp() throws Exception {
+        experimentRepository.deleteAll();
+
         final Experiment newExperiment = TestUtils.newTestExperiment1();
 
         experiment = experimentRepository.save(newExperiment);
@@ -70,18 +73,20 @@ public class ExperimentTests {
 
     @Test
     public void testGetExperiment() throws Exception {
-        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getId());
+        final URL url = new URL("http://localhost:" + port + "/v1/experiment/" + experiment.getExperimentId());
         final ResponseEntity<ExperimentDTO> response = template.getForEntity(url.toString(), ExperimentDTO.class);
 
-        assertEquals(experiment, response.getBody().getValue());
+        assertEquals(experiment.getExperimentId(), response.getBody().getId());
     }
 
     @Test
     public void testListExperiments() throws Exception {
         final URL url = new URL("http://localhost:" + port + "/v1/experiment");
-        final ResponseEntity<Experiment[]> response = template.getForEntity(url.toString(), Experiment[].class);
+        final ResponseEntity<ExperimentListDTO> response = template.getForEntity(url.toString(), ExperimentListDTO.class);
 
-        assertEquals(1, response.getBody().length);
-        assertEquals(experiment, response.getBody()[0]);
+        assertEquals(1, response.getBody().getExperiments().size());
+        assertEquals(experiment.getExperimentId(), response.getBody().getExperiments().get(0).getId());
+        System.out.println(response.getBody());
+        assertEquals(experiment.getName(), response.getBody().getExperiments().get(0).getName());
     }
 }

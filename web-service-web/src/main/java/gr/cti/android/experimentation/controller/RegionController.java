@@ -56,16 +56,18 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.GET, produces = "application/json")
-    public RegionListDTO getExperimentRegions(@PathVariable(value = "experimentId") final int experimentId)
+    public RegionListDTO getExperimentRegions(@PathVariable(value = "experimentId") final String experimentId)
             throws IOException {
         final RegionListDTO list = new RegionListDTO();
         LOGGER.info("get regions for " + experimentId);
         list.setRegions(new ArrayList<>());
-
-        final Experiment experiment = experimentRepository.findById(experimentId);
+        LOGGER.info("Experiment:" + experimentId);
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
+        LOGGER.error("Experiment:" + experiment);
         if (experiment != null) {
-            for (final Region region : regionRepository.findByExperimentId(experimentId)) {
-                list.getRegions().add(newRegionDTO(region));
+            final Set<Region> regions = regionRepository.findByExperimentId(experiment.getId());
+            for (final Region region : regions) {
+                list.getRegions().add(newRegionDTO(region, experimentId));
             }
         }
         return list;
@@ -82,11 +84,11 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.POST, produces = "application/json")
-    public RegionListDTO postRegion2Experiment(@PathVariable(value = "experimentId") final int experimentId
+    public RegionListDTO postRegion2Experiment(@PathVariable(value = "experimentId") final String experimentId
             , @RequestBody final RegionListDTO regionListDTO)
             throws IOException {
 
-        final Experiment experiment = experimentRepository.findById(experimentId);
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment != null) {
             int count = getExperimentRegions(experimentId).getRegions().size() + 1;
             for (final RegionDTO regionDTO : regionListDTO.getRegions()) {
@@ -94,8 +96,8 @@ public class RegionController extends BaseController {
                 if (region.getName() == null) {
                     region.setName("Region " + count);
                 }
-                region.setExperimentId(experimentId);
-                region.setExperimentRegionId(experimentId);
+                region.setExperimentId(experiment.getId());
+                region.setExperimentRegionId(experiment.getId());
                 regionRepository.save(region);
             }
         }
@@ -113,14 +115,14 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.PUT, produces = "application/json")
-    public RegionListDTO putRegion2Experiment(@PathVariable(value = "experimentId") final int experimentId
+    public RegionListDTO putRegion2Experiment(@PathVariable(value = "experimentId") final String experimentId
             , @RequestBody final RegionListDTO regionListDTO)
             throws IOException {
 
-        final Experiment experiment = experimentRepository.findById(experimentId);
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment != null) {
             //remove old regions
-            final Set<Region> oldRegions = regionRepository.findByExperimentId(experimentId);
+            final Set<Region> oldRegions = regionRepository.findByExperimentId(experiment.getId());
             regionRepository.delete(oldRegions);
             //add new regions
             int count = 0;
@@ -130,8 +132,8 @@ public class RegionController extends BaseController {
                 if (region.getName() == null) {
                     region.setName("Region " + count);
                 }
-                region.setExperimentId(experimentId);
-                region.setExperimentRegionId(experimentId);
+                region.setExperimentId(experiment.getId());
+                region.setExperimentRegionId(Integer.parseInt(experimentId));
                 regionRepository.save(region);
             }
         }
@@ -150,7 +152,7 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.GET, produces = "application/json")
-    public RegionDTO getExperimentRegion(@PathVariable(value = "experimentId") final int experimentId
+    public RegionDTO getExperimentRegion(@PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId)
             throws IOException {
 
@@ -159,7 +161,7 @@ public class RegionController extends BaseController {
 //        if (experiment != null) {
         Region existingRegion = regionRepository.findById(regionId);
         if (existingRegion != null) {
-            return newRegionDTO(existingRegion);
+            return newRegionDTO(existingRegion, experimentId);
         }
 //        }
         return null;
@@ -176,13 +178,12 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.POST, produces = "application/json")
-    public RegionDTO postRegion2Experiment(@PathVariable(value = "experimentId") final int experimentId
+    public RegionDTO postRegion2Experiment(@PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId
             , @RequestBody final RegionDTO regionDTO)
             throws IOException {
 
-        final Experiment experiment = experimentRepository.findById(experimentId);
-
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
 
         if (experiment != null) {
             Region existingRegion = regionRepository.findById(regionId);
@@ -217,12 +218,12 @@ public class RegionController extends BaseController {
                     existingRegion.setMinMeasurements(region.getMinMeasurements());
                 }
                 LOGGER.info("Region: " + existingRegion);
-                existingRegion.setExperimentRegionId(experimentId);
+                existingRegion.setExperimentRegionId(experiment.getId());
                 regionRepository.save(existingRegion);
             }
         }
 
-        return newRegionDTO(regionRepository.findById(regionId));
+        return newRegionDTO(regionRepository.findById(regionId), experimentId);
     }
 
     /**
@@ -235,11 +236,11 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.DELETE, produces = "application/json")
-    public RegionListDTO postRegion2Experiment(@PathVariable(value = "experimentId") final int experimentId
+    public RegionListDTO postRegion2Experiment(@PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId)
             throws IOException {
 
-        final Experiment experiment = experimentRepository.findById(experimentId);
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment != null) {
             Region region = regionRepository.findById(regionId);
             if (region != null) {

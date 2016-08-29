@@ -37,25 +37,25 @@ public class WebServiceClientTest {
 
     @Test
     public void testListExperiments() throws Exception {
-        final Experiment[] experiments = client.listExperiments();
-        for (final Experiment experiment : experiments) {
+        final ExperimentListDTO experiments = client.listExperiments();
+        for (final ExperimentDTO experiment : experiments.getExperiments()) {
             System.out.println(experiment);
         }
     }
 
     @Test
     public void testListExperimentsBySmartphoneId() throws Exception {
-        final Experiment[] experiments = client.listExperiments(15);
-        for (final Experiment experiment : experiments) {
+        final ExperimentListDTO experiments = client.listExperiments(15);
+        for (final ExperimentDTO experiment : experiments.getExperiments()) {
             System.out.println(experiment);
         }
     }
 
     @Test
     public void testGetExperiment() throws Exception {
-        final Experiment[] experiments = client.listExperiments();
-        final Experiment experiment = experiments[0];
-        final Experiment theExperiment = client.getExperiment(experiment.getId());
+        final ExperimentListDTO experiments = client.listExperiments();
+        final ExperimentDTO experiment = experiments.getExperiments().get(0);
+        final ExperimentDTO theExperiment = client.getExperiment(experiment.getId());
         System.out.println(theExperiment);
     }
 
@@ -69,9 +69,9 @@ public class WebServiceClientTest {
 
     @Test
     public void testGetPlugin() throws Exception {
-        final Experiment[] experiments = client.listExperiments();
-        final Experiment experiment = experiments[0];
-        final Experiment theExperiment = client.getExperiment(experiment.getId());
+        final ExperimentListDTO experiments = client.listExperiments();
+        final ExperimentDTO experiment = experiments.getExperiments().get(0);
+        final ExperimentDTO theExperiment = client.getExperiment(experiment.getId());
         System.out.println(theExperiment);
     }
 

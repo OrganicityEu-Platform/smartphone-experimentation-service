@@ -69,10 +69,10 @@ public class StatsController extends BaseController {
                     } else {
                         totalDateCounts.put(date, 1L);
                     }
-                    if (experimentDateCounts.get(experiment.getId()).containsKey(date)) {
-                        experimentDateCounts.get(experiment.getId()).put(date, (experimentDateCounts.get(experiment.getId()).get(date)) + 1L);
+                    if (experimentDateCounts.get(experiment.getExperimentId()).containsKey(date)) {
+                        experimentDateCounts.get(experiment.getExperimentId()).put(date, (experimentDateCounts.get(experiment.getExperimentId()).get(date)) + 1L);
                     } else {
-                        experimentDateCounts.get(experiment.getId()).put(date, 1L);
+                        experimentDateCounts.get(experiment.getExperimentId()).put(date, 1L);
                     }
                 }
             }
