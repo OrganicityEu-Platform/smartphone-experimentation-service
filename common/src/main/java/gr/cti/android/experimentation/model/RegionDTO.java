@@ -39,8 +39,6 @@ public class RegionDTO implements Serializable {
 
     private String name;
 
-    private int experimentRegionId;
-
     private String experimentId;
 
     private String startDate;
@@ -73,14 +71,6 @@ public class RegionDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getExperimentRegionId() {
-        return experimentRegionId;
-    }
-
-    public void setExperimentRegionId(int experimentRegionId) {
-        this.experimentRegionId = experimentRegionId;
     }
 
     public String getExperimentId() {
@@ -164,7 +154,6 @@ public class RegionDTO implements Serializable {
         RegionDTO regionDTO = (RegionDTO) o;
 
         if (id != regionDTO.id) return false;
-        if (experimentRegionId != regionDTO.experimentRegionId) return false;
         if (minMeasurements != regionDTO.minMeasurements) return false;
         if (maxMeasurements != regionDTO.maxMeasurements) return false;
         if (name != null ? !name.equals(regionDTO.name) : regionDTO.name != null) return false;
@@ -179,7 +168,6 @@ public class RegionDTO implements Serializable {
     public int hashCode() {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + experimentRegionId;
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
         result = 31 * result + minMeasurements;
@@ -194,7 +182,6 @@ public class RegionDTO implements Serializable {
         return "RegionDTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", experimentRegionId=" + experimentRegionId +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", minMeasurements=" + minMeasurements +

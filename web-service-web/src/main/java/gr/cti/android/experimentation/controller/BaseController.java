@@ -203,7 +203,7 @@ public class BaseController {
         return smartphone;
     }
 
-    protected RegionDTO newRegionDTO(final Region region,final String experimentId) {
+    protected RegionDTO newRegionDTO(final Region region) {
         final RegionDTO dto = new RegionDTO();
         dto.setId(region.getId());
         dto.setCoordinates(region.getCoordinates());
@@ -211,8 +211,7 @@ public class BaseController {
         dto.setEndDate(region.getEndDate());
         dto.setStartTime(region.getStartTime());
         dto.setEndTime(region.getEndTime());
-        dto.setExperimentRegionId(region.getExperimentRegionId());
-        dto.setExperimentId(experimentId);
+        dto.setExperimentId(region.getExperimentId());
         dto.setMaxMeasurements(region.getMaxMeasurements());
         dto.setMinMeasurements(region.getMinMeasurements());
         dto.setWeight(region.getWeight());
@@ -228,7 +227,6 @@ public class BaseController {
         region.setEndDate(dto.getEndDate());
         region.setStartTime(dto.getStartTime());
         region.setEndTime(dto.getEndTime());
-        region.setExperimentRegionId(dto.getExperimentRegionId());
         region.setMaxMeasurements(dto.getMaxMeasurements());
         region.setMinMeasurements(dto.getMinMeasurements());
         region.setWeight(dto.getWeight());

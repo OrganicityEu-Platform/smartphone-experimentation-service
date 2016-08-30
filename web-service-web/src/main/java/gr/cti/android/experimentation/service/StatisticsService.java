@@ -149,7 +149,7 @@ public class StatisticsService {
         return counts;
     }
 
-    public double getExperimentArea(final int experimentId) {
+    public double getExperimentArea(final String experimentId) {
         LOGGER.debug("===================================TEMPORAL COVERAGE");
         final Set<Region> regions = regionRepository.findByExperimentId(experimentId);
 

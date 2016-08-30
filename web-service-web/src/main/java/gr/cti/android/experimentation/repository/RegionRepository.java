@@ -39,5 +39,5 @@ public interface RegionRepository extends CrudRepository<Region, Long> {
 
     Region findById(int id);
 
-    Set<Region> findByExperimentId(int experimentId);
+    Set<Region> findByExperimentId(String experimentId);
 }

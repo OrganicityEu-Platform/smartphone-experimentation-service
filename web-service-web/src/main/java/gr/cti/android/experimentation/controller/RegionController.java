@@ -65,9 +65,9 @@ public class RegionController extends BaseController {
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         LOGGER.error("Experiment:" + experiment);
         if (experiment != null) {
-            final Set<Region> regions = regionRepository.findByExperimentId(experiment.getId());
+            final Set<Region> regions = regionRepository.findByExperimentId(experimentId);
             for (final Region region : regions) {
-                list.getRegions().add(newRegionDTO(region, experimentId));
+                list.getRegions().add(newRegionDTO(region));
             }
         }
         return list;
@@ -96,8 +96,7 @@ public class RegionController extends BaseController {
                 if (region.getName() == null) {
                     region.setName("Region " + count);
                 }
-                region.setExperimentId(experiment.getId());
-                region.setExperimentRegionId(experiment.getId());
+                region.setExperimentId(experiment.getExperimentId());
                 regionRepository.save(region);
             }
         }
@@ -122,7 +121,7 @@ public class RegionController extends BaseController {
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment != null) {
             //remove old regions
-            final Set<Region> oldRegions = regionRepository.findByExperimentId(experiment.getId());
+            final Set<Region> oldRegions = regionRepository.findByExperimentId(experimentId);
             regionRepository.delete(oldRegions);
             //add new regions
             int count = 0;
@@ -132,8 +131,7 @@ public class RegionController extends BaseController {
                 if (region.getName() == null) {
                     region.setName("Region " + count);
                 }
-                region.setExperimentId(experiment.getId());
-                region.setExperimentRegionId(Integer.parseInt(experimentId));
+                region.setExperimentId(experiment.getExperimentId());
                 regionRepository.save(region);
             }
         }
@@ -161,7 +159,7 @@ public class RegionController extends BaseController {
 //        if (experiment != null) {
         Region existingRegion = regionRepository.findById(regionId);
         if (existingRegion != null) {
-            return newRegionDTO(existingRegion, experimentId);
+            return newRegionDTO(existingRegion);
         }
 //        }
         return null;
@@ -218,12 +216,11 @@ public class RegionController extends BaseController {
                     existingRegion.setMinMeasurements(region.getMinMeasurements());
                 }
                 LOGGER.info("Region: " + existingRegion);
-                existingRegion.setExperimentRegionId(experiment.getId());
                 regionRepository.save(existingRegion);
             }
         }
 
-        return newRegionDTO(regionRepository.findById(regionId), experimentId);
+        return newRegionDTO(regionRepository.findById(regionId));
     }
 
     /**

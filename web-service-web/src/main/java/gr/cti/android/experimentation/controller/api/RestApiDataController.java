@@ -23,8 +23,12 @@ package gr.cti.android.experimentation.controller.api;
  * #L%
  */
 
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.controller.BaseController;
+import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.util.Utils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -60,6 +64,7 @@ public class RestApiDataController extends BaseController {
     @RequestMapping(value = "/experiment/data/{experimentId}", method = RequestMethod.GET, produces = "application/json")
     public String getExperimentDataByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
+            , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
             , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
         LOGGER.info("to:" + to);
         return getExperimentData(experiment, deviceId, after, to, accuracy).toString();
@@ -69,9 +74,10 @@ public class RestApiDataController extends BaseController {
     @RequestMapping(value = "/experiment/data/{experimentId}/hour", method = RequestMethod.GET, produces = "application/json")
     public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
+            , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
             , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
-        JSONObject data = getExperimentHourlyData(experiment, deviceId, after, to, accuracy);
-        LOGGER.info(data);
+        final Region region = regionRepository.findById(Integer.parseInt(regionId));
+        JSONObject data = getExperimentHourlyData(experiment, deviceId, after, to, accuracy, region);
         return data.toString();
     }
 
@@ -122,7 +128,7 @@ public class RestApiDataController extends BaseController {
         return addressPoints;
     }
 
-    private JSONObject getExperimentHourlyData(final String experiment, final int deviceId, final String after, final String to, final int accuracy) {
+    private JSONObject getExperimentHourlyData(final String experiment, final int deviceId, final String after, final String to, final int accuracy, final Region region) {
         final String format = getFormat(accuracy);
         final DecimalFormat df = new DecimalFormat(format);
         final long start = parseDateMillis(after);
@@ -136,6 +142,11 @@ public class RestApiDataController extends BaseController {
         }
 
         try {
+            Polygon poly = null;
+            if (region != null) {
+                poly = Utils.createPolygonForRegion(region);
+            }
+
             final Map<Integer, Map<String, Map<String, Map<String, DescriptiveStatistics>>>> dataAggregates = new HashMap<>();
             String longitude;
             String latitude;
@@ -156,6 +167,11 @@ public class RestApiDataController extends BaseController {
                     if (message.has(LATITUDE) && message.has(LONGITUDE)) {
                         longitude = df.format(message.getDouble(LONGITUDE));
                         latitude = df.format(message.getDouble(LATITUDE));
+
+                        if (poly != null && !dataInRegion(poly, latitude, longitude)) {
+                            continue;
+                        }
+
                         if (!dataAggregates.containsKey(hour)) {
                             dataAggregates.put(hour, new HashMap<>());
                         }
@@ -217,7 +233,6 @@ public class RestApiDataController extends BaseController {
                 final JSONArray addressPoints = new JSONArray();
                 for (final String longit : dataAggregates.get(hour).keySet()) {
                     for (final String latit : dataAggregates.get(hour).get(longit).keySet()) {
-                        LOGGER.info("{" + longit + ":" + latit + "}");
                         final JSONArray measurement = new JSONArray();
                         try {
                             measurement.put(Double.parseDouble(latit));
@@ -233,7 +248,6 @@ public class RestApiDataController extends BaseController {
                                 final String keyString = (String) key;
                                 final String part = keyString.split("\\.")[keyString.split("\\.").length - 1];
                                 double value = dataAggregates.get(hour).get(longit).get(latit).get(keyString).getMean();
-                                LOGGER.info("value: " + value);
                                 if (Double.isFinite(value) && value != 1) {
                                     data.put(part, value);
                                 } else {
@@ -253,13 +267,17 @@ public class RestApiDataController extends BaseController {
                     LOGGER.error(e, e);
                 }
             }
-            LOGGER.info(hourlyPoints.toString());
             return hourlyPoints;
         } catch (Exception e) {
             LOGGER.error(e, e);
         }
         return null;
 
+    }
+
+    private boolean dataInRegion(Polygon polygon, String latitude, String longitude) {
+        final Point point = Utils.createPointForCoordinates(latitude, longitude);
+        return polygon.contains(point);
     }
 
 

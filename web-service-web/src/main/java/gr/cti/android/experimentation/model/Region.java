@@ -45,8 +45,6 @@ public class Region implements Serializable {
 
     private String name;
 
-    private Integer experimentRegionId;
-
     private String startDate;
 
     private String endDate;
@@ -63,7 +61,7 @@ public class Region implements Serializable {
 
     private String coordinates;
 
-    private Integer experimentId;
+    private String experimentId;
 
     public int getId() {
         return id;
@@ -79,14 +77,6 @@ public class Region implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getExperimentRegionId() {
-        return experimentRegionId;
-    }
-
-    public void setExperimentRegionId(int experimentRegionId) {
-        this.experimentRegionId = experimentRegionId;
     }
 
     public String getStartDate() {
@@ -153,11 +143,11 @@ public class Region implements Serializable {
         this.coordinates = coordinates;
     }
 
-    public int getExperimentId() {
+    public String getExperimentId() {
         return experimentId;
     }
 
-    public void setExperimentId(int experimentId) {
+    public void setExperimentId(String experimentId) {
         this.experimentId = experimentId;
     }
 
@@ -169,7 +159,6 @@ public class Region implements Serializable {
         Region region = (Region) o;
 
         if (id != region.id) return false;
-        if (experimentRegionId != region.experimentRegionId) return false;
         if (minMeasurements != region.minMeasurements) return false;
         if (maxMeasurements != region.maxMeasurements) return false;
         if (experimentId != region.experimentId) return false;
@@ -185,14 +174,12 @@ public class Region implements Serializable {
     public int hashCode() {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + experimentRegionId;
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
         result = 31 * result + minMeasurements;
         result = 31 * result + maxMeasurements;
         result = 31 * result + (weight != null ? weight.hashCode() : 0);
         result = 31 * result + (coordinates != null ? coordinates.hashCode() : 0);
-        result = 31 * result + experimentId;
         return result;
     }
 
@@ -201,7 +188,6 @@ public class Region implements Serializable {
         return "Region{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", experimentRegionId=" + experimentRegionId +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", minMeasurements=" + minMeasurements +
