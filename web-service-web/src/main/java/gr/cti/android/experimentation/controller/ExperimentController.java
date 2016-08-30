@@ -25,7 +25,10 @@ package gr.cti.android.experimentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.ApiResponse;
+import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.ExperimentDTO;
+import gr.cti.android.experimentation.model.ExperimentListDTO;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.springframework.stereotype.Controller;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -103,12 +107,17 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces = "application/json")
-    public ExperimentListDTO listExperiments(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
+    public ExperimentListDTO listExperiments(
+            Principal principal,
+            @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
         LOGGER.info("GET /experiment");
         final ExperimentListDTO experiments = new ExperimentListDTO();
         experiments.setExperiments(new ArrayList<>());
         final Iterable<Experiment> enabledExperiments = experimentRepository.findAll();
         for (Experiment enabledExperiment : enabledExperiments) {
+            if (principal != null && !enabledExperiment.getUserId().equals(principal.getName())) {
+                continue;
+            }
             experiments.getExperiments().add(newExperimentDTO(enabledExperiment));
         }
         return experiments;
