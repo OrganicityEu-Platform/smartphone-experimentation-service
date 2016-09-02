@@ -27,6 +27,7 @@ import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.exception.PluginNotFoundException;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
+import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.model.PluginListDTO;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -62,14 +63,14 @@ public class PluginController extends BaseController {
     public PluginListDTO getPluginList(
             final Principal principal,
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
-            @RequestParam(value = "userId", required = false) final Long userId,
             @RequestParam(value = "type", required = false, defaultValue = "live") final String type)
             throws NotAuthorizedException {
         LOGGER.debug(String.format("GET /plugin %s", principal));
 
         PluginListDTO pluginListDTO = new PluginListDTO();
         pluginListDTO.setPlugins(new ArrayList<>());
-        if (userId != null) {
+        if (principal != null) {
+            final String userId = principal.getName();
             final Set<Plugin> plugins = pluginRepository.findByUserId(userId);
             for (Plugin plugin : plugins) {
                 pluginListDTO.getPlugins().add(newPluginDTO(plugin));
@@ -88,61 +89,67 @@ public class PluginController extends BaseController {
      *
      * @param principal the user principal.
      * @param response  the HTTP response object.
-     * @param plugin    the plugin object to register.
+     * @param pluginDTO the plugin object to register.
      */
     @ResponseBody
     @RequestMapping(value = "/plugin", method = RequestMethod.POST, produces = "application/json")
     public Object addPlugin(final Principal principal, HttpServletResponse response,
-                            @ModelAttribute final Plugin plugin) throws IOException {
+                            @ModelAttribute final PluginDTO pluginDTO) throws IOException, NotAuthorizedException {
         LOGGER.debug(String.format("POST /plugin %s", principal));
 
+        if (principal == null) {
+            throw new NotAuthorizedException();
+        }
+
         final ApiResponse apiResponse = new ApiResponse();
-        final String contextType = plugin.getContextType();
+        final String contextType = pluginDTO.getContextType();
         if (contextType == null
-                || plugin.getName() == null
-                || plugin.getImageUrl() == null
-                || plugin.getFilename() == null
-                || plugin.getInstallUrl() == null
-                || plugin.getDescription() == null
-                || plugin.getRuntimeFactoryClass() == null
-                || plugin.getUserId() == null
+                || pluginDTO.getName() == null
+                || pluginDTO.getImageUrl() == null
+                || pluginDTO.getFilename() == null
+                || pluginDTO.getInstallUrl() == null
+                || pluginDTO.getDescription() == null
+                || pluginDTO.getRuntimeFactoryClass() == null
                 ) {
-            LOGGER.info("wrong data: " + plugin);
+            LOGGER.info("wrong data: " + pluginDTO);
             String errorMessage = "error";
             if (contextType == null) {
                 errorMessage = "contextType cannot be null";
-            } else if (plugin.getName() == null) {
+            } else if (pluginDTO.getName() == null) {
                 errorMessage = "name cannot be null";
-            } else if (plugin.getImageUrl() == null) {
+            } else if (pluginDTO.getImageUrl() == null) {
                 errorMessage = "imageUrl cannot be null";
-            } else if (plugin.getFilename() == null) {
+            } else if (pluginDTO.getFilename() == null) {
                 errorMessage = "filename cannot be null";
-            } else if (plugin.getInstallUrl() == null) {
+            } else if (pluginDTO.getInstallUrl() == null) {
                 errorMessage = "url cannot be null";
-            } else if (plugin.getDescription() == null) {
+            } else if (pluginDTO.getDescription() == null) {
                 errorMessage = "description cannot be null";
-            } else if (plugin.getRuntimeFactoryClass() == null) {
+            } else if (pluginDTO.getRuntimeFactoryClass() == null) {
                 errorMessage = "runtimeFactoryClass cannot be null";
-            } else if (plugin.getUserId() == null) {
-                errorMessage = "userId cannot be null";
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
         } else {
             final Set<Plugin> existingPlugins = pluginRepository.findByContextType(contextType);
             if (existingPlugins.isEmpty()) {
-                LOGGER.info("addPlugin: " + plugin);
+                LOGGER.info("addPlugin: " + pluginDTO);
+                Plugin plugin = newPlugin(pluginDTO);
+                plugin.setEnabled(false);
+                plugin.setPublicList(false);
+                plugin.setUserId(principal.getName());
                 pluginRepository.save(plugin);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");
-                apiResponse.setValue(plugin);
+                apiResponse.setValue(pluginDTO);
                 return apiResponse;
             } else {
-                LOGGER.info("plugin exists: " + plugin);
+                LOGGER.info("plugin exists: " + pluginDTO);
                 response.sendError(HttpServletResponse.SC_CONFLICT, "a plugin with this contextType already exists");
             }
         }
         return null;
     }
+
 
     /**
      * Get an existing plugin.
@@ -182,8 +189,12 @@ public class PluginController extends BaseController {
     @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
     public Object addPlugin(final Principal principal, HttpServletResponse response,
                             @ModelAttribute final Plugin plugin,
-                            @PathVariable("pluginId") final long pluginId) throws IOException, PluginNotFoundException {
+                            @PathVariable("pluginId") final long pluginId) throws IOException, PluginNotFoundException, NotAuthorizedException {
         LOGGER.debug(String.format("POST /plugin/%d %s", pluginId, principal));
+
+        if (principal == null) {
+            throw new NotAuthorizedException();
+        }
 
         final ApiResponse apiResponse = new ApiResponse();
         final String contextType = plugin.getContextType();
@@ -220,8 +231,14 @@ public class PluginController extends BaseController {
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
         } else {
+
             final Plugin storedPlugin = pluginRepository.findById((int) pluginId);
-            if (storedPlugin != null) {
+            if (storedPlugin == null) {
+                throw new PluginNotFoundException();
+            } else {
+                if (!principal.getName().equals(storedPlugin.getUserId())) {
+                    throw new PluginNotFoundException();
+                }
 
                 final Set<Plugin> existingPlugins = pluginRepository.findByContextType(contextType);
                 for (final Plugin existingPlugin : existingPlugins) {
@@ -244,8 +261,6 @@ public class PluginController extends BaseController {
                 apiResponse.setMessage("ok");
                 apiResponse.setValue(plugin);
                 return apiResponse;
-            } else {
-                throw new PluginNotFoundException();
             }
         }
         return null;
@@ -274,6 +289,10 @@ public class PluginController extends BaseController {
         if (plugin == null) {
             throw new PluginNotFoundException();
         } else {
+            if (principal.getName().equals(plugin.getUserId())) {
+                throw new NotAuthorizedException();
+            }
+
             pluginRepository.delete(plugin);
             apiResponse.setStatus(HttpServletResponse.SC_OK);
             apiResponse.setMessage("ok");

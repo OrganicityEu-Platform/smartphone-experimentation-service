@@ -23,7 +23,6 @@ package gr.cti.android.experimentation.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.Entity;
@@ -45,8 +44,9 @@ public class Plugin implements Serializable {
     private String installUrl;
     private String imageUrl;
     private String filename;
-    @JsonIgnore
-    private Long userId;
+    private boolean enabled;
+    private boolean publicList;
+    private String userId;
 
     public Plugin() {
     }
@@ -115,12 +115,28 @@ public class Plugin implements Serializable {
         this.filename = filename;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean isPublicList() {
+        return publicList;
+    }
+
+    public void setPublicList(boolean publicList) {
+        this.publicList = publicList;
     }
 
     @Override

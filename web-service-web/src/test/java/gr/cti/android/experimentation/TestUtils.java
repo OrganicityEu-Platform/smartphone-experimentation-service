@@ -72,7 +72,7 @@ public class TestUtils {
         plugin.setDescription("test description");
         plugin.setImageUrl("http://image.jpg");
         plugin.setInstallUrl("http://repo.smartphone-experimentation.eu/plugin.jar");
-        plugin.setUserId(1L);
+        plugin.setUserId("1");
         return plugin;
     }
 }

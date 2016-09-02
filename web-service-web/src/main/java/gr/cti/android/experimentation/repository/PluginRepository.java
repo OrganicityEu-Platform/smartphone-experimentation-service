@@ -45,5 +45,5 @@ public interface PluginRepository extends CrudRepository<Plugin, Long> {
 
     Plugin findById(int id);
 
-    Set<Plugin> findByUserId(Long userId);
+    Set<Plugin> findByUserId(String userId);
 }

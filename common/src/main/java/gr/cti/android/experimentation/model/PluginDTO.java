@@ -23,7 +23,6 @@ package gr.cti.android.experimentation.model;
  * #L%
  */
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -39,8 +38,6 @@ public class PluginDTO implements Serializable {
     private String installUrl;
     private String imageUrl;
     private String filename;
-    @JsonIgnore
-    private Long userId;
 
     public PluginDTO() {
     }
@@ -107,14 +104,6 @@ public class PluginDTO implements Serializable {
 
     public void setFilename(String filename) {
         this.filename = filename;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     @Override

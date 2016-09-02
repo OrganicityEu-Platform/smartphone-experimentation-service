@@ -237,7 +237,6 @@ public class BaseController {
     protected PluginDTO newPluginDTO(final Plugin plugin) {
         final PluginDTO dto = new PluginDTO();
         dto.setId(plugin.getId());
-        dto.setUserId(plugin.getUserId());
         dto.setImageUrl(plugin.getImageUrl());
         dto.setInstallUrl(plugin.getInstallUrl());
         dto.setContextType(plugin.getContextType());
@@ -264,4 +263,15 @@ public class BaseController {
         return dto;
     }
 
+    protected Plugin newPlugin(final PluginDTO dto) {
+        final Plugin plugin = new Plugin();
+        plugin.setName(dto.getName());
+        plugin.setContextType(dto.getContextType());
+        plugin.setRuntimeFactoryClass(dto.getRuntimeFactoryClass());
+        plugin.setDescription(dto.getDescription());
+        plugin.setInstallUrl(dto.getInstallUrl());
+        plugin.setImageUrl(dto.getImageUrl());
+        plugin.setFilename(dto.getFilename());
+        return plugin;
+    }
 }
