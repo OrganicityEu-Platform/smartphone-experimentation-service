@@ -23,8 +23,10 @@ package gr.cti.android.experimentation.controller.exception;
  * #L%
  */
 
+import gr.cti.android.experimentation.exception.ExperimentNotFoundException;
 import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.exception.PluginNotFoundException;
+import gr.cti.android.experimentation.exception.RegionNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,13 +39,25 @@ public class ExceptionHandlingController {
 
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Not Authorized")  // 401
     @ExceptionHandler(NotAuthorizedException.class)
-    public void conflict() {
+    public void notAuthorized() {
         // Nothing to do
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Plugin Not found")  // 404
     @ExceptionHandler(PluginNotFoundException.class)
     public void pluginNotFound() {
+        // Nothing to do
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Experiment Not found")  // 404
+    @ExceptionHandler(ExperimentNotFoundException.class)
+    public void experimentNotFound() {
+        // Nothing to do
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Region Not found")  // 404
+    @ExceptionHandler(RegionNotFoundException.class)
+    public void regionNotFound() {
         // Nothing to do
     }
 
