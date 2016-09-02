@@ -260,6 +260,7 @@ public class BaseController {
         dto.setStatus(experiment.getStatus());
         dto.setSensorDependencies(experiment.getSensorDependencies());
         dto.setDescription(experiment.getDescription());
+        dto.setFilename(experiment.getFilename());
         return dto;
     }
 

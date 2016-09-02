@@ -77,21 +77,22 @@ public class SmartphoneController extends BaseController {
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getTotalSmartphoneStatistics(
             @PathVariable(value = "smartphoneId") final int smartphoneId) {
-        return getExperimentSmartphoneStatistics(smartphoneId, 0);
+        return getExperimentSmartphoneStatistics(smartphoneId, null);
     }
 
     @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics/{experimentId}", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getExperimentSmartphoneStatistics(
-            @PathVariable(value = "smartphoneId") final int smartphoneId, @PathVariable(value = "experimentId") final int experimentId) {
+            @PathVariable(value = "smartphoneId") final int smartphoneId, @PathVariable(value = "experimentId") final String experimentId) {
 
         final Smartphone smartphone = smartphoneRepository.findById(smartphoneId);
         if (smartphone != null) {
             final SmartphoneStatisticsDTO smartphoneStatistics = new SmartphoneStatisticsDTO(smartphoneId);
             smartphoneStatistics.setSensorRules(smartphone.getSensorsRules());
             smartphoneStatistics.setReadings(resultRepository.countByDeviceId(smartphone.getId()));
-            if (experimentId != 0) {
-                smartphoneStatistics.setExperimentReadings(resultRepository.countByDeviceIdAndExperimentId(smartphone.getId(), experimentId));
+            if (experimentId != null) {
+                final Experiment exp = experimentRepository.findByExperimentId(experimentId);
+                smartphoneStatistics.setExperimentReadings(resultRepository.countByDeviceIdAndExperimentId(smartphone.getId(), exp.getId()));
             } else {
                 smartphoneStatistics.setExperimentReadings(0);
             }
@@ -103,10 +104,11 @@ public class SmartphoneController extends BaseController {
             smartphoneStatistics.setExperiments(experimentIdsTotal.size());
 
             smartphoneStatistics.setLast7Days(getLast7DaysTotalReadings(smartphone));
-            if (experimentId != 0) {
-                smartphoneStatistics.setExperimentRankings(getRankingList("", experimentId));
-                smartphoneStatistics.setExperimentBadges(newBadgeDTOSet(badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphone.getId())));
-                smartphoneStatistics.setExperimentUsage(getExperimentParticipationTime(experimentId, smartphoneId));
+            if (experimentId != null) {
+                final Experiment exp = experimentRepository.findByExperimentId(experimentId);
+                smartphoneStatistics.setExperimentRankings(getRankingList("", exp.getId()));
+                smartphoneStatistics.setExperimentBadges(newBadgeDTOSet(badgeRepository.findByExperimentIdAndDeviceId(exp.getId(), smartphone.getId())));
+                smartphoneStatistics.setExperimentUsage(getExperimentParticipationTime(exp.getId(), smartphoneId));
             }
             smartphoneStatistics.setBadges(newBadgeDTOSet(badgeRepository.findByDeviceId(smartphone.getId())));
             smartphoneStatistics.setRankings(getRankingList("", 0));

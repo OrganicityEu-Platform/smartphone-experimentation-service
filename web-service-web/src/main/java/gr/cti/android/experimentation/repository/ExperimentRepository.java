@@ -37,7 +37,7 @@ public interface ExperimentRepository extends CrudRepository<Experiment, Long> {
 
     Page<Experiment> findAll(Pageable pageable);
 
-    Experiment findById(String id);
+    Experiment findById(int id);
 
     Experiment findByExperimentId(String experimentId);
 
