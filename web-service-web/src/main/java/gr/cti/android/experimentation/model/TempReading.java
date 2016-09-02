@@ -23,9 +23,6 @@ package gr.cti.android.experimentation.model;
  * #L%
  */
 
-/**
- * Created by amaxilatis on 10/11/2015.
- */
 public class TempReading {
     private long timestamp;
     private double value;

@@ -28,13 +28,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
 
-/**
- * Created with IntelliJ IDEA.
- * User: theodori
- * Date: 9/4/13
- * Time: 11:06 AM
- * To change this template use File | Settings | File Templates.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseExperiment implements Serializable {

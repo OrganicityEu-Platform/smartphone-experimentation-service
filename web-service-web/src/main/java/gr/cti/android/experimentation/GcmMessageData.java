@@ -23,9 +23,6 @@ package gr.cti.android.experimentation;
  * #L%
  */
 
-/**
- * Created by amaxilatis on 2/11/2015.
- */
 public class GcmMessageData {
     private String type;
     private Integer count;
