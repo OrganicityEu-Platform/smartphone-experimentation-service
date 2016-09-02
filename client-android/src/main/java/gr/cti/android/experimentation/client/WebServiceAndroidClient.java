@@ -79,8 +79,8 @@ public class WebServiceAndroidClient {
                 HttpMethod.GET, req, ExperimentListDTO.class).getBody();
     }
 
-    public ExperimentDTO getExperiment(final String id) {
-        return restTemplate.exchange(BASE_URL + "experiment/" + id,
+    public ExperimentDTO getExperiment(final String experimentId) {
+        return restTemplate.exchange(BASE_URL + "experiment/" + experimentId,
                 HttpMethod.GET, req, ExperimentDTO.class).getBody();
     }
 
@@ -94,7 +94,7 @@ public class WebServiceAndroidClient {
                 HttpMethod.GET, req, SmartphoneStatisticsDTO.class).getBody();
     }
 
-    public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId, final int experimentId) {
+    public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId, final String experimentId) {
         return restTemplate.exchange(BASE_URL + "/smartphone/" + smartphoneId + "/statistics/" + experimentId,
                 HttpMethod.GET, req, SmartphoneStatisticsDTO.class).getBody();
     }
@@ -104,7 +104,7 @@ public class WebServiceAndroidClient {
                 HttpMethod.POST, new HttpEntity<>(smartphone, headers), SmartphoneDTO.class).getBody();
     }
 
-    public RegionListDTO getExperimentRegions(final int experimentId) {
+    public RegionListDTO getExperimentRegions(final String experimentId) {
         return restTemplate.exchange(BASE_URL + "/experiment/" + experimentId + "/region",
                 HttpMethod.GET, req, RegionListDTO.class).getBody();
     }

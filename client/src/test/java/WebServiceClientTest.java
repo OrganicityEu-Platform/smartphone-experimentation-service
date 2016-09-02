@@ -83,13 +83,13 @@ public class WebServiceClientTest {
 
     @Test
     public void testGetSmartphoneStatistics2() throws Exception {
-        final SmartphoneStatisticsDTO smartphoneStatistics = client.getSmartphoneStatistics(15, 22);
+        final SmartphoneStatisticsDTO smartphoneStatistics = client.getSmartphoneStatistics(15, "22");
         System.out.println(smartphoneStatistics);
     }
 
     @Test
     public void testGetExperimentRegions() throws Exception {
-        final RegionListDTO regions = client.getExperimentRegions(22);
+        final RegionListDTO regions = client.getExperimentRegions("22");
         for (RegionDTO dto : regions.getRegions()) {
             System.out.println(dto);
         }
