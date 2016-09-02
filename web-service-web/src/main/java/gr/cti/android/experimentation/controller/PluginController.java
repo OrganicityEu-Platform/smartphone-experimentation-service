@@ -236,7 +236,7 @@ public class PluginController extends BaseController {
             if (storedPlugin == null) {
                 throw new PluginNotFoundException();
             } else {
-                if (!principal.getName().equals(storedPlugin.getUserId())) {
+                if (!isPluginOfUser(plugin,principal)) {
                     throw new PluginNotFoundException();
                 }
 
@@ -289,8 +289,8 @@ public class PluginController extends BaseController {
         if (plugin == null) {
             throw new PluginNotFoundException();
         } else {
-            if (principal.getName().equals(plugin.getUserId())) {
-                throw new NotAuthorizedException();
+            if (!isPluginOfUser(plugin, principal)) {
+                throw new PluginNotFoundException();
             }
 
             pluginRepository.delete(plugin);

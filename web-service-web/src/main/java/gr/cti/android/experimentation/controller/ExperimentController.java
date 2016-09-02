@@ -25,6 +25,8 @@ package gr.cti.android.experimentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
+import gr.cti.android.experimentation.exception.ExperimentNotFoundException;
+import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.ExperimentDTO;
@@ -63,9 +65,13 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/contact/experiment", method = RequestMethod.POST, produces = "application/json")
-    public String contactExperiment(final HttpServletResponse response,
+    public String contactExperiment(Principal principal, final HttpServletResponse response,
                                     @RequestParam(value = "experimentId") final String experimentId,
-                                    @RequestParam(value = "message") final String message) throws JSONException {
+                                    @RequestParam(value = "message") final String message) throws JSONException, ExperimentNotFoundException {
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
+        if (experiment == null || !isExperimentOfUser(experiment, principal)) {
+            throw new ExperimentNotFoundException();
+        }
         try {
             gcmService.send2Experiment(Integer.parseInt(experimentId), message);
         } catch (Exception e) {
@@ -176,8 +182,12 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment", method = RequestMethod.POST, produces = "application/json")
-    public ApiResponse addExperiment(HttpServletResponse response, @ModelAttribute ExperimentDTO experiment)
-            throws IOException {
+    public ApiResponse addExperiment(Principal principal, HttpServletResponse response, @ModelAttribute ExperimentDTO experiment)
+            throws IOException, NotAuthorizedException {
+        if (principal == null) {
+            throw new NotAuthorizedException();
+        }
+
         final ApiResponse apiResponse = new ApiResponse();
         LOGGER.info("addExperiment " + experiment);
         if (experiment.getName() == null
@@ -253,7 +263,12 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
-    public ApiResponse updateExperiment(HttpServletResponse response, @ModelAttribute final ExperimentDTO experiment, @PathVariable("experimentId") final String experimentId) throws IOException {
+    public ApiResponse updateExperiment(Principal principal, HttpServletResponse response,
+                                        @ModelAttribute final ExperimentDTO experiment,
+                                        @PathVariable("experimentId") final String experimentId) throws IOException, NotAuthorizedException, ExperimentNotFoundException {
+        if (principal == null) {
+            throw new NotAuthorizedException();
+        }
 
         final ApiResponse apiResponse = new ApiResponse();
 //        if (experiment.getName() == null
@@ -285,6 +300,10 @@ public class ExperimentController extends BaseController {
 //        } else {
         final Experiment storedExperiment = experimentRepository.findByExperimentId(experimentId);
         if (storedExperiment != null) {
+            if (!isExperimentOfUser(storedExperiment, principal)) {
+                throw new ExperimentNotFoundException();
+            }
+
             if (experiment.getName() != null) {
                 storedExperiment.setName(experiment.getName());
             }
@@ -320,10 +339,8 @@ public class ExperimentController extends BaseController {
             return apiResponse;
         } else {
             LOGGER.error("experiment not found: " + experiment);
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "an experiment with this id does not exist");
+            throw new ExperimentNotFoundException();
         }
-//        }
-        return null;
     }
 
     /**
@@ -336,22 +353,26 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.DELETE, produces = "application/json")
-    public ApiResponse deleteExperiment(HttpServletResponse response,
-                                        @PathVariable(value = "experimentId") final String experimentId) throws IOException {
-
+    public ApiResponse deleteExperiment(Principal principal, HttpServletResponse response,
+                                        @PathVariable(value = "experimentId") final String experimentId)
+            throws IOException, NotAuthorizedException, ExperimentNotFoundException {
+        if (principal == null) {
+            throw new NotAuthorizedException();
+        }
         final ApiResponse apiResponse = new ApiResponse();
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment == null) {
-            final String errorMessage = "no experiment found with this id";
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, errorMessage);
+            throw new ExperimentNotFoundException();
         } else {
+            if (!isExperimentOfUser(experiment, principal)) {
+                throw new ExperimentNotFoundException();
+            }
             experimentRepository.delete(experiment);
             apiResponse.setStatus(HttpServletResponse.SC_OK);
             apiResponse.setMessage("ok");
             apiResponse.setValue(experiment);
             return apiResponse;
         }
-        return null;
     }
 
 }

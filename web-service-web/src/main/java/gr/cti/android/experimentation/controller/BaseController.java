@@ -25,7 +25,10 @@ package gr.cti.android.experimentation.controller;
 
 import gr.cti.android.experimentation.model.*;
 import gr.cti.android.experimentation.repository.*;
-import gr.cti.android.experimentation.service.*;
+import gr.cti.android.experimentation.service.GCMService;
+import gr.cti.android.experimentation.service.ModelService;
+import gr.cti.android.experimentation.service.OrionService;
+import gr.cti.android.experimentation.service.SqlDbService;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +37,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -273,5 +277,13 @@ public class BaseController {
         plugin.setImageUrl(dto.getImageUrl());
         plugin.setFilename(dto.getFilename());
         return plugin;
+    }
+
+    protected boolean isPluginOfUser(final Plugin plugin, final Principal principal) {
+        return plugin.getUserId().equals(principal.getName());
+    }
+
+    protected boolean isExperimentOfUser(final Experiment experiment, final Principal principal) {
+        return experiment.getUserId().equals(principal.getName());
     }
 }
