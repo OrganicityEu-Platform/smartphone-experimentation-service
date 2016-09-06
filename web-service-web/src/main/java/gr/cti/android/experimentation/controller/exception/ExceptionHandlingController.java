@@ -27,6 +27,7 @@ import gr.cti.android.experimentation.exception.ExperimentNotFoundException;
 import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.exception.PluginNotFoundException;
 import gr.cti.android.experimentation.exception.RegionNotFoundException;
+import org.keycloak.common.VerificationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,6 +41,12 @@ public class ExceptionHandlingController {
     @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Not Authorized")  // 401
     @ExceptionHandler(NotAuthorizedException.class)
     public void notAuthorized() {
+        // Nothing to do
+    }
+
+    @ResponseStatus(value = HttpStatus.UNAUTHORIZED, reason = "Token Expired")  // 401
+    @ExceptionHandler(VerificationException.class)
+    public void tokenIsNotActive() {
         // Nothing to do
     }
 
