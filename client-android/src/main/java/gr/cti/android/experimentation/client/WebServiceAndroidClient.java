@@ -28,12 +28,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 public class WebServiceAndroidClient {
     private final RestTemplate restTemplate;
 
-    private static final String BASE_URL = "http://api.smartphone-experimentation.eu/v1/";
+    private static final String BASE_URL = "https://api.smartphone-experimentation.eu/v1/";
     private String token;
     private HttpHeaders headers;
     private HttpEntity<String> req;
@@ -51,14 +52,24 @@ public class WebServiceAndroidClient {
         req = new HttpEntity<>("", headers);
     }
 
+
+    public void setErrorHandler(final ResponseErrorHandler responseErrorHandler) {
+        restTemplate.setErrorHandler(responseErrorHandler);
+    }
+
     public void clearToken() {
         this.token = "";
         headers.remove(HttpHeaders.AUTHORIZATION);
     }
 
+    public String getToken() {
+        return token;
+    }
+
     public void setToken(final String token) {
         this.token = token;
         if (!"".equals(token)) {
+            headers.remove(HttpHeaders.AUTHORIZATION);
             headers.add(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", token));
         }
         req = new HttpEntity<>("", headers);
