@@ -116,7 +116,7 @@ public class ExperimentController extends BaseController {
     public ExperimentListDTO listExperiments(
             Principal principal,
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        LOGGER.info("GET /experiment");
+        LOGGER.info("GET /experiment " + principal);
         final ExperimentListDTO experiments = new ExperimentListDTO();
         experiments.setExperiments(new ArrayList<>());
         final Iterable<Experiment> enabledExperiments = experimentRepository.findAll();
@@ -137,8 +137,9 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/live", method = RequestMethod.GET, produces = "application/json")
-    public ExperimentListDTO listLiveExperiments(@RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        LOGGER.info("GET /experiment");
+    public ExperimentListDTO listLiveExperiments(Principal principal,
+                                                 @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
+        LOGGER.info("GET /experiment " + pluginRepository);
         final ExperimentListDTO experiments = new ExperimentListDTO();
         experiments.setExperiments(new ArrayList<>());
         final Iterable<Experiment> enabledExperiments = experimentRepository.findByEnabled(true);
@@ -158,10 +159,10 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
-    public ExperimentDTO getExperiment(HttpServletResponse response,
+    public ExperimentDTO getExperiment(Principal principal, HttpServletResponse response,
                                        @PathVariable(value = "experimentId") final String experimentId)
             throws IOException {
-        LOGGER.info("GET /experiment/" + experimentId);
+        LOGGER.info("GET /experiment/" + experimentId + " " + principal);
 
         final Experiment storedExperiment = experimentRepository.findByExperimentId(experimentId);
         if (storedExperiment != null) {
@@ -184,6 +185,8 @@ public class ExperimentController extends BaseController {
     @RequestMapping(value = "/experiment", method = RequestMethod.POST, produces = "application/json")
     public ApiResponse addExperiment(Principal principal, HttpServletResponse response, @ModelAttribute ExperimentDTO experiment)
             throws IOException, NotAuthorizedException {
+        LOGGER.info("POST /experiment " + principal);
+
         if (principal == null) {
             throw new NotAuthorizedException();
         }
@@ -191,6 +194,7 @@ public class ExperimentController extends BaseController {
         final ApiResponse apiResponse = new ApiResponse();
         LOGGER.info("addExperiment " + experiment);
         if (experiment.getName() == null
+                || experiment.getId() == null
                 || experiment.getDescription() == null
                 || experiment.getUrlDescription() == null
 //                || experiment.getUrl() == null
@@ -200,7 +204,9 @@ public class ExperimentController extends BaseController {
                 ) {
             LOGGER.info("wrong data: " + experiment);
             String errorMessage = "error";
-            if (experiment.getName() == null) {
+            if (experiment.getId() == null) {
+                errorMessage = "experiment id cannot be null";
+            } else if (experiment.getName() == null) {
                 errorMessage = "name cannot be null";
             } else if (experiment.getDescription() == null) {
                 errorMessage = "description cannot be null";

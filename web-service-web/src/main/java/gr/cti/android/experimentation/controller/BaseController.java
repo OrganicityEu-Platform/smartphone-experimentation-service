@@ -29,6 +29,7 @@ import gr.cti.android.experimentation.service.GCMService;
 import gr.cti.android.experimentation.service.ModelService;
 import gr.cti.android.experimentation.service.OrionService;
 import gr.cti.android.experimentation.service.SqlDbService;
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +45,11 @@ import java.util.*;
 
 @Controller
 public class BaseController {
+
+    /**
+     * a log4j logger to print messages.
+     */
+    private static final Logger LOGGER = Logger.getLogger(BaseController.class);
 
     protected static final String LATITUDE = "org.ambientdynamix.contextplugins.Latitude";
     protected static final String LONGITUDE = "org.ambientdynamix.contextplugins.Longitude";
@@ -284,6 +290,7 @@ public class BaseController {
     }
 
     protected boolean isExperimentOfUser(final Experiment experiment, final Principal principal) {
+        LOGGER.info("experiment.userId:" + experiment.getId() + "principal:" + principal.getName());
         return experiment.getUserId().equals(principal.getName());
     }
 }

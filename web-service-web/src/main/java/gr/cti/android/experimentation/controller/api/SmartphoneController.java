@@ -33,6 +33,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,15 +77,19 @@ public class SmartphoneController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getTotalSmartphoneStatistics(
+            Principal principal,
             @PathVariable(value = "smartphoneId") final int smartphoneId) {
-        return getExperimentSmartphoneStatistics(smartphoneId, null);
+        LOGGER.info("GET /smartphone/" + smartphoneId + "/statistics " + principal);
+        return
+                getExperimentSmartphoneStatistics(principal, smartphoneId, null);
     }
 
     @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics/{experimentId}", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getExperimentSmartphoneStatistics(
-            @PathVariable(value = "smartphoneId") final int smartphoneId, @PathVariable(value = "experimentId") final String experimentId) {
-
+            Principal principal, @PathVariable(value = "smartphoneId") final int smartphoneId,
+            @PathVariable(value = "experimentId") final String experimentId) {
+        LOGGER.info("GET /smartphone/" + smartphoneId + "/statistics/" + experimentId + " " + principal);
         final Smartphone smartphone = smartphoneRepository.findById(smartphoneId);
         if (smartphone != null) {
             final SmartphoneStatisticsDTO smartphoneStatistics = new SmartphoneStatisticsDTO(smartphoneId);
