@@ -140,9 +140,10 @@ public class RestRankingController extends BaseController {
     @RequestMapping(value = {"/ranking", "/rankings"}, method = RequestMethod.GET)
     public Set<RankingEntry> getRankings(
             @RequestParam(required = false, defaultValue = "") final String after,
-            @RequestParam(required = false, defaultValue = "0") final int experimentId
+            @RequestParam(required = false, defaultValue = "0") final String experimentId
     ) {
-        return getRankingList(after, experimentId);
+        final Experiment exp = experimentRepository.findByExperimentId(experimentId);
+        return getRankingList(after, exp.getId());
     }
 
     @ResponseBody

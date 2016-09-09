@@ -270,7 +270,8 @@ public class ExperimentController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
     public ApiResponse updateExperiment(Principal principal, HttpServletResponse response,
-                                        @ModelAttribute final ExperimentDTO experiment,
+                                        @ModelAttribute @RequestBody final ExperimentDTO experiment,
+
                                         @PathVariable("experimentId") final String experimentId) throws IOException, NotAuthorizedException, ExperimentNotFoundException {
         if (principal == null) {
             throw new NotAuthorizedException();

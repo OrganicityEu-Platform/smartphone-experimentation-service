@@ -26,6 +26,7 @@ package gr.cti.android.experimentation.controller.api;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.controller.BaseController;
+import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.util.Utils;
@@ -135,10 +136,11 @@ public class RestApiDataController extends BaseController {
         final long end = parseDateMillis(to);
 
         final Set<Result> results;
+        Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = resultRepository.findByExperimentIdAndTimestampAfter(Integer.parseInt(experiment), start);
+            results = resultRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
         } else {
-            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(Integer.parseInt(experiment), deviceId, start);
+            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getId(), deviceId, start);
         }
 
         try {
