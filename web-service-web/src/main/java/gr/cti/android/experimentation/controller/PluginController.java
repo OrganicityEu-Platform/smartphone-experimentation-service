@@ -65,19 +65,15 @@ public class PluginController extends BaseController {
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
             @RequestParam(value = "type", required = false, defaultValue = "live") final String type)
             throws NotAuthorizedException {
-        LOGGER.debug(String.format("GET /plugin %s", principal));
+        LOGGER.info(String.format("GET /plugin %s", principal));
 
         PluginListDTO pluginListDTO = new PluginListDTO();
         pluginListDTO.setPlugins(new ArrayList<>());
-        if (principal != null) {
-            final String userId = principal.getName();
-            final Set<Plugin> plugins = pluginRepository.findByUserId(userId);
-            for (Plugin plugin : plugins) {
+        final Set<Plugin> plugins = pluginRepository.findAll();
+        for (Plugin plugin : plugins) {
+            if (plugin.isEnabled()) {
                 pluginListDTO.getPlugins().add(newPluginDTO(plugin));
-            }
-        } else {
-            final Set<Plugin> plugins = pluginRepository.findAll();
-            for (Plugin plugin : plugins) {
+            } else if (principal != null && plugin.getUserId() != null && plugin.getUserId().contains(principal.getName())) {
                 pluginListDTO.getPlugins().add(newPluginDTO(plugin));
             }
         }
@@ -95,7 +91,7 @@ public class PluginController extends BaseController {
     @RequestMapping(value = "/plugin", method = RequestMethod.POST, produces = "application/json")
     public Object addPlugin(final Principal principal, HttpServletResponse response,
                             @ModelAttribute final PluginDTO pluginDTO) throws IOException, NotAuthorizedException {
-        LOGGER.debug(String.format("POST /plugin %s", principal));
+        LOGGER.info(String.format("POST /plugin %s", principal));
 
         if (principal == null) {
             throw new NotAuthorizedException();
@@ -161,7 +157,7 @@ public class PluginController extends BaseController {
     @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.GET, produces = "application/json")
     public Object getPlugin(final Principal principal, @PathVariable("pluginId") final long pluginId)
             throws PluginNotFoundException {
-        LOGGER.debug(String.format("GET /plugin/%d %s", pluginId, principal));
+        LOGGER.info(String.format("GET /plugin/%d %s", pluginId, principal));
 
         final ApiResponse apiResponse = new ApiResponse();
 
@@ -190,7 +186,7 @@ public class PluginController extends BaseController {
     public Object addPlugin(final Principal principal, HttpServletResponse response,
                             @ModelAttribute final Plugin plugin,
                             @PathVariable("pluginId") final long pluginId) throws IOException, PluginNotFoundException, NotAuthorizedException {
-        LOGGER.debug(String.format("POST /plugin/%d %s", pluginId, principal));
+        LOGGER.info(String.format("POST /plugin/%d %s", pluginId, principal));
 
         if (principal == null) {
             throw new NotAuthorizedException();
@@ -236,7 +232,7 @@ public class PluginController extends BaseController {
             if (storedPlugin == null) {
                 throw new PluginNotFoundException();
             } else {
-                if (!isPluginOfUser(plugin,principal)) {
+                if (!isPluginOfUser(plugin, principal)) {
                     throw new PluginNotFoundException();
                 }
 
@@ -278,11 +274,11 @@ public class PluginController extends BaseController {
     public Object deletePlugin(final Principal principal,
                                HttpServletResponse response, @PathVariable("pluginId") final int pluginId)
             throws NotAuthorizedException, PluginNotFoundException {
+        LOGGER.info(String.format("DELETE /plugin/%d %s", pluginId, principal));
+
         if (principal == null) {
             throw new NotAuthorizedException();
         }
-
-        LOGGER.debug(String.format("DELETE /plugin/%d %s", pluginId, principal));
 
         final ApiResponse apiResponse = new ApiResponse();
         final Plugin plugin = pluginRepository.findById(pluginId);
