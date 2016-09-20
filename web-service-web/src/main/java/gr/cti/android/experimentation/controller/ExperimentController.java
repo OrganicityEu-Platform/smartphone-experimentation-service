@@ -68,6 +68,8 @@ public class ExperimentController extends BaseController {
     public String contactExperiment(Principal principal, final HttpServletResponse response,
                                     @RequestParam(value = "experimentId") final String experimentId,
                                     @RequestParam(value = "message") final String message) throws JSONException, ExperimentNotFoundException {
+        LOGGER.info("POST /contact/experiment" + " " + principal);
+
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment == null || !isExperimentOfUser(experiment, principal)) {
             throw new ExperimentNotFoundException();
@@ -91,9 +93,11 @@ public class ExperimentController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/contact/smartphone", method = RequestMethod.POST, produces = "application/json")
-    public String contactSmartphone(final HttpServletResponse response,
+    public String contactSmartphone(Principal principal, final HttpServletResponse response,
                                     @RequestParam(value = "smartphoneId") final String smartphoneId,
                                     @RequestParam(value = "message") final String message) throws JSONException {
+        LOGGER.info("POST /contact/smartphone" + " " + principal);
+
         final GcmMessageData data = new GcmMessageData();
         data.setType("text");
         data.setText(message);
@@ -142,9 +146,16 @@ public class ExperimentController extends BaseController {
         LOGGER.info("GET /experiment " + pluginRepository);
         final ExperimentListDTO experiments = new ExperimentListDTO();
         experiments.setExperiments(new ArrayList<>());
-        final Iterable<Experiment> enabledExperiments = experimentRepository.findByEnabled(true);
-        for (Experiment enabledExperiment : enabledExperiments) {
-            experiments.getExperiments().add(newExperimentDTO(enabledExperiment));
+        final Iterable<Experiment> enabledExperiments = experimentRepository.findAll();
+        for (Experiment experiment : enabledExperiments) {
+            if (experiment.getEnabled()) {
+                //check for live experiments
+                experiments.getExperiments().add(newExperimentDTO(experiment));
+            } else if (principal != null && experiment.getUserId() != null
+                    && experiment.getUserId().contains(principal.getName())) {
+                //check for under development experiments
+                experiments.getExperiments().add(newExperimentDTO(experiment));
+            }
         }
         return experiments;
     }
@@ -273,6 +284,8 @@ public class ExperimentController extends BaseController {
                                         @ModelAttribute @RequestBody final ExperimentDTO experiment,
 
                                         @PathVariable("experimentId") final String experimentId) throws IOException, NotAuthorizedException, ExperimentNotFoundException {
+        LOGGER.info("POST /experiment/" + experimentId + " " + principal);
+
         if (principal == null) {
             throw new NotAuthorizedException();
         }
@@ -363,6 +376,8 @@ public class ExperimentController extends BaseController {
     public ApiResponse deleteExperiment(Principal principal, HttpServletResponse response,
                                         @PathVariable(value = "experimentId") final String experimentId)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException {
+        LOGGER.info("DELETE /experiment/" + experimentId + " " + principal);
+
         if (principal == null) {
             throw new NotAuthorizedException();
         }
