@@ -60,8 +60,11 @@ public class RegionController extends BaseController {
      */
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.GET, produces = "application/json")
-    public RegionListDTO getExperimentRegions(@PathVariable(value = "experimentId") final String experimentId)
+    public RegionListDTO getExperimentRegions(@PathVariable(value = "experimentId") final String experimentId,
+                                              Principal principal)
             throws IOException, ExperimentNotFoundException {
+        LOGGER.info(String.format("GET /experiment/%s/region %s", experimentId, principal));
+
         final RegionListDTO list = new RegionListDTO();
         LOGGER.info("get regions for " + experimentId);
         list.setRegions(new ArrayList<>());
@@ -94,6 +97,7 @@ public class RegionController extends BaseController {
             Principal principal, @PathVariable(value = "experimentId") final String experimentId,
             @RequestBody final RegionListDTO regionListDTO)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException {
+        LOGGER.info(String.format("POST /experiment/%s/region %s", experimentId, principal));
 
         if (principal == null) {
             throw new NotAuthorizedException();
@@ -107,7 +111,7 @@ public class RegionController extends BaseController {
                 throw new ExperimentNotFoundException();
             }
 
-            int count = getExperimentRegions(experimentId).getRegions().size() + 1;
+            int count = getExperimentRegions(experimentId, principal).getRegions().size() + 1;
             for (final RegionDTO regionDTO : regionListDTO.getRegions()) {
                 final Region region = newRegion(regionDTO);
                 if (region.getName() == null) {
@@ -118,7 +122,7 @@ public class RegionController extends BaseController {
             }
         }
 
-        return getExperimentRegions(experimentId);
+        return getExperimentRegions(experimentId, principal);
     }
 
     /**
@@ -134,6 +138,7 @@ public class RegionController extends BaseController {
     public RegionListDTO putRegion2Experiment(Principal principal, @PathVariable(value = "experimentId") final String experimentId
             , @RequestBody final RegionListDTO regionListDTO)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException {
+        LOGGER.info(String.format("PUT /experiment/%s/region %s", experimentId, principal));
 
         if (principal == null) {
             throw new NotAuthorizedException();
@@ -163,7 +168,7 @@ public class RegionController extends BaseController {
             }
         }
 
-        return getExperimentRegions(experimentId);
+        return getExperimentRegions(experimentId, principal);
     }
 
 
@@ -178,8 +183,9 @@ public class RegionController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.GET, produces = "application/json")
     public RegionDTO getExperimentRegion(@PathVariable(value = "experimentId") final String experimentId
-            , @PathVariable(value = "regionId") final int regionId)
+            , @PathVariable(value = "regionId") final int regionId, Principal principal)
             throws IOException, RegionNotFoundException, ExperimentNotFoundException {
+        LOGGER.info(String.format("GET /experiment/%s/region/%s %s", experimentId, regionId, principal));
 
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
         if (experiment == null) {
@@ -208,6 +214,8 @@ public class RegionController extends BaseController {
             , @PathVariable(value = "regionId") final int regionId
             , @RequestBody final RegionDTO regionDTO)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException, RegionNotFoundException {
+        LOGGER.info(String.format("POST /experiment/%s/region/%s %s", experimentId, regionId, principal));
+
         if (principal == null) {
             throw new NotAuthorizedException();
         }
@@ -274,6 +282,8 @@ public class RegionController extends BaseController {
     public RegionListDTO postRegion2Experiment(Principal principal, @PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException, RegionNotFoundException {
+        LOGGER.info(String.format("DELETE /experiment/%s/region/%s %s", experimentId, regionId, principal));
+
         if (principal == null) {
             throw new NotAuthorizedException();
         }
@@ -292,7 +302,7 @@ public class RegionController extends BaseController {
             }
         }
 
-        return getExperimentRegions(experimentId);
+        return getExperimentRegions(experimentId,principal);
     }
 
 }
