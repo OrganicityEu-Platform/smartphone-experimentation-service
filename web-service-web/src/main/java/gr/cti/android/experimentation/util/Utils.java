@@ -42,18 +42,10 @@ public class Utils {
     public static Polygon createPolygonForRegion(final Region region) throws JSONException {
         final GeometryFactory fact = new GeometryFactory();
         final List<Coordinate> seq = new ArrayList<>();
-        try {
-            final JSONArray arr = (JSONArray) new JSONArray(region.getCoordinates()).get(0);
-            for (int i = 0; i < arr.length(); i++) {
-                final JSONArray elems = (JSONArray) arr.get(i);
-                seq.add(new Coordinate(elems.getDouble(1), elems.getDouble(0)));
-            }
-        } catch (Exception e) {
-            final JSONArray arr = new JSONArray(region.getCoordinates());
-            for (int i = 0; i < arr.length(); i++) {
-                final JSONArray elems = (JSONArray) arr.get(i);
-                seq.add(new Coordinate(elems.getDouble(1), elems.getDouble(0)));
-            }
+        final JSONArray arr = new JSONArray(region.getCoordinates());
+        for (int i = 0; i < arr.length(); i++) {
+            final JSONArray elems = (JSONArray) arr.get(i);
+            seq.add(new Coordinate(elems.getDouble(1), elems.getDouble(0)));
         }
         return fact.createPolygon(seq.toArray(new Coordinate[1]));
     }
