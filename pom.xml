@@ -2,7 +2,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>cti.organicity</groupId>
+    <groupId>cti.organicity.set</groupId>
     <artifactId>web-service-parent</artifactId>
     <version>1.0</version>
     <name>Smartphone Experimentation</name>
@@ -12,13 +12,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <modules>
         <module>common</module>
         <module>client</module>
         <module>client-android</module>
         <module>web-service-web</module>
     </modules>
+
     <build>
         <plugins>
             <plugin>
