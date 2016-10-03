@@ -30,14 +30,13 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class SmartphoneController extends BaseController {
 
@@ -53,10 +52,9 @@ public class SmartphoneController extends BaseController {
      * @return the phoneId generated or -1 if there was a error.
      */
     @ApiOperation(value = "Register Smartphone")
-    @RequestMapping(value = "/smartphone", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/smartphone", method = RequestMethod.POST, produces = APPLICATION_JSON)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = Smartphone.class)})
-    @ResponseBody
     public SmartphoneDTO registerSmartphone(@RequestBody SmartphoneDTO smartphoneDTO) {
         try {
             LOGGER.info(smartphoneDTO);
@@ -74,7 +72,6 @@ public class SmartphoneController extends BaseController {
         return null;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getTotalSmartphoneStatistics(
             Principal principal,
@@ -84,7 +81,6 @@ public class SmartphoneController extends BaseController {
                 getExperimentSmartphoneStatistics(principal, smartphoneId, null);
     }
 
-    @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics/{experimentId}", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getExperimentSmartphoneStatistics(
             Principal principal, @PathVariable(value = "smartphoneId") final int smartphoneId,
@@ -143,14 +139,12 @@ public class SmartphoneController extends BaseController {
         return badgeDTO;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/badge", method = RequestMethod.GET)
     public Set<Badge> getSmartphoneBadges(
             @PathVariable(value = "smartphoneId") final int smartphoneId) {
         return getExperimentSmartphoneBadges(smartphoneId, 0);
     }
 
-    @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/badge/{experimentId}", method = RequestMethod.GET)
     public Set<Badge> getExperimentSmartphoneBadges(
             @PathVariable(value = "smartphoneId") final int smartphoneId, @PathVariable(value = "experimentId") final int experimentId) {
@@ -161,14 +155,12 @@ public class SmartphoneController extends BaseController {
         }
     }
 
-    @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/time", method = RequestMethod.GET)
     public TreeSet<UsageEntry> getExperimentParticipationTime(
             @PathVariable(value = "smartphoneId") final int smartphoneId) {
         return getExperimentParticipationTime(0, smartphoneId);
     }
 
-    @ResponseBody
     @RequestMapping(value = "/smartphone/{smartphoneId}/time/{experimentId}", method = RequestMethod.GET)
     public TreeSet<UsageEntry> getExperimentParticipationTime(
             @PathVariable(value = "experimentId") final int experimentId, @PathVariable(value = "smartphoneId") final int smartphoneId) {

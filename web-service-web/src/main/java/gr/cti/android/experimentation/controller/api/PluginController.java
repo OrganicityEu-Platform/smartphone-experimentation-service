@@ -1,4 +1,4 @@
-package gr.cti.android.experimentation.controller;
+package gr.cti.android.experimentation.controller.api;
 
 /*-
  * #%L
@@ -23,6 +23,7 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
+import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.exception.PluginNotFoundException;
 import gr.cti.android.experimentation.model.ApiResponse;
@@ -30,7 +31,6 @@ import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.model.PluginListDTO;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * @author Dimitrios Amaxilatis.
  */
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class PluginController extends BaseController {
 
@@ -58,8 +58,7 @@ public class PluginController extends BaseController {
      * @param phoneId   the id of the phone requesting the list of available plugins.
      * @return a json list of all available plugins in the system.
      */
-    @ResponseBody
-    @RequestMapping(value = "/plugin", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/plugin", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public PluginListDTO getPluginList(
             final Principal principal,
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId,
@@ -87,8 +86,7 @@ public class PluginController extends BaseController {
      * @param response  the HTTP response object.
      * @param pluginDTO the plugin object to register.
      */
-    @ResponseBody
-    @RequestMapping(value = "/plugin", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/plugin", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public Object addPlugin(final Principal principal, HttpServletResponse response,
                             @ModelAttribute final PluginDTO pluginDTO) throws IOException, NotAuthorizedException {
         LOGGER.info(String.format("POST /plugin %s", principal));
@@ -153,8 +151,7 @@ public class PluginController extends BaseController {
      * @param principal the user principal.
      * @param pluginId  the id of the plugin to update.
      */
-    @ResponseBody
-    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public Object getPlugin(final Principal principal, @PathVariable("pluginId") final long pluginId)
             throws PluginNotFoundException {
         LOGGER.info(String.format("GET /plugin/%d %s", pluginId, principal));
@@ -181,8 +178,7 @@ public class PluginController extends BaseController {
      * @param plugin    the plugin object to update.
      * @param pluginId  the id of the plugin to update.
      */
-    @ResponseBody
-    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public Object addPlugin(final Principal principal, HttpServletResponse response,
                             @ModelAttribute final Plugin plugin,
                             @PathVariable("pluginId") final long pluginId) throws IOException, PluginNotFoundException, NotAuthorizedException {
@@ -269,8 +265,7 @@ public class PluginController extends BaseController {
      * @param response  the HTTP response object.
      * @param pluginId  the id of the plugin to delete.
      */
-    @ResponseBody
-    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/plugin/{pluginId}", method = RequestMethod.DELETE, produces = APPLICATION_JSON)
     public Object deletePlugin(final Principal principal,
                                HttpServletResponse response, @PathVariable("pluginId") final int pluginId)
             throws NotAuthorizedException, PluginNotFoundException {

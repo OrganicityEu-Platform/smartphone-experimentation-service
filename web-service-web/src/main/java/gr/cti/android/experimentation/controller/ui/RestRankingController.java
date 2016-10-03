@@ -25,12 +25,14 @@ package gr.cti.android.experimentation.controller.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.controller.BaseController;
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.DownloadableResultDTO;
+import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.RankingEntry;
+import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * @author Dimitrios Amaxilatis.
  */
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class RestRankingController extends BaseController {
     /**
@@ -51,8 +53,7 @@ public class RestRankingController extends BaseController {
 
 
     @Deprecated
-    @ResponseBody
-    @RequestMapping(value = "/statistics/{phoneId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/statistics/{phoneId}", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public Map<Long, Long> statisticsByPhone(@PathVariable("phoneId") final String phoneId,
                                              final HttpServletResponse response) {
 
@@ -63,7 +64,6 @@ public class RestRankingController extends BaseController {
     }
 
 
-    @ResponseBody
     @RequestMapping(value = {"/results/{experimentId}"}, method = RequestMethod.GET)
     public Set<DownloadableResultDTO> getResults(
             @PathVariable("experimentId") final String experimentId
@@ -95,7 +95,6 @@ public class RestRankingController extends BaseController {
         return externalResults;
     }
 
-    @ResponseBody
     @RequestMapping(value = {"/results/{experimentId}/csv"}, method = RequestMethod.GET, produces = "text/csv")
     public String getResultsCsv(
             @PathVariable("experimentId") final String experimentId
@@ -138,7 +137,6 @@ public class RestRankingController extends BaseController {
         return resResponse.toString();
     }
 
-    @ResponseBody
     @RequestMapping(value = {"/ranking", "/rankings"}, method = RequestMethod.GET)
     public Set<RankingEntry> getRankings(
             @RequestParam(required = false, defaultValue = "") final String after,
@@ -148,7 +146,6 @@ public class RestRankingController extends BaseController {
         return getRankingList(after, exp.getId());
     }
 
-    @ResponseBody
     @Deprecated
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public String getRankings(@RequestParam(required = false, defaultValue = "0") final int deviceId) {

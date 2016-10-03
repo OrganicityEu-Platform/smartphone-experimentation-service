@@ -36,7 +36,6 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -46,7 +45,7 @@ import java.util.*;
 /**
  * @author Dimitrios Amaxilatis.
  */
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class RestApiDataController extends BaseController {
     /**
@@ -54,8 +53,7 @@ public class RestApiDataController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(RestApiDataController.class);
 
-    @ResponseBody
-    @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/data", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getExperimentDataByExperimentId(@RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
             , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy
@@ -64,8 +62,7 @@ public class RestApiDataController extends BaseController {
         return getAllData(deviceId, after, to, accuracy).toString();
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/experiment/data/{experimentId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/data/{experimentId}", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getExperimentDataByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
             , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
@@ -75,8 +72,7 @@ public class RestApiDataController extends BaseController {
         return getExperimentData(experiment, deviceId, after, to, accuracy).toString();
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/experiment/data/{experimentId}/hour", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/data/{experimentId}/hour", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
             , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
@@ -89,7 +85,7 @@ public class RestApiDataController extends BaseController {
     }
 
 //    @ResponseBody
-//    @RequestMapping(value = "/api/v1/experiment/data/{experimentId}/rankings", method = RequestMethod.GET, produces = "application/json")
+//    @RequestMapping(value = "/api/v1/experiment/data/{experimentId}/rankings", method = RequestMethod.GET, produces = APPLICATION_JSON)
 //    public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after) {
 //        JSONObject data = getExperimentHourlyData(experiment, deviceId, after);
 //        LOGGER.info(data);

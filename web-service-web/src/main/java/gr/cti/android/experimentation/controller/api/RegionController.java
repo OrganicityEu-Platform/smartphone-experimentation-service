@@ -1,4 +1,4 @@
-package gr.cti.android.experimentation.controller;
+package gr.cti.android.experimentation.controller.api;
 
 /*-
  * #%L
@@ -23,6 +23,7 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
+import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.exception.ExperimentNotFoundException;
 import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.exception.RegionNotFoundException;
@@ -31,7 +32,6 @@ import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.RegionDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ import java.util.Set;
 /**
  * @author Dimitrios Amaxilatis.
  */
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class RegionController extends BaseController {
 
@@ -58,8 +58,7 @@ public class RegionController extends BaseController {
      * @return the {@see Region} entities of a specific {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public RegionListDTO getExperimentRegions(@PathVariable(value = "experimentId") final String experimentId,
                                               Principal principal)
             throws IOException, ExperimentNotFoundException {
@@ -91,8 +90,7 @@ public class RegionController extends BaseController {
      * @return the {@see Region} entities of a specific {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public RegionListDTO postRegion2Experiment(
             Principal principal, @PathVariable(value = "experimentId") final String experimentId,
             @RequestBody final RegionListDTO regionListDTO)
@@ -133,8 +131,7 @@ public class RegionController extends BaseController {
      * @return the {@see Region} entities of a specific {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.PUT, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}/region", method = RequestMethod.PUT, produces = APPLICATION_JSON)
     public RegionListDTO putRegion2Experiment(Principal principal, @PathVariable(value = "experimentId") final String experimentId
             , @RequestBody final RegionListDTO regionListDTO)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException {
@@ -180,8 +177,7 @@ public class RegionController extends BaseController {
      * @return the {@see RegionDTO} element.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public RegionDTO getExperimentRegion(@PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId, Principal principal)
             throws IOException, RegionNotFoundException, ExperimentNotFoundException {
@@ -208,8 +204,7 @@ public class RegionController extends BaseController {
      * @return the {@see Region} entities of a specific {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public RegionDTO postRegion2Experiment(Principal principal, @PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId
             , @RequestBody final RegionDTO regionDTO)
@@ -277,8 +272,7 @@ public class RegionController extends BaseController {
      * @return the {@see Region} entities of a specific {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}/region/{regionId}", method = RequestMethod.DELETE, produces = APPLICATION_JSON)
     public RegionListDTO postRegion2Experiment(Principal principal, @PathVariable(value = "experimentId") final String experimentId
             , @PathVariable(value = "regionId") final int regionId)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException, RegionNotFoundException {

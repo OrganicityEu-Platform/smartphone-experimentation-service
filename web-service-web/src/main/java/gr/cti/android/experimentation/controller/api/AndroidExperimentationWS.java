@@ -30,18 +30,14 @@ import gr.cti.android.experimentation.model.*;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Set;
 
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class AndroidExperimentationWS extends BaseController {
 
@@ -50,8 +46,7 @@ public class AndroidExperimentationWS extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(AndroidExperimentationWS.class);
 
-    @ResponseBody
-    @RequestMapping(value = "/data", method = RequestMethod.POST, produces = "application/json", consumes = "text/plain")
+    @RequestMapping(value = "/data", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = TEXT_PLAIN)
     public JSONObject data(@RequestBody String body, final HttpServletResponse response) throws
             JSONException, IOException {
 
@@ -78,8 +73,7 @@ public class AndroidExperimentationWS extends BaseController {
         return responseObject;
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/data/multiple", method = RequestMethod.POST, produces = "application/json", consumes = "application/json")
+    @RequestMapping(value = "/data/multiple", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
     public ResponseDTO data(@RequestBody final ResultListDTO resultList, final HttpServletResponse response,
                             Principal principal) throws
             JSONException, IOException {

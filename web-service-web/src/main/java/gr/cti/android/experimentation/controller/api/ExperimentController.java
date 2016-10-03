@@ -1,4 +1,4 @@
-package gr.cti.android.experimentation.controller;
+package gr.cti.android.experimentation.controller.api;
 
 /*-
  * #%L
@@ -25,6 +25,7 @@ package gr.cti.android.experimentation.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
+import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.exception.ExperimentNotFoundException;
 import gr.cti.android.experimentation.exception.NotAuthorizedException;
 import gr.cti.android.experimentation.model.ApiResponse;
@@ -33,7 +34,6 @@ import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * @author Dimitrios Amaxilatis.
  */
-@Controller
+@RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class ExperimentController extends BaseController {
 
@@ -63,8 +63,7 @@ public class ExperimentController extends BaseController {
      * @return
      * @throws JSONException
      */
-    @ResponseBody
-    @RequestMapping(value = "/contact/experiment", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/contact/experiment", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public String contactExperiment(Principal principal, final HttpServletResponse response,
                                     @RequestParam(value = "experimentId") final String experimentId,
                                     @RequestParam(value = "message") final String message) throws JSONException, ExperimentNotFoundException {
@@ -91,8 +90,7 @@ public class ExperimentController extends BaseController {
      * @return
      * @throws JSONException
      */
-    @ResponseBody
-    @RequestMapping(value = "/contact/smartphone", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/contact/smartphone", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public String contactSmartphone(Principal principal, final HttpServletResponse response,
                                     @RequestParam(value = "smartphoneId") final String smartphoneId,
                                     @RequestParam(value = "message") final String message) throws JSONException {
@@ -115,8 +113,7 @@ public class ExperimentController extends BaseController {
      * @param phoneId the Id of the {@see Smartphone} that will be used.
      * @return A list of {@see Experiment}.
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces =APPLICATION_JSON)
     public ExperimentListDTO listExperiments(
             Principal principal,
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
@@ -139,8 +136,7 @@ public class ExperimentController extends BaseController {
      * @param phoneId the Id of the {@see Smartphone} that will be used.
      * @return A list of {@see Experiment}.
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/live", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/live", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public ExperimentListDTO listLiveExperiments(Principal principal,
                                                  @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
         LOGGER.info("GET /experiment " + pluginRepository);
@@ -168,8 +164,7 @@ public class ExperimentController extends BaseController {
      * @return the information of a specific {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public ExperimentDTO getExperiment(Principal principal, HttpServletResponse response,
                                        @PathVariable(value = "experimentId") final String experimentId)
             throws IOException {
@@ -192,8 +187,7 @@ public class ExperimentController extends BaseController {
      * @return the information of the {@see Experiment} added.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/experiment", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public ApiResponse addExperiment(Principal principal, HttpServletResponse response, @ModelAttribute ExperimentDTO experiment)
             throws IOException, NotAuthorizedException {
         LOGGER.info("POST /experiment " + principal);
@@ -279,8 +273,7 @@ public class ExperimentController extends BaseController {
      * @param experimentId the id of the {@see Experiment} to update.
      * @return the updated information of the {@see Experiment}.
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.POST, produces = APPLICATION_JSON)
     public ApiResponse updateExperiment(Principal principal, HttpServletResponse response,
                                         @ModelAttribute @RequestBody final ExperimentDTO experiment,
 
@@ -372,8 +365,7 @@ public class ExperimentController extends BaseController {
      * @return the removed {@see Experiment}.
      * @throws IOException
      */
-    @ResponseBody
-    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/experiment/{experimentId}", method = RequestMethod.DELETE, produces = APPLICATION_JSON)
     public ApiResponse deleteExperiment(Principal principal, HttpServletResponse response,
                                         @PathVariable(value = "experimentId") final String experimentId)
             throws IOException, NotAuthorizedException, ExperimentNotFoundException {

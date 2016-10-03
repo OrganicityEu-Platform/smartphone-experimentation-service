@@ -28,23 +28,21 @@ import gr.cti.android.experimentation.model.Result;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Dimitrios Amaxilatis.
  */
-@Controller
+@RestController
 public class RestDataController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = Logger.getLogger(RestDataController.class);
 
-    @ResponseBody
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "text/csv")
     public String dataCsv(@RequestParam(value = "type") final String type) throws JSONException {
         final StringBuilder response = new StringBuilder();

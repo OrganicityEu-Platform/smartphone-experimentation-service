@@ -26,7 +26,7 @@ package gr.cti.android.experimentation.api.test;
 
 import gr.cti.android.experimentation.Application;
 import gr.cti.android.experimentation.TestUtils;
-import gr.cti.android.experimentation.controller.PluginController;
+import gr.cti.android.experimentation.controller.api.PluginController;
 import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.PluginListDTO;

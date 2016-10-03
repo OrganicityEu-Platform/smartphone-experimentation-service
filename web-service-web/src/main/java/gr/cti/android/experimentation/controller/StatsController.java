@@ -47,7 +47,7 @@ public class StatsController extends BaseController {
      */
     private static final Logger LOGGER = Logger.getLogger(StatsController.class);
 
-    @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getStats(final Map<String, Object> model) {
 
         final Map<Integer, Long> experimentCount = new HashMap<>();
