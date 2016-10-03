@@ -74,9 +74,9 @@ public class ApplicationSecurity extends KeycloakWebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/sso/**").permitAll()
-                .antMatchers("/webjars/**").permitAll()
                 .antMatchers("/swagger-ui.html").permitAll()
                 .antMatchers("/v1/**").permitAll()
+                .anyRequest().permitAll()
                 .and().csrf().disable();
     }
 
