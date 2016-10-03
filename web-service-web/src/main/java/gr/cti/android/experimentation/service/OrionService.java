@@ -24,12 +24,7 @@ package gr.cti.android.experimentation.service;
  */
 
 import com.amaxilatis.orion.OrionClient;
-import com.amaxilatis.orion.model.OrionContextElement;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.meggsimum.w3w.Coordinates;
-import de.meggsimum.w3w.ThreeWords;
-import de.meggsimum.w3w.What3Words;
-import de.meggsimum.w3w.What3WordsException;
 import eu.organicity.entities.handler.attributes.Attribute;
 import eu.organicity.entities.handler.entities.SmartphoneDevice;
 import eu.organicity.entities.handler.metadata.Datatype;
@@ -45,7 +40,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -67,13 +61,13 @@ public class OrionService {
 
     @Value("${w3w.key}")
     private String w3wApiKey;
-    private What3Words w3w;
+//    private What3Words w3w;
 
     @PostConstruct
     public void init() {
         orionClient = new OrionClient("http://localhost:1026", "", "organicity", "/");
         mapper = new ObjectMapper();
-        w3w = new What3Words(w3wApiKey);
+//        w3w = new What3Words(w3wApiKey);
 
     }
 
@@ -162,29 +156,29 @@ public class OrionService {
             }
 
 
-            try {
-                final Coordinates coords = new Coordinates(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                final ThreeWords locationWords = w3w.positionToWords(coords);
-                final String locationWordsString = commaString(locationWords);
-                final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
-                        experiment.getUserId(), newResult.getExperimentId(), locationWordsString);
-                locationPhoneEntity.setId(uri);
-                locationPhoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                locationPhoneEntity.setDatasource(false, "http://set.organicity.eu");
-                try {
-                    final OrionContextElement entity = locationPhoneEntity.getContextElement();
-                    String string = mapper.writeValueAsString(entity);
-                    LOGGER.info(string);
-                    final String res = orionClient.postContextEntity(uri, entity);
-                    LOGGER.info(res.replaceAll("\n", ""));
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
-                }
-            } catch (IOException e) {
-                LOGGER.error(e, e);
-            } catch (What3WordsException e) {
-                LOGGER.error(e, e);
-            }
+//            try {
+//                final Coordinates coords = new Coordinates(Double.parseDouble(latitude), Double.parseDouble(longitude));
+//                final ThreeWords locationWords = w3w.positionToWords(coords);
+//                final String locationWordsString = commaString(locationWords);
+//                final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
+//                        experiment.getUserId(), newResult.getExperimentId(), locationWordsString);
+//                locationPhoneEntity.setId(uri);
+//                locationPhoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
+//                locationPhoneEntity.setDatasource(false, "http://set.organicity.eu");
+//                try {
+//                    final OrionContextElement entity = locationPhoneEntity.getContextElement();
+//                    String string = mapper.writeValueAsString(entity);
+//                    LOGGER.info(string);
+//                    final String res = orionClient.postContextEntity(uri, entity);
+//                    LOGGER.info(res.replaceAll("\n", ""));
+//                } catch (Exception e) {
+//                    LOGGER.error(e, e);
+//                }
+//            } catch (IOException e) {
+//                LOGGER.error(e, e);
+//            } catch (What3WordsException e) {
+//                LOGGER.error(e, e);
+//            }
 
         } catch (JSONException e) {
             LOGGER.warn(e.getMessage());
@@ -193,7 +187,7 @@ public class OrionService {
     }
 
 
-    public static String commaString(final ThreeWords threeWords) {
-        return threeWords.getFirst() + "," + threeWords.getSecond() + "," + threeWords.getThird();
-    }
+//    public static String commaString(final ThreeWords threeWords) {
+//        return threeWords.getFirst() + "," + threeWords.getSecond() + "," + threeWords.getThird();
+//    }
 }

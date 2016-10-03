@@ -8,15 +8,23 @@
     <name>Smartphone Experimentation Web Service</name>
     <description>WebService for AndroidExperimentation.</description>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.3.5.RELEASE</version>
-    </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <start-class>gr.cti.android.experimentation.Application</start-class>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <!-- Import dependency management from Spring Boot -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>1.3.5.RELEASE</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <repositories>
         <repository>
@@ -212,13 +220,13 @@
             <version>3.1</version>
         </dependency>
 
-        <!--#################################################################################################-->
-        <!--HTTP CLIENT-->
-        <dependency>
-            <groupId>de.meggsimum.w3w</groupId>
-            <artifactId>w3w-java-wrapper</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
+        <!--&lt;!&ndash;#################################################################################################&ndash;&gt;-->
+        <!--&lt;!&ndash;HTTP CLIENT&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>de.meggsimum.w3w</groupId>-->
+            <!--<artifactId>w3w-java-wrapper</artifactId>-->
+            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.vividsolutions/jts -->
         <dependency>
