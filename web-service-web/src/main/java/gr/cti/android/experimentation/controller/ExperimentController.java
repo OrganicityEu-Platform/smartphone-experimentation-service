@@ -75,7 +75,7 @@ public class ExperimentController extends BaseController {
             throw new ExperimentNotFoundException();
         }
         try {
-            gcmService.send2Experiment(Integer.parseInt(experimentId), message);
+            gcmService.send2Experiment(experiment.getId(), message);
         } catch (Exception e) {
             LOGGER.error(e, e);
         }
@@ -250,7 +250,8 @@ public class ExperimentController extends BaseController {
                 }
                 experimentObj.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 experimentObj.setSensorDependencies(experiment.getSensorDependencies());
-                experimentObj.setUserId(experiment.getUserId());
+                experimentObj.setUrlDescription(experiment.getUrlDescription());
+                experimentObj.setUserId(principal.getName());
 
                 experimentObj.setEnabled(true);
                 experimentObj.setStatus("1");
