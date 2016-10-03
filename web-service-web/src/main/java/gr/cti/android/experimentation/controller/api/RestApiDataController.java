@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -57,7 +58,9 @@ public class RestApiDataController extends BaseController {
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "application/json")
     public String getExperimentDataByExperimentId(@RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
-            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy
+            , Principal principal) {
+        LOGGER.info("GET /data " + principal);
         return getAllData(deviceId, after, to, accuracy).toString();
     }
 
@@ -66,8 +69,9 @@ public class RestApiDataController extends BaseController {
     public String getExperimentDataByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
             , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
-            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
-        LOGGER.info("to:" + to);
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy
+            , Principal principal) {
+        LOGGER.info("GET /experiment/data/" + experiment + " " + principal);
         return getExperimentData(experiment, deviceId, after, to, accuracy).toString();
     }
 
@@ -76,7 +80,9 @@ public class RestApiDataController extends BaseController {
     public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
             , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
-            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy) {
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy
+            , Principal principal) {
+        LOGGER.info("GET /experiment/data/" + experiment + "/hour regionId="+regionId+ " " + principal);
         final Region region = regionRepository.findById(Integer.parseInt(regionId));
         JSONObject data = getExperimentHourlyData(experiment, deviceId, after, to, accuracy, region);
         return data.toString();
@@ -97,11 +103,13 @@ public class RestApiDataController extends BaseController {
         final long start = parseDateMillis(after);
         final long end = parseDateMillis(to);
 
+
         final Set<Result> results;
+        Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = resultRepository.findByExperimentIdAndTimestampAfter(Integer.parseInt(experiment), start);
+            results = resultRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
         } else {
-            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(Integer.parseInt(experiment), deviceId, start);
+            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getId(), deviceId, start);
         }
 
 

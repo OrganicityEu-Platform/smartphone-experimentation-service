@@ -18,7 +18,7 @@ spring:
   jpa.database-platform: org.hibernate.dialect.MySQLDialect
   # datasource connection information
   datasource:
-    url: jdbc:mysql://smartphone-experimentation.eu:3306/androidExperimentation
+    url: jdbc:mysql://api.smartphone-experimentation.eu:3306/androidExperimentation
     driver-class-name: com.mysql.jdbc.Driver
     # use the two following lines to avoid closed connections
     test-on-borrow: true
@@ -32,7 +32,7 @@ spring:
   jpa.database-platform: org.hibernate.dialect.MySQLDialect
   # datasource connection information
   datasource:
-    url: jdbc:mysql://localhost:3306/androidExperimentation
+    url: jdbc:mysql://127.0.0.1:3306/androidExperimentation
     driver-class-name: com.mysql.jdbc.Driver
     # use the two following lines to avoid closed connections
     test-on-borrow: true

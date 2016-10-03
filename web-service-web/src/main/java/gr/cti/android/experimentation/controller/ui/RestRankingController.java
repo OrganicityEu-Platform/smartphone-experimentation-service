@@ -66,10 +66,11 @@ public class RestRankingController extends BaseController {
     @ResponseBody
     @RequestMapping(value = {"/results/{experimentId}"}, method = RequestMethod.GET)
     public Set<DownloadableResultDTO> getResults(
-            @PathVariable("experimentId") final int experimentId
+            @PathVariable("experimentId") final String experimentId
     ) {
         final Set<DownloadableResultDTO> externalResults = new TreeSet<>();
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        Experiment experiment = experimentRepository.findByExperimentId(experimentId);
+        final Set<Result> results = resultRepository.findByExperimentId(experiment.getId());
         LOGGER.info("Will try to convert " + results.size() + " results.");
         for (final Result result : results) {
             try {
@@ -97,9 +98,10 @@ public class RestRankingController extends BaseController {
     @ResponseBody
     @RequestMapping(value = {"/results/{experimentId}/csv"}, method = RequestMethod.GET, produces = "text/csv")
     public String getResultsCsv(
-            @PathVariable("experimentId") final int experimentId
+            @PathVariable("experimentId") final String experimentId
     ) {
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
+        final Set<Result> results = resultRepository.findByExperimentId(experiment.getId());
         final StringBuilder resResponse = new StringBuilder();
         final Set<String> headers = new HashSet<>();
         for (final Result result : results) {
