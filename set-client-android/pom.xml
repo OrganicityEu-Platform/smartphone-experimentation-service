@@ -3,9 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cti.organicity.set</groupId>
-    <artifactId>client-android</artifactId>
+    <artifactId>set-client-android</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Smartphone Experimentation Android Client</name>
+    <name>SET Android Client</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,7 +47,7 @@
     <dependencies>
         <dependency>
             <groupId>cti.organicity.set</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>set-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>

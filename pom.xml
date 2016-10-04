@@ -3,20 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>cti.organicity.set</groupId>
-    <artifactId>web-service-parent</artifactId>
+    <artifactId>parent</artifactId>
     <version>1.0</version>
-    <name>Smartphone Experimentation</name>
     <packaging>pom</packaging>
+    <name>Smartphone Experimentation</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <modules>
-        <module>common</module>
-        <module>client</module>
-        <module>client-android</module>
-        <module>web-service-web</module>
+        <module>set-common</module>
+        <module>set-client</module>
+        <module>set-client-android</module>
+        <module>set-www</module>
     </modules>
 
     <build>
