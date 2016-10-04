@@ -24,19 +24,15 @@ package gr.cti.android.experimentation;
  */
 
 
-import org.apache.coyote.http11.AbstractHttp11Protocol;
+import com.google.common.base.Predicate;
 import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatConnectorCustomizer;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -48,6 +44,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.TimeZone;
 
+import static com.google.common.base.Predicates.or;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 
@@ -82,66 +79,28 @@ public class Application implements CommandLineRunner {
 
     }
 
-
-    @Bean
-    public EmbeddedServletContainerCustomizer servletContainerCustomizer() {
-        return servletContainer -> ((TomcatEmbeddedServletContainerFactory) servletContainer).addConnectorCustomizers(
-                (TomcatConnectorCustomizer) connector -> {
-                    AbstractHttp11Protocol httpProtocol = (AbstractHttp11Protocol) connector.getProtocolHandler();
-                    httpProtocol.setCompression("on");
-                    httpProtocol.setCompressionMinSize(256);
-                    String mimeTypes = httpProtocol.getCompressableMimeTypes();
-                    String mimeTypesWithJson = mimeTypes
-                            + "," + MediaType.APPLICATION_JSON_VALUE
-                            + "," + MediaType.IMAGE_PNG + "," + MediaType.IMAGE_GIF + "," + MediaType.IMAGE_JPEG
-                            + "," + "application/javascript" + "," + "text/css";
-                    httpProtocol.setCompressableMimeTypes(mimeTypesWithJson);
-                }
-        );
-    }
-
-
     @Bean
     public Docket smartphoneApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("smartphone")
+                .groupName("SmartphoneService-API")
                 .apiInfo(apiInfo())
                 .select()
-                .paths(regex("/api/v1/.*"))
+                .paths(paths())
                 .build()
-//                .groupName("contact")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .paths(regex("/api/v1/contact/.*"))
-//                .build()
-//                .groupName("ranking")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .paths(regex("/api/v1/ranking/.*"))
-//                .build()
-//                .groupName("data")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .paths(regex("/api/v1/data/.*"))
-//                .build()
-//                .groupName("experiment")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .paths(regex("/api/v1/experiment/.*"))
-//                .build()
-//                .groupName("plugin")
-//                .apiInfo(apiInfo())
-//                .select()
-//                .paths(regex("/api/v1/plugin/.*"))
-//                .build()
                 ;
     }
 
+    private Predicate<String> paths() {
+        return or(
+                regex("/v1/.*")
+        );
+    }
+
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("Organicity Smartphone Experimentation API")
-                .description("Organicity Smartphone Experimentation API")
-                .termsOfServiceUrl("http://www.organicity.eu")
-                .contact(new Contact("Organicity Helpdesk", "https://support.zoho.com/portal/organicity/home", "helpdesk@organicity.eu)"))
+        return new ApiInfoBuilder().title("OrganiCity Smartphone Experimentation API")
+                .description("Backend service for the SET tool for the OrganiCity Platform")
+                .termsOfServiceUrl("http://organicity.eu/cookies-privacy-policy/")
+                .contact(new Contact("OrganiCity MailingList", "https://groups.google.com/forum/#!forum/organicity-experimentation", "organicity-experimentation@googlegroups.com)"))
                 .version("1").build();
     }
 }
