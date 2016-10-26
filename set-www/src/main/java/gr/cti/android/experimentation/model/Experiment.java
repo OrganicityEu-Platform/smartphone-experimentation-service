@@ -40,6 +40,7 @@ public class Experiment implements Serializable {
     @GeneratedValue
     private Integer id;
     private String experimentId;
+    private String experimenter;
     private String description;
     private String urlDescription;
     private Long timestamp;

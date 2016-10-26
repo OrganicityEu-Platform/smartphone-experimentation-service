@@ -25,10 +25,7 @@ package gr.cti.android.experimentation.util;
  */
 
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.*;
 import gr.cti.android.experimentation.model.Region;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +35,8 @@ import java.util.List;
 
 public class Utils {
     private static final double DIFF = 0.00004;
+    public static final String LATITUDE = "org.ambientdynamix.contextplugins.Latitude";
+    public static final String LONGITUDE = "org.ambientdynamix.contextplugins.Longitude";
 
     public static Polygon createPolygonForRegion(final Region region) throws JSONException {
         final GeometryFactory fact = new GeometryFactory();
@@ -65,5 +64,12 @@ public class Utils {
     public static Point createPointForCoordinates(final String latitude, final String longitude) {
         final GeometryFactory fact = new GeometryFactory();
         return fact.createPoint(new Coordinate(Double.parseDouble(latitude), Double.parseDouble(longitude)));
+    }
+
+    public static double polygons2Area(List<Polygon> polygons) {
+        final GeometryFactory fact = new GeometryFactory();
+        // note the following geometry collection may be invalid (say with overlapping polygons)
+        GeometryCollection geometryCollection = (GeometryCollection) fact.buildGeometry(polygons);
+        return geometryCollection.union().getArea() * 12365 * 1000 * 1000;
     }
 }

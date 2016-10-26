@@ -195,6 +195,26 @@ public class RegionController extends BaseController {
         }
     }
 
+
+    /**
+     * Get a {@see Region} entity of a specific {@see Experiment}.
+     *
+     * @param regionId the Id of the {@see Region}.
+     * @return the {@see RegionDTO} element.
+     * @throws IOException
+     */
+    @RequestMapping(value = "/region/{regionId}", method = RequestMethod.GET, produces = APPLICATION_JSON)
+    public RegionDTO getExperimentRegion(@PathVariable(value = "regionId") final int regionId, Principal principal)
+            throws IOException, RegionNotFoundException, ExperimentNotFoundException {
+        LOGGER.info(String.format("GET /region/%s %s", regionId, principal));
+
+        final Region existingRegion = regionRepository.findById(regionId);
+        if (existingRegion == null) {
+            throw new RegionNotFoundException();
+        }
+        return newRegionDTO(existingRegion);
+    }
+
     /**
      * Updates a {@see Region} entity of a specific {@see Experiment}.
      *
@@ -296,7 +316,7 @@ public class RegionController extends BaseController {
             }
         }
 
-        return getExperimentRegions(experimentId,principal);
+        return getExperimentRegions(experimentId, principal);
     }
 
 }
