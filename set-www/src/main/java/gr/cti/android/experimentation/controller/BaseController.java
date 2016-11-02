@@ -43,13 +43,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.apache.logging.log4j.LogManager.getLogger;
+
 @Controller
 public class BaseController {
 
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(BaseController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(BaseController.class);
     protected static final String APPLICATION_JSON = "application/json";
     protected static final String TEXT_PLAIN = "text/plain";
 

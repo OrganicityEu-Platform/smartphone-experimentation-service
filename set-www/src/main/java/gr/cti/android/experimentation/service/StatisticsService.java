@@ -31,7 +31,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.*;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +41,7 @@ import java.util.*;
 
 import static gr.cti.android.experimentation.util.Utils.createPolygonForCoordinates;
 import static gr.cti.android.experimentation.util.Utils.createPolygonForRegion;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -53,7 +53,8 @@ public class StatisticsService {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(StatisticsService.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(StatisticsService.class);
+    
     private static final double DIFF = 0.00004;
 
     @Autowired

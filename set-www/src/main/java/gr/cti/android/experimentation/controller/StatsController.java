@@ -26,7 +26,6 @@ package gr.cti.android.experimentation.controller;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.Smartphone;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -45,7 +46,7 @@ public class StatsController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(StatsController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(StatsController.class);
 
     @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getStats(final Map<String, Object> model) {

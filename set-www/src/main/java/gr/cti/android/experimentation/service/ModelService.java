@@ -28,7 +28,6 @@ import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.PluginRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.repository.SmartphoneRepository;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,13 +36,15 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static org.apache.logging.log4j.LogManager.getLogger;
+
 @Service
 public class ModelService {
 
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(ModelService.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(ModelService.class);
 
     @Autowired
     PluginRepository pluginRepository;

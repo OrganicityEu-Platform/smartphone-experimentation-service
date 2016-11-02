@@ -25,7 +25,6 @@ package gr.cti.android.experimentation;
 
 
 import com.google.common.base.Predicate;
-import org.apache.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -45,6 +44,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.TimeZone;
 
 import static com.google.common.base.Predicates.or;
+import static org.apache.logging.log4j.LogManager.getLogger;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 
@@ -64,7 +64,7 @@ public class Application implements CommandLineRunner {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(Application.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(Application.class);
 
     public static void main(String[] args)
             throws Exception {

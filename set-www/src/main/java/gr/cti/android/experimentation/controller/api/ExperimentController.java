@@ -32,7 +32,6 @@ import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,6 +40,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -52,7 +53,7 @@ public class ExperimentController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(ExperimentController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(ExperimentController.class);
 
     /**
      * Sends a message using GCM to all volunteers participating in a specific {@see Experiment}.
@@ -113,7 +114,7 @@ public class ExperimentController extends BaseController {
      * @param phoneId the Id of the {@see Smartphone} that will be used.
      * @return A list of {@see Experiment}.
      */
-    @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces =APPLICATION_JSON)
+    @RequestMapping(value = "/experiment", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public ExperimentListDTO listExperiments(
             Principal principal,
             @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {

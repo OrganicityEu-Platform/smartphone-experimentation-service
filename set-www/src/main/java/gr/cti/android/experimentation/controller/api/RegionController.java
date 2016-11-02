@@ -31,13 +31,14 @@ import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.RegionDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
-import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -49,7 +50,7 @@ public class RegionController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(RegionController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RegionController.class);
 
     /**
      * Returns the {@see Region} information of a specific {@see Experiment}.

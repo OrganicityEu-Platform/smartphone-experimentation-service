@@ -31,7 +31,6 @@ import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.util.Utils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,6 +41,8 @@ import java.security.Principal;
 import java.text.DecimalFormat;
 import java.util.*;
 
+import static org.apache.logging.log4j.LogManager.getLogger;
+
 /**
  * @author Dimitrios Amaxilatis.
  */
@@ -51,7 +52,7 @@ public class RestApiDataController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(RestApiDataController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RestApiDataController.class);
 
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getExperimentDataByExperimentId(@RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after

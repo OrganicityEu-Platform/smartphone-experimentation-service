@@ -1,8 +1,8 @@
-package gr.cti.android.experimentation.controller;
+package gr.cti.android.experimentation.util;
 
 /*-
  * #%L
- * Smartphone Experimentation Web Service
+ * SET Web Service
  * $Id:$
  * $HeadURL:$
  * %%
@@ -23,19 +23,22 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
-/**
- * @author Dimitrios Amaxilatis.
- */
-@Controller
-public class HomeController extends BaseController {
+import java.util.List;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String home() {
-        return "redirect:/swagger-ui.html";
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class OCApplicationListDTO {
+
+    private List<OCApplicationDTO> applications;
+
+    public List<OCApplicationDTO> getApplications() {
+        return applications;
     }
 
+    public void setApplications(List<OCApplicationDTO> applications) {
+        this.applications = applications;
+    }
 }

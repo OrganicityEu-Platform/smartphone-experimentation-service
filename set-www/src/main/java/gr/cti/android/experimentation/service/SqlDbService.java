@@ -29,7 +29,6 @@ import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.GeoResultRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.repository.SmartphoneRepository;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,8 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Set;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -49,7 +50,7 @@ public class SqlDbService {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(SqlDbService.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(SqlDbService.class);
 
     @Autowired
     ResultRepository resultRepository;
@@ -92,9 +93,10 @@ public class SqlDbService {
 
                 //store to orion
                 try {
-                    Experiment experiment = experimentRepository.findByExperimentId(
-                            String.valueOf(newResult.getExperimentId())
+                    Experiment experiment = experimentRepository.findById(
+                            newResult.getExperimentId()
                     );
+                    System.out.println("store: " + newResult.getExperimentId() + " experiment:" + experiment);
                     orionService.store(newResult, experiment);
                 } catch (Exception e) {
                     LOGGER.error(e, e);

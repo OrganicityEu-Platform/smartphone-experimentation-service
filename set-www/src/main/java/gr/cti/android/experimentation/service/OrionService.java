@@ -24,6 +24,7 @@ package gr.cti.android.experimentation.service;
  */
 
 import com.amaxilatis.orion.OrionClient;
+import com.amaxilatis.orion.model.OrionContextElement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.organicity.entities.handler.attributes.Attribute;
 import eu.organicity.entities.handler.entities.SmartphoneDevice;
@@ -32,9 +33,11 @@ import eu.organicity.entities.namespace.OrganicityAttributeTypes;
 import eu.organicity.entities.namespace.OrganicityDatatypes;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Result;
-import org.apache.log4j.Logger;
+import gr.cti.android.experimentation.repository.ExperimentRepository;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -42,6 +45,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.Iterator;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -53,7 +58,8 @@ public class OrionService {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(OrionService.class);
+    private static final Logger LOGGER = getLogger(OrionService.class);
+
     private static final String ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT = "urn:oc:entity:experimenters:%s:%s:%s";
 
     private OrionClient orionClient;
@@ -61,14 +67,27 @@ public class OrionService {
 
     @Value("${w3w.key}")
     private String w3wApiKey;
+    @Value("${orion.url}")
+    private String orionUrl;
+    @Value("${orion.token}")
+    private String orionToken;
+    @Value("${orion.service}")
+    private String orionService;
+    @Value("${orion.servicePath}")
+    private String orionServicePath;
 //    private What3Words w3w;
 
+    @Autowired
+    ExperimentRepository experimentRepository;
+    @Autowired
+    ExperimentPortalService experimentPortalService;
+
     @PostConstruct
+
     public void init() {
-        orionClient = new OrionClient("http://localhost:1026", "", "organicity", "/");
+        orionClient = new OrionClient(orionUrl, orionToken, orionService, orionServicePath);
         mapper = new ObjectMapper();
 //        w3w = new What3Words(w3wApiKey);
-
     }
 
     @Async
@@ -78,6 +97,19 @@ public class OrionService {
         final SmartphoneDevice locationPhoneEntity = new SmartphoneDevice();
 
         locationPhoneEntity.setTimestamp(new Date());
+
+        if (experiment.getOcExperimentId() == null) {
+            experimentPortalService.getOCExperimentId(experiment.getExperimentId());
+        }
+
+        experiment = experimentRepository.findById(experiment.getId());
+        if (experiment == null || experiment.getUserId() == null || experiment.getOcExperimentId() == null) {
+            LOGGER.error("experiment == null");
+            return;
+        }
+        final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
+                experiment.getUserId(), experiment.getOcExperimentId(), newResult.getDeviceId());
+        LOGGER.info("Orion URI: " + uri);
 
         try {
             LOGGER.info(newResult.getMessage());
@@ -156,38 +188,27 @@ public class OrionService {
             }
 
 
-//            try {
-//                final Coordinates coords = new Coordinates(Double.parseDouble(latitude), Double.parseDouble(longitude));
-//                final ThreeWords locationWords = w3w.positionToWords(coords);
-//                final String locationWordsString = commaString(locationWords);
-//                final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
-//                        experiment.getUserId(), newResult.getExperimentId(), locationWordsString);
-//                locationPhoneEntity.setId(uri);
-//                locationPhoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
-//                locationPhoneEntity.setDatasource(false, "http://set.organicity.eu");
-//                try {
-//                    final OrionContextElement entity = locationPhoneEntity.getContextElement();
-//                    String string = mapper.writeValueAsString(entity);
-//                    LOGGER.info(string);
-//                    final String res = orionClient.postContextEntity(uri, entity);
-//                    LOGGER.info(res.replaceAll("\n", ""));
-//                } catch (Exception e) {
-//                    LOGGER.error(e, e);
-//                }
-//            } catch (IOException e) {
-//                LOGGER.error(e, e);
-//            } catch (What3WordsException e) {
-//                LOGGER.error(e, e);
-//            }
+            if (latitude != null && longitude != null) {
 
+                locationPhoneEntity.setId(uri);
+
+                locationPhoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                locationPhoneEntity.setDatasource(false, "http://set.organicity.eu");
+                try {
+                    final OrionContextElement entity = locationPhoneEntity.getContextElement();
+                    String string = mapper.writeValueAsString(entity);
+                    LOGGER.info(string);
+                    final String res = orionClient.postContextEntity(uri, entity);
+                    LOGGER.info(res.replaceAll("\n", ""));
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            } else {
+                LOGGER.warn("latitude:" + latitude + " longitude:" + longitude);
+            }
         } catch (JSONException e) {
-            LOGGER.warn(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
         }
 
     }
-
-
-//    public static String commaString(final ThreeWords threeWords) {
-//        return threeWords.getFirst() + "," + threeWords.getSecond() + "," + threeWords.getThird();
-//    }
 }

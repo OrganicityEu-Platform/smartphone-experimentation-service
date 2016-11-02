@@ -28,13 +28,14 @@ import gr.cti.android.experimentation.model.*;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
@@ -43,7 +44,7 @@ public class SmartphoneController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(SmartphoneController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(SmartphoneController.class);
 
 
     /**

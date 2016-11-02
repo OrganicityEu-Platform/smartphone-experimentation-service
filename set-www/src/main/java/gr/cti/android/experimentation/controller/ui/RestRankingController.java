@@ -29,7 +29,6 @@ import gr.cti.android.experimentation.model.DownloadableResultDTO;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.RankingEntry;
 import gr.cti.android.experimentation.model.Result;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,6 +39,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.apache.logging.log4j.LogManager.getLogger;
+
 /**
  * @author Dimitrios Amaxilatis.
  */
@@ -49,7 +50,7 @@ public class RestRankingController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(RestRankingController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RestRankingController.class);
 
 
     @Deprecated

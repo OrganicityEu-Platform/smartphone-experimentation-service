@@ -39,6 +39,7 @@ public class Experiment implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
+    private String ocExperimentId;
     private String experimentId;
     private String experimenter;
     private String description;
@@ -75,6 +76,14 @@ public class Experiment implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOcExperimentId() {
+        return ocExperimentId;
+    }
+
+    public void setOcExperimentId(String ocExperimentId) {
+        this.ocExperimentId = ocExperimentId;
     }
 
     public String getExperimentId() {

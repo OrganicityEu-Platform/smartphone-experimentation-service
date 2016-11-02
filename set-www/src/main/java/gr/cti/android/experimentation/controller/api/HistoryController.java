@@ -29,7 +29,6 @@ import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.TempReading;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +38,8 @@ import javax.annotation.PostConstruct;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static org.apache.logging.log4j.LogManager.getLogger;
+
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class HistoryController extends BaseController {
@@ -46,7 +47,7 @@ public class HistoryController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(HistoryController.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(HistoryController.class);
     private SimpleDateFormat df;
     private SimpleDateFormat df1;
 

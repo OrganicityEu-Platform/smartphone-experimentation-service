@@ -24,25 +24,22 @@ package gr.cti.android.experimentation.service;
  */
 
 
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.util.Utils;
-import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static gr.cti.android.experimentation.util.Utils.createPolygonForCoordinates;
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -54,7 +51,7 @@ public class LocationService {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(LocationService.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(LocationService.class);
 
     @Autowired
     ExperimentRepository experimentRepository;

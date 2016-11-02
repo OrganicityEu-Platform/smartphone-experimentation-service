@@ -27,15 +27,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.organicity.entities.namespace.OrganicityAttributeTypes;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.*;
-import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Set;
+
+import static org.apache.logging.log4j.LogManager.getLogger;
 
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
@@ -44,7 +48,7 @@ public class AndroidExperimentationWS extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = Logger.getLogger(AndroidExperimentationWS.class);
+    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(AndroidExperimentationWS.class);
 
     @RequestMapping(value = "/data", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = TEXT_PLAIN)
     public JSONObject data(@RequestBody String body, final HttpServletResponse response) throws
