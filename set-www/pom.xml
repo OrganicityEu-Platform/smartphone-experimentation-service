@@ -35,10 +35,6 @@
             <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
         </repository>
         <repository>
-            <id>sparkworks</id>
-            <url>http://nexus.sparkworks.net/nexus/content/repositories/snapshots</url>
-        </repository>
-        <repository>
             <id>jitpack</id>
             <url>https://jitpack.io/</url>
         </repository>
@@ -219,9 +215,9 @@
         <!--&lt;!&ndash;#################################################################################################&ndash;&gt;-->
         <!--&lt;!&ndash;HTTP CLIENT&ndash;&gt;-->
         <!--<dependency>-->
-            <!--<groupId>de.meggsimum.w3w</groupId>-->
-            <!--<artifactId>w3w-java-wrapper</artifactId>-->
-            <!--<version>1.0-SNAPSHOT</version>-->
+        <!--<groupId>de.meggsimum.w3w</groupId>-->
+        <!--<artifactId>w3w-java-wrapper</artifactId>-->
+        <!--<version>1.0-SNAPSHOT</version>-->
         <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/com.vividsolutions/jts -->

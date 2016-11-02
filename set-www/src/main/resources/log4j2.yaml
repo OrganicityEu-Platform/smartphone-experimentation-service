@@ -13,7 +13,6 @@ Configuration:
       target: SYSTEM_OUT
       PatternLayout:
         pattern: "[%d{ISO8601}] %5p %t %c{1}:%L - %m%n"
-      Threshold: trace
     RollingFile:
       - name: sqlAppender
         fileName: ${log-path}/sql.log

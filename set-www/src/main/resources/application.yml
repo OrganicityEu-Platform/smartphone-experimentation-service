@@ -8,6 +8,12 @@ server.compression:
   enabled: true
   mime-types: application/json,text/html,text/plain
 
+orion:
+  url: "http://experimenters.organicity.eu:1026/"
+  token: ""
+  service: "organicity"
+  servicePath: "/"
+
 # profiles
 ---
 spring:
@@ -37,6 +43,7 @@ spring:
     # use the two following lines to avoid closed connections
     test-on-borrow: true
     validationQuery: SELECT 1
+
 ---
 spring:
   profiles: test
