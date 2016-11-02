@@ -23,16 +23,11 @@ package gr.cti.android.experimentation.service;
  * #L%
  */
 
+import gr.cti.android.experimentation.client.ExperimentManagementClient;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.util.OCApplicationDTO;
-import gr.cti.android.experimentation.util.OCApplicationListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
 
@@ -53,19 +48,10 @@ public class ExperimentPortalService {
     @Autowired
     ExperimentRepository experimentRepository;
 
-
-    public List<OCApplicationDTO> getOcApplications() {
-        RestTemplate restTemplate = new RestTemplate();
-        try {
-            return restTemplate.getForObject(BASE_URL + "/allapplications", OCApplicationListDTO.class).getApplications();
-        } catch (Exception e) {
-            LOGGER.error(e, e);
-            return new ArrayList<>();
-        }
-    }
+    private ExperimentManagementClient experimentManagementClient = new ExperimentManagementClient();
 
     public void getOCExperimentId(final String experimentId) {
-        getOcApplications().stream().filter(ocApplicationDTO -> ocApplicationDTO.getApplicationId().equals(experimentId)).forEach(ocApplicationDTO -> {
+        experimentManagementClient.listApplications().getApplications().stream().filter(ocApplicationDTO -> ocApplicationDTO.getApplicationId().equals(experimentId)).forEach(ocApplicationDTO -> {
             Experiment exp = experimentRepository.findByExperimentId(experimentId);
             exp.setOcExperimentId(ocApplicationDTO.getExperimentId());
             experimentRepository.save(exp);
