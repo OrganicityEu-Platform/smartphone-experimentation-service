@@ -140,7 +140,7 @@ public class ExperimentController extends BaseController {
     @RequestMapping(value = "/experiment/live", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public ExperimentListDTO listLiveExperiments(Principal principal,
                                                  @RequestParam(value = "phoneId", required = false, defaultValue = "0") final int phoneId) {
-        LOGGER.info("GET /experiment " + pluginRepository);
+        LOGGER.info("GET /experiment " + principal);
         final ExperimentListDTO experiments = new ExperimentListDTO();
         experiments.setExperiments(new ArrayList<>());
         final Iterable<Experiment> enabledExperiments = experimentRepository.findAll();
