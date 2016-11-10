@@ -9,10 +9,12 @@ server.compression:
   mime-types: application/json,text/html,text/plain
 
 orion:
-  url: "http://experimenters.organicity.eu:1026/"
+  url: "http://localhost:1026/"
   token: ""
-  service: "organicity"
+  service: "smartphone"
   servicePath: "/"
+
+
 
 # profiles
 ---
