@@ -23,62 +23,40 @@ package gr.cti.android.experimentation.client;
  * #L%
  */
 
+import eu.organicity.client.OrganicityServiceBaseClient;
 import gr.cti.android.experimentation.model.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
 
-public class WebServiceAndroidClient {
-    private final RestTemplate restTemplate;
+public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
 
     private static final String BASE_URL = "https://api.smartphone-experimentation.eu/v1/";
     private static final String ACCOUNTS_TOKEN_ENDPOINT = "https://accounts.organicity.eu/realms/organicity/protocol/openid-connect/token";
-    private String token;
     private String encodedToken;
-    private HttpHeaders headers;
-    private HttpEntity<String> req;
-
     public WebServiceAndroidClient() {
         this("");
     }
 
     public WebServiceAndroidClient(final String token) {
-        this.token = token;
-        restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
-        req = new HttpEntity<>("", headers);
+        super(token);
     }
-
 
     public void setErrorHandler(final ResponseErrorHandler responseErrorHandler) {
         restTemplate.setErrorHandler(responseErrorHandler);
     }
 
     public void clearToken() {
-        this.token = "";
         headers.remove(HttpHeaders.AUTHORIZATION);
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
     }
 
     public void setEncodedToken(final String encodedToken) {
         this.encodedToken = encodedToken;
     }
-
 
     public boolean updateAccessToken() {
 

@@ -1,0 +1,60 @@
+package gr.cti.android.experimentation.util;/*-
+ * #%L
+ * Smartphone Experimentation Client
+ * $Id:$
+ * $HeadURL:$
+ * %%
+ * Copyright (C) 2015 - 2016 CTI - Computer Technology Institute and Press "Diophantus"
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * #L%
+ */
+
+import eu.organicity.discovery.dto.FeatureCollectionDTO;
+import eu.organicity.discovery.dto.FeatureDTO;
+import eu.organicity.sitemanager.client.OrganicityClient;
+import eu.organicity.sitemanager.dto.Asset;
+import org.junit.Before;
+import org.junit.Test;
+
+public class OrganicityClientTest {
+
+    private OrganicityClient client;
+
+    @Before
+    public void before() throws Exception {
+        client = new OrganicityClient();
+        client.setToken("");
+        client.setEncodedToken("");
+    }
+
+    @Test
+    public void testList() throws Exception {
+        final Asset[] assets = client.listAssetTypes();
+        for (final Asset asset : assets) {
+            System.out.println(asset);
+        }
+    }
+
+    @Test
+    public void testListNearbyAssets() throws Exception {
+        final FeatureCollectionDTO[] assets = client.listNearbyAssets(38.246639, 21.734573, 20);
+        for (final FeatureCollectionDTO asset : assets) {
+            System.out.println(asset.getProperties().getName());
+            for (final FeatureDTO featureDTO : asset.getFeatures()) {
+                System.out.println("\t" + featureDTO.getProperties().getId() + " " + featureDTO.getGeometry());
+            }
+        }
+    }
+}
