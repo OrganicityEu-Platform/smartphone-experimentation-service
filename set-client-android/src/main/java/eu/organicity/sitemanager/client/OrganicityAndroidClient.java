@@ -24,6 +24,7 @@ package eu.organicity.sitemanager.client;
  */
 
 import eu.organicity.discovery.dto.FeatureCollectionDTO;
+import eu.organicity.experiment.management.dto.OCApplicationListDTO;
 import eu.organicity.sitemanager.dto.Asset;
 import gr.cti.android.experimentation.client.OauthTokenResponse;
 import org.springframework.http.HttpEntity;
@@ -40,6 +41,7 @@ public class OrganicityAndroidClient {
     private final RestTemplate restTemplate;
     private static final String ACCOUNTS_TOKEN_ENDPOINT = "https://accounts.organicity.eu/realms/organicity/protocol/openid-connect/token";
     private static final String EXPERIMENTERS_SITE_ENDPOINT = "https://exp.orion.organicity.eu/v2/";
+    private static final String EXPERIMENT_MANAGEMENT_ENDPOINT = "http://31.200.243.76:8081/";
     private static final String ADS_ENDPOINT = "http://discovery.organicity.eu/v0/";
     private static final String SITEMANAGER_URL = "https://sitemanager.organicity.eu/v1/";
     private String token;
@@ -107,6 +109,32 @@ public class OrganicityAndroidClient {
         return false;
     }
 
+    //    Experimenters Site API
+
+    public String postAsset(final String entity) {
+        if (!"".equals(token)) {
+            updateAccessToken();
+        }
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.AUTHORIZATION, "Basic " + encodedToken);
+        headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
+        headers.add(HttpHeaders.ACCEPT, "application/json");
+        headers.add("X-Organicity-Application", applicationId);
+        headers.add("X-Organicity-Experiment", experimentId);
+
+        final HttpEntity<String> requestEntity = new HttpEntity<>(entity, headers);
+        return restTemplate.exchange(EXPERIMENTERS_SITE_ENDPOINT + "entities",
+                HttpMethod.POST, requestEntity, String.class).getBody();
+    }
+
+    //    Site Management API
+
+    /**
+     * List all the avaialble asset types for OC.
+     *
+     * @return an {@see Asset} array.
+     */
     public Asset[] listAssetTypes() {
         if (!"".equals(token)) {
             updateAccessToken();
@@ -115,6 +143,16 @@ public class OrganicityAndroidClient {
                 HttpMethod.GET, req, Asset[].class).getBody();
     }
 
+    //    Discovery API
+
+    /**
+     * List all nearby assets.
+     *
+     * @param lat    the latitude for the query.
+     * @param lon    the longitude for the query.
+     * @param radius the radius for the circle to search for assets inside it.
+     * @return a {@see FeatureCollectionDTO} array.
+     */
     public FeatureCollectionDTO[] listNearbyAssets(final double lat, final double lon, final int radius) {
         if (!"".equals(token)) {
             updateAccessToken();
@@ -130,5 +168,17 @@ public class OrganicityAndroidClient {
 
         return restTemplate.exchange(ADS_ENDPOINT + "assets/geo/search",
                 HttpMethod.GET, internalRec, FeatureCollectionDTO[].class).getBody();
+    }
+
+    //    Experiment Management API
+
+    /**
+     * List all applications for the current user from the Experiment Management OC Service.
+     *
+     * @return a {@see OCApplicationListDTO}.
+     */
+    public OCApplicationListDTO listApplications() {
+        return restTemplate.exchange(EXPERIMENT_MANAGEMENT_ENDPOINT + "allapplications",
+                HttpMethod.GET, req, OCApplicationListDTO.class).getBody();
     }
 }

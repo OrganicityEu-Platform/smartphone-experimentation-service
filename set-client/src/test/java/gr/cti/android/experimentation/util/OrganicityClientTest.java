@@ -23,6 +23,8 @@ package gr.cti.android.experimentation.util;/*-
 
 import eu.organicity.discovery.dto.FeatureCollectionDTO;
 import eu.organicity.discovery.dto.FeatureDTO;
+import eu.organicity.experiment.management.dto.OCApplicationDTO;
+import eu.organicity.experiment.management.dto.OCApplicationListDTO;
 import eu.organicity.sitemanager.client.OrganicityClient;
 import eu.organicity.sitemanager.dto.Asset;
 import org.junit.Before;
@@ -57,4 +59,14 @@ public class OrganicityClientTest {
             }
         }
     }
+
+
+    @Test
+    public void testListExperiments() throws Exception {
+        OCApplicationListDTO applications = client.listApplications();
+        for (final OCApplicationDTO application : applications.getApplications()) {
+            System.out.println(application);
+        }
+    }
+
 }
