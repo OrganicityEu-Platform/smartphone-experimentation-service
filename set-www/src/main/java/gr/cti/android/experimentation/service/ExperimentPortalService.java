@@ -23,7 +23,7 @@ package gr.cti.android.experimentation.service;
  * #L%
  */
 
-import gr.cti.android.experimentation.client.ExperimentManagementClient;
+import eu.organicity.sitemanager.client.OrganicityClient;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class ExperimentPortalService {
     @Autowired
     ExperimentRepository experimentRepository;
 
-    private ExperimentManagementClient experimentManagementClient = new ExperimentManagementClient();
+    private OrganicityClient experimentManagementClient = new OrganicityClient();
 
     public void getOCExperimentId(final String experimentId) {
         experimentManagementClient.listApplications().getApplications().stream().filter(ocApplicationDTO -> ocApplicationDTO.getApplicationId().equals(experimentId)).forEach(ocApplicationDTO -> {
