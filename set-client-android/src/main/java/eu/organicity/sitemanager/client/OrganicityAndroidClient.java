@@ -158,15 +158,11 @@ public class OrganicityAndroidClient {
             updateAccessToken();
         }
         final MultiValueMap<String, String> codeMap = new LinkedMultiValueMap<>();
-        codeMap.add("lat", String.valueOf(lat));
-        codeMap.add("long", String.valueOf(lon));
-        codeMap.add("radius", String.valueOf(radius));
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.ACCEPT, "application/json");
         headers.add(HttpHeaders.USER_AGENT, "java-client");
         final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
-
-        return restTemplate.exchange(ADS_ENDPOINT + "assets/geo/search",
+        return restTemplate.exchange(ADS_ENDPOINT + "assets/geo/search?lat=" + lat + "&long=" + lon + "&radius=" + radius + "&km=true",
                 HttpMethod.GET, internalRec, FeatureCollectionDTO[].class).getBody();
     }
 
