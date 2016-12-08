@@ -43,6 +43,7 @@ public class ExperimentDTO implements Serializable {
     private String userId;
     private String url;
     private String filename;
+    private String parentExperimentId;
 
     public long getTimestamp() {
         return timestamp;
@@ -130,6 +131,14 @@ public class ExperimentDTO implements Serializable {
 
     public void setUrlDescription(String urlDescription) {
         this.urlDescription = urlDescription;
+    }
+
+    public String getParentExperimentId() {
+        return parentExperimentId;
+    }
+
+    public void setParentExperimentId(String parentExperimentId) {
+        this.parentExperimentId = parentExperimentId;
     }
 
     @Override

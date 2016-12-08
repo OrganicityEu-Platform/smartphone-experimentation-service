@@ -274,6 +274,7 @@ public class BaseController {
         dto.setSensorDependencies(experiment.getSensorDependencies());
         dto.setDescription(experiment.getDescription());
         dto.setFilename(experiment.getFilename());
+        dto.setParentExperimentId(experiment.getOcExperimentId());
         return dto;
     }
 

@@ -24,6 +24,7 @@ package gr.cti.android.experimentation.client;
  */
 
 import eu.organicity.client.OrganicityServiceBaseClient;
+import eu.organicity.discovery.dto.FeatureCollectionDTO;
 import gr.cti.android.experimentation.model.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -35,9 +36,10 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
 
-    private static final String BASE_URL = "https://api.smartphone-experimentation.eu/v1/";
+    private static final String BASE_URL = "https://api.smartphone-experimentation.eu/";
     private static final String ACCOUNTS_TOKEN_ENDPOINT = "https://accounts.organicity.eu/realms/organicity/protocol/openid-connect/token";
     private String encodedToken;
+
     public WebServiceAndroidClient() {
         this("");
     }
@@ -85,7 +87,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "experiment",
+        return restTemplate.exchange(BASE_URL + "v1/experiment",
                 HttpMethod.GET, req, ExperimentListDTO.class).getBody();
     }
 
@@ -93,7 +95,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "experiment/live",
+        return restTemplate.exchange(BASE_URL + "v1/experiment/live",
                 HttpMethod.GET, req, ExperimentListDTO.class).getBody();
     }
 
@@ -101,7 +103,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "experiment?phoneId=" + smartphoneId,
+        return restTemplate.exchange(BASE_URL + "v1/experiment?phoneId=" + smartphoneId,
                 HttpMethod.GET, req, ExperimentListDTO.class).getBody();
     }
 
@@ -109,7 +111,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "experiment/" + experimentId,
+        return restTemplate.exchange(BASE_URL + "v1/experiment/" + experimentId,
                 HttpMethod.GET, req, ExperimentDTO.class).getBody();
     }
 
@@ -117,7 +119,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "plugin",
+        return restTemplate.exchange(BASE_URL + "v1/plugin",
                 HttpMethod.GET, req, PluginListDTO.class).getBody();
     }
 
@@ -125,7 +127,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "/smartphone/" + smartphoneId + "/statistics",
+        return restTemplate.exchange(BASE_URL + "v1/smartphone/" + smartphoneId + "/statistics",
                 HttpMethod.GET, req, SmartphoneStatisticsDTO.class).getBody();
     }
 
@@ -133,7 +135,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "/smartphone/" + smartphoneId + "/statistics/" + experimentId,
+        return restTemplate.exchange(BASE_URL + "v1/smartphone/" + smartphoneId + "/statistics/" + experimentId,
                 HttpMethod.GET, req, SmartphoneStatisticsDTO.class).getBody();
     }
 
@@ -141,7 +143,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "/smartphone",
+        return restTemplate.exchange(BASE_URL + "v1/smartphone",
                 HttpMethod.POST, new HttpEntity<>(smartphone, headers), SmartphoneDTO.class).getBody();
     }
 
@@ -149,7 +151,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "/experiment/" + experimentId + "/region",
+        return restTemplate.exchange(BASE_URL + "v1/experiment/" + experimentId + "/region",
                 HttpMethod.GET, req, RegionListDTO.class).getBody();
     }
 
@@ -157,8 +159,27 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
         if (!"".equals(token)) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "/data/multiple",
+        return restTemplate.exchange(BASE_URL + "v1/data/multiple",
                 HttpMethod.POST, new HttpEntity<>(resultListDTO, headers), ResponseDTO.class).getBody();
     }
 
+    /**
+     * List all nearby assets.
+     *
+     * @param lat the latitude for the query.
+     * @param lon the longitude for the query.
+     * @return a {@see FeatureCollectionDTO} array.
+     */
+    public FeatureCollectionDTO[] listNearbyAssets(final double lat, final double lon) {
+        if (!"".equals(token)) {
+            updateAccessToken();
+        }
+        final MultiValueMap<String, Object> codeMap = new LinkedMultiValueMap<>();
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, "application/json");
+        final HttpEntity<MultiValueMap<String, Object>> internalRec = new HttpEntity<>(codeMap, headers);
+
+        return restTemplate.exchange(BASE_URL + "assets/geo/search?lat=" + lat + "&long=" + lon + "&radius=20",
+                HttpMethod.GET, internalRec, FeatureCollectionDTO[].class).getBody();
+    }
 }

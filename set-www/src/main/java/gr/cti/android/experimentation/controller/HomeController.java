@@ -23,9 +23,13 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
+import eu.organicity.discovery.dto.FeatureCollectionDTO;
+import eu.organicity.sitemanager.client.OrganicityClient;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -36,6 +40,12 @@ public class HomeController extends BaseController {
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home() {
         return "redirect:/swagger-ui.html";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/assets/geo/search", method = RequestMethod.GET, produces = APPLICATION_JSON)
+    public FeatureCollectionDTO[] assetsGeoSearch(@RequestParam double lat, @RequestParam("long") double lon, @RequestParam int radius) {
+        return new OrganicityClient().listNearbyAssets(lat, lon, radius);
     }
 
 }
