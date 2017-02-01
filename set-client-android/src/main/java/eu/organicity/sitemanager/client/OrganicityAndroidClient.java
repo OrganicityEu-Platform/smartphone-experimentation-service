@@ -23,6 +23,7 @@ package eu.organicity.sitemanager.client;
  * #L%
  */
 
+import eu.organicity.discovery.dto.ExperimentAssetDTO;
 import eu.organicity.discovery.dto.FeatureCollectionDTO;
 import eu.organicity.experiment.management.dto.OCApplicationListDTO;
 import eu.organicity.sitemanager.dto.Asset;
@@ -164,6 +165,30 @@ public class OrganicityAndroidClient {
         final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
         return restTemplate.exchange(ADS_ENDPOINT + "assets/geo/search?lat=" + lat + "&long=" + lon + "&radius=" + radius + "&km=true",
                 HttpMethod.GET, internalRec, FeatureCollectionDTO[].class).getBody();
+    }
+
+    /**
+     * List all experiment assets.
+     *
+     * @param experimentId the id of the experiment for the query.
+     * @return a {@see ExperimentAssetDTO} array.
+     */
+    public ExperimentAssetDTO[] listExperimentAssets(final String experimentId) {
+        if (!"".equals(token)) {
+            updateAccessToken();
+        }
+        final MultiValueMap<String, String> codeMap = new LinkedMultiValueMap<>();
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, "application/json");
+        headers.add(HttpHeaders.USER_AGENT, "java-client");
+        final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
+        try {
+            return restTemplate.exchange(ADS_ENDPOINT + "assets/experiments/" + experimentId,
+                    HttpMethod.GET, internalRec, ExperimentAssetDTO[].class).getBody();
+        } catch (Exception e) {
+            return new ExperimentAssetDTO[]{restTemplate.exchange(ADS_ENDPOINT + "assets/experiments/" + experimentId,
+                    HttpMethod.GET, internalRec, ExperimentAssetDTO.class).getBody()};
+        }
     }
 
     //    Experiment Management API

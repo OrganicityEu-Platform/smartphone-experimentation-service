@@ -163,6 +163,22 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
                 HttpMethod.POST, new HttpEntity<>(resultListDTO, headers), ResponseDTO.class).getBody();
     }
 
+    public NewAssetDTO sendAsset(final String assetName, final String experimentId,
+                                 final double latitude, final double longitude) {
+        if (!"".equals(token)) {
+            updateAccessToken();
+        }
+
+        NewAssetDTO newAssetDTO = new NewAssetDTO();
+        newAssetDTO.setName(assetName);
+        newAssetDTO.setExperimentId(experimentId);
+        newAssetDTO.setLatitude(latitude);
+        newAssetDTO.setLongitude(longitude);
+
+        return restTemplate.exchange(BASE_URL + "v1/asset/add",
+                HttpMethod.POST, new HttpEntity<>(newAssetDTO, headers), NewAssetDTO.class).getBody();
+    }
+
     /**
      * List all nearby assets.
      *
