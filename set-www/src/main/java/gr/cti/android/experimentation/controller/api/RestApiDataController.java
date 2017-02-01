@@ -73,13 +73,23 @@ public class RestApiDataController extends BaseController {
         return getExperimentData(experiment, deviceId, after, to, accuracy).toString();
     }
 
+    @RequestMapping(value = "/experiment/data/{experimentId}/list", method = RequestMethod.GET, produces = APPLICATION_JSON)
+    public String getExperimentDataByExperimentIdList(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
+            , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
+            , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
+            , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy
+            , Principal principal) {
+        LOGGER.info("GET /experiment/data/" + experiment + " " + principal);
+        return getExperimentDataList(experiment, deviceId, after, to, accuracy).toString();
+    }
+
     @RequestMapping(value = "/experiment/data/{experimentId}/hour", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getExperimentDataHourlyByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
             , @RequestParam(value = "to", defaultValue = "0", required = false) final String to
             , @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId
             , @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy
             , Principal principal) {
-        LOGGER.info("GET /experiment/data/" + experiment + "/hour regionId="+regionId+ " " + principal);
+        LOGGER.info("GET /experiment/data/" + experiment + "/hour regionId=" + regionId + " " + principal);
         final Region region = regionRepository.findById(Integer.parseInt(regionId));
         JSONObject data = getExperimentHourlyData(experiment, deviceId, after, to, accuracy, region);
         return data.toString();
@@ -115,6 +125,59 @@ public class RestApiDataController extends BaseController {
         return addressPoints;
     }
 
+    private JSONArray getExperimentDataList(final String experiment, final int deviceId, final String after, final String to, final int accuracy) {
+        final long start = parseDateMillis(after);
+        final long end = parseDateMillis(to);
+
+
+        final Set<Result> results;
+        Experiment exp = experimentRepository.findByExperimentId(experiment);
+        if (deviceId == 0) {
+            results = resultRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+        } else {
+            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getId(), deviceId, start);
+        }
+        LOGGER.info("found:" + results.size());
+
+        final JSONArray array = new JSONArray();
+        for (final Result result : results) {
+            if (end != 0 && result.getTimestamp() > end) {
+                continue;
+            }
+            try {
+                final JSONObject obj = new JSONObject();
+                final JSONObject message = new JSONObject(result.getMessage());
+                if (message.has(LATITUDE) && message.has(LONGITUDE)) {
+                    obj.put("longitude", message.getDouble(LONGITUDE));
+                    obj.put("latitude", message.getDouble(LATITUDE));
+
+                    final Iterator iterator = message.keys();
+                    final JSONObject dataJson = new JSONObject();
+                    while (iterator.hasNext()) {
+                        final String key = (String) iterator.next();
+                        if (key.equals(LATITUDE) || key.equals(LONGITUDE)) {
+                            continue;
+                        }
+                        try {
+                            final String data = message.getString(key);
+                            dataJson.put(key, data);
+                        } catch (Exception e) {
+                            LOGGER.error(e, e);
+                        }
+                    }
+                    obj.put("data", dataJson);
+                    obj.put("timestamp", result.getTimestamp());
+                    obj.put("deviceId", result.getDeviceId());
+                }
+                array.put(obj);
+            } catch (Exception e) {
+                LOGGER.error(e, e);
+            }
+        }
+        LOGGER.info("returning:" + array.length());
+        return array;
+    }
+
     private JSONArray getAllData(final int deviceId, final String after, final String to, final int accuracy) {
         final String format = getFormat(accuracy);
 
@@ -132,6 +195,30 @@ public class RestApiDataController extends BaseController {
         final JSONArray addressPoints = doCalculations(results, end, df);
         LOGGER.info(addressPoints.toString());
         return addressPoints;
+    }
+
+    private JSONArray getAllDataList(final int deviceId, final String after, final String to, final int accuracy) {
+        final String format = getFormat(accuracy);
+
+        DecimalFormat df = new DecimalFormat(format);
+        long start = parseDateMillis(after);
+        long end = parseDateMillis(to);
+
+        final Set<Result> results;
+        if (deviceId == 0) {
+            results = new HashSet<>();
+        } else {
+            results = resultRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(deviceId, start);
+        }
+
+        JSONArray array = new JSONArray();
+        for (Result result : results) {
+            if (result.getTimestamp() > end) {
+                continue;
+            }
+
+        }
+        return array;
     }
 
     private JSONObject getExperimentHourlyData(final String experiment, final int deviceId, final String after, final String to, final int accuracy, final Region region) {
