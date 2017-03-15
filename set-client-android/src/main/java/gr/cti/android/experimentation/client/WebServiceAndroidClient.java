@@ -163,7 +163,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
                 HttpMethod.POST, new HttpEntity<>(resultListDTO, headers), ResponseDTO.class).getBody();
     }
 
-    public NewAssetDTO sendAsset(final String assetName, final String experimentId,
+    public NewAssetDTO sendAsset(final String assetName, final String assetType, final String experimentId,
                                  final double latitude, final double longitude) {
         if (!"".equals(token)) {
             updateAccessToken();
@@ -171,6 +171,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
 
         NewAssetDTO newAssetDTO = new NewAssetDTO();
         newAssetDTO.setName(assetName);
+        newAssetDTO.setType(assetType);
         newAssetDTO.setExperimentId(experimentId);
         newAssetDTO.setLatitude(latitude);
         newAssetDTO.setLongitude(longitude);

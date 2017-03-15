@@ -32,6 +32,7 @@ import java.io.Serializable;
 public class NewAssetDTO implements Serializable {
 
     private String name;
+    private String type;
     private String experimentId;
     private double latitude;
     private double longitude;
@@ -66,5 +67,18 @@ public class NewAssetDTO implements Serializable {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+    
+    public String getType() {
+        return type;
+    }
+    
+    public void setType(String type) {
+        this.type = type;
+    }
+    
+    @Override
+    public String toString() {
+        return "NewAssetDTO{" + "name='" + name + '\'' + ", type='" + type + '\'' + ", experimentId='" + experimentId + '\'' + ", latitude=" + latitude + ", longitude=" + longitude + '}';
     }
 }

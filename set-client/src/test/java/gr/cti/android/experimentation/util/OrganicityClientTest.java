@@ -21,12 +21,13 @@ package gr.cti.android.experimentation.util;/*-
  * #L%
  */
 
+import eu.organicity.discovery.dto.AssetTypeDTO;
+import eu.organicity.discovery.dto.ExperimentAssetDTO;
 import eu.organicity.discovery.dto.FeatureCollectionDTO;
 import eu.organicity.discovery.dto.FeatureDTO;
 import eu.organicity.experiment.management.dto.OCApplicationDTO;
 import eu.organicity.experiment.management.dto.OCApplicationListDTO;
 import eu.organicity.sitemanager.client.OrganicityClient;
-import eu.organicity.sitemanager.dto.Asset;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,9 +43,9 @@ public class OrganicityClientTest {
     }
 
     @Test
-    public void testList() throws Exception {
-        final Asset[] assets = client.listAssetTypes();
-        for (final Asset asset : assets) {
+    public void testAssetTypes() throws Exception {
+        final AssetTypeDTO[] assets = client.listAssetTypes();
+        for (final AssetTypeDTO asset : assets) {
             System.out.println(asset);
         }
     }
@@ -66,6 +67,19 @@ public class OrganicityClientTest {
         OCApplicationListDTO applications = client.listApplications();
         for (final OCApplicationDTO application : applications.getApplications()) {
             System.out.println(application);
+        }
+    }
+
+    @Test
+    public void testListExperimentAssets() throws Exception {
+        ExperimentAssetDTO[] experimentAssetDTOs = client.listExperimentAssets("5820b17baeb046575877af53");
+        for (final ExperimentAssetDTO experimentAssetDTO : experimentAssetDTOs) {
+            System.out.println(experimentAssetDTO);
+        }
+
+        experimentAssetDTOs = client.listExperimentAssets("57f210e59324fdd11103d93c");
+        for (final ExperimentAssetDTO experimentAssetDTO : experimentAssetDTOs) {
+            System.out.println(experimentAssetDTO);
         }
     }
 

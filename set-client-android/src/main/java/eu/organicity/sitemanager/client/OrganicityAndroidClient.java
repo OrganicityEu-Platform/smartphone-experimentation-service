@@ -23,10 +23,10 @@ package eu.organicity.sitemanager.client;
  * #L%
  */
 
+import eu.organicity.discovery.dto.AssetTypeDTO;
 import eu.organicity.discovery.dto.ExperimentAssetDTO;
 import eu.organicity.discovery.dto.FeatureCollectionDTO;
 import eu.organicity.experiment.management.dto.OCApplicationListDTO;
-import eu.organicity.sitemanager.dto.Asset;
 import gr.cti.android.experimentation.client.OauthTokenResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -97,8 +97,7 @@ public class OrganicityAndroidClient {
         headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
         final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
 
-        final ResponseEntity<OauthTokenResponse> response =
-                restTemplate.exchange(ACCOUNTS_TOKEN_ENDPOINT, HttpMethod.POST, internalRec, OauthTokenResponse.class);
+        final ResponseEntity<OauthTokenResponse> response = restTemplate.exchange(ACCOUNTS_TOKEN_ENDPOINT, HttpMethod.POST, internalRec, OauthTokenResponse.class);
         if (response.hasBody()) {
             OauthTokenResponse credentials = response.getBody();
 
@@ -125,24 +124,22 @@ public class OrganicityAndroidClient {
         headers.add("X-Organicity-Experiment", experimentId);
 
         final HttpEntity<String> requestEntity = new HttpEntity<>(entity, headers);
-        return restTemplate.exchange(EXPERIMENTERS_SITE_ENDPOINT + "entities",
-                HttpMethod.POST, requestEntity, String.class).getBody();
+        return restTemplate.exchange(EXPERIMENTERS_SITE_ENDPOINT + "entities", HttpMethod.POST, requestEntity, String.class).getBody();
     }
 
     //    Site Management API
 
-    /**
-     * List all the avaialble asset types for OC.
-     *
-     * @return an {@see Asset} array.
-     */
-    public Asset[] listAssetTypes() {
-        if (!"".equals(token)) {
-            updateAccessToken();
-        }
-        return restTemplate.exchange(SITEMANAGER_URL + "dictionary/assettypes",
-                HttpMethod.GET, req, Asset[].class).getBody();
-    }
+//    /**
+//     * List all the avaialble asset types for OC.
+//     *
+//     * @return an {@see Asset} array.
+//     */
+//    public Asset[] listAssetTypes() {
+//        if (!"".equals(token)) {
+//            updateAccessToken();
+//        }
+//        return restTemplate.exchange(SITEMANAGER_URL + "dictionary/assettypes", HttpMethod.GET, req, Asset[].class).getBody();
+//    }
 
     //    Discovery API
 
@@ -163,8 +160,24 @@ public class OrganicityAndroidClient {
         headers.add(HttpHeaders.ACCEPT, "application/json");
         headers.add(HttpHeaders.USER_AGENT, "java-client");
         final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
-        return restTemplate.exchange(ADS_ENDPOINT + "assets/geo/search?lat=" + lat + "&long=" + lon + "&radius=" + radius + "&km=true",
-                HttpMethod.GET, internalRec, FeatureCollectionDTO[].class).getBody();
+        return restTemplate.exchange(ADS_ENDPOINT + "assets/geo/search?lat=" + lat + "&long=" + lon + "&radius=" + radius + "&km=true", HttpMethod.GET, internalRec, FeatureCollectionDTO[].class).getBody();
+    }
+
+    /**
+     * List all asset types.
+     *
+     * @return a {@see AssetTypeDTO} array.
+     */
+    public AssetTypeDTO[] listAssetTypes() {
+        if (!"".equals(token)) {
+            updateAccessToken();
+        }
+        final MultiValueMap<String, String> codeMap = new LinkedMultiValueMap<>();
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.ACCEPT, "application/json");
+        headers.add(HttpHeaders.USER_AGENT, "java-client");
+        final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
+        return restTemplate.exchange(ADS_ENDPOINT + "types", HttpMethod.GET, internalRec, AssetTypeDTO[].class).getBody();
     }
 
     /**
@@ -183,11 +196,9 @@ public class OrganicityAndroidClient {
         headers.add(HttpHeaders.USER_AGENT, "java-client");
         final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
         try {
-            return restTemplate.exchange(ADS_ENDPOINT + "assets/experiments/" + experimentId,
-                    HttpMethod.GET, internalRec, ExperimentAssetDTO[].class).getBody();
+            return restTemplate.exchange(ADS_ENDPOINT + "assets/experiments/" + experimentId, HttpMethod.GET, internalRec, ExperimentAssetDTO[].class).getBody();
         } catch (Exception e) {
-            return new ExperimentAssetDTO[]{restTemplate.exchange(ADS_ENDPOINT + "assets/experiments/" + experimentId,
-                    HttpMethod.GET, internalRec, ExperimentAssetDTO.class).getBody()};
+            return new ExperimentAssetDTO[]{restTemplate.exchange(ADS_ENDPOINT + "assets/experiments/" + experimentId, HttpMethod.GET, internalRec, ExperimentAssetDTO.class).getBody()};
         }
     }
 
@@ -199,7 +210,6 @@ public class OrganicityAndroidClient {
      * @return a {@see OCApplicationListDTO}.
      */
     public OCApplicationListDTO listApplications() {
-        return restTemplate.exchange(EXPERIMENT_MANAGEMENT_ENDPOINT + "allapplications",
-                HttpMethod.GET, req, OCApplicationListDTO.class).getBody();
+        return restTemplate.exchange(EXPERIMENT_MANAGEMENT_ENDPOINT + "allapplications", HttpMethod.GET, req, OCApplicationListDTO.class).getBody();
     }
 }
