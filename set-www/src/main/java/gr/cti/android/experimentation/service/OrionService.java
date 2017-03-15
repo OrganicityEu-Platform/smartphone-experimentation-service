@@ -32,6 +32,7 @@ import eu.organicity.entities.handler.metadata.Datatype;
 import eu.organicity.entities.namespace.OrganicityAttributeTypes;
 import eu.organicity.entities.namespace.OrganicityDatatypes;
 import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.NewAssetDTO;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.util.OauthTokenResponse;
@@ -53,6 +54,7 @@ import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Collectors;
@@ -65,18 +67,18 @@ import static org.apache.logging.log4j.LogManager.getLogger;
  */
 @Service
 public class OrionService {
-
+    
     /**
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = getLogger(OrionService.class);
-
+    
     private static final String ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT = "urn:oc:entity:experimenters:%s:%s:%s";
     private static final String ACCOUNTS_TOKEN_ENDPOINT = "https://accounts.organicity.eu/realms/organicity/protocol/openid-connect/token";
     private static final String EXP_PROXY_ENDPOINT = "https://exp.orion.organicity.eu/v2/entities";
-
+    
     private OrionClient orionClient;
-
+    
     private ObjectMapper mapper;
     @Value("${w3w.key}")
     private String w3wApiKey;
@@ -90,36 +92,33 @@ public class OrionService {
     private String orionServicePath;
     @Value("${token.offline}")
     private String offlineToken;
-
     @Value("${token.encoded}")
     private String encodedToken;
-
+    
     private RestTemplate restTemplate = new RestTemplate();
-
+    
     //    private What3Words w3w;
     @Autowired
     ExperimentRepository experimentRepository;
     @Autowired
     ExperimentPortalService experimentPortalService;
-
+    
     @PostConstruct
-
+    
     public void init() {
         orionClient = new OrionClient(orionUrl, orionToken, orionService, orionServicePath);
         mapper = new ObjectMapper();
-
+        
         restTemplate.setErrorHandler(new ResponseErrorHandler() {
             @Override
             public void handleError(ClientHttpResponse clienthttpresponse) throws IOException {
-                if (clienthttpresponse.getStatusCode() == HttpStatus.BAD_REQUEST
-                        || clienthttpresponse.getStatusCode() == HttpStatus.FORBIDDEN) {
+                if (clienthttpresponse.getStatusCode() == HttpStatus.BAD_REQUEST || clienthttpresponse.getStatusCode() == HttpStatus.FORBIDDEN) {
                     LOGGER.error("Text:" + clienthttpresponse.getStatusText());
-                    String result = new BufferedReader(new InputStreamReader(clienthttpresponse.getBody()))
-                            .lines().collect(Collectors.joining("\n"));
+                    String result = new BufferedReader(new InputStreamReader(clienthttpresponse.getBody())).lines().collect(Collectors.joining("\n"));
                     LOGGER.error("result:" + result);
                 }
             }
-
+            
             @Override
             public boolean hasError(ClientHttpResponse clienthttpresponse) throws IOException {
                 if (clienthttpresponse.getStatusCode() != HttpStatus.OK) {
@@ -128,34 +127,33 @@ public class OrionService {
                 return false;
             }
         });
-//        w3w = new What3Words(w3wApiKey);
+        //        w3w = new What3Words(w3wApiKey);
     }
-
+    
     @Async
     public void store(Result newResult, Experiment experiment) {
         LOGGER.info("store-orion:" + newResult.getDeviceId());
-
+        
         final SmartphoneDevice locationPhoneEntity = new SmartphoneDevice();
-
+        
         locationPhoneEntity.setTimestamp(new Date());
-
+        
         if (experiment.getOcExperimentId() == null) {
             experimentPortalService.getOCExperimentId(experiment.getExperimentId());
         }
-
+        
         experiment = experimentRepository.findById(experiment.getId());
         if (experiment == null || experiment.getUserId() == null || experiment.getOcExperimentId() == null) {
             LOGGER.error("experiment == null");
             return;
         }
-        final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT,
-                experiment.getUserId(), experiment.getOcExperimentId(), newResult.getDeviceId());
+        final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT, experiment.getUserId(), experiment.getOcExperimentId(), newResult.getDeviceId());
         LOGGER.info("Orion URI: " + uri);
-
+        
         try {
             LOGGER.info(newResult.getMessage());
             final JSONObject readingList = new JSONObject(newResult.getMessage());
-
+            
             final Iterator keys = readingList.keys();
             String latitude = null;
             String longitude = null;
@@ -227,12 +225,12 @@ public class OrionService {
                     locationPhoneEntity.addAttribute(a);
                 }
             }
-
-
+            
+            
             if (latitude != null && longitude != null) {
-
+                
                 locationPhoneEntity.setId(uri);
-
+                
                 locationPhoneEntity.setPosition(Double.parseDouble(latitude), Double.parseDouble(longitude));
                 locationPhoneEntity.setDatasource(false, "http://set.organicity.eu");
                 try {
@@ -244,14 +242,16 @@ public class OrionService {
                     headers.add("Fiware-Service", orionService);
                     headers.add("Fiware-ServicePath", orionServicePath);
                     final HttpEntity r1 = new HttpEntity(headers);
-
+                    
                     String formattedEntity = restTemplate.exchange(orionUrl + "v2/entities/" + uri, HttpMethod.GET, r1, String.class).getBody();
                     LOGGER.info(formattedEntity);
+                    //Uses the Anon-user offline-token to get a new access token every time.
+                    //offline-tokens expire after 30 days of inactivity.
                     String token = updateAccessToken();
                     postProxy(formattedEntity, token, experiment.getOcExperimentId(), experiment.getExperimentId());
-
-
-//                    LOGGER.info(res.replaceAll("\n", ""));
+                    
+                    
+                    //                    LOGGER.info(res.replaceAll("\n", ""));
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
@@ -261,45 +261,88 @@ public class OrionService {
         } catch (JSONException e) {
             LOGGER.error(e.getMessage(), e);
         }
-
+        
     }
-
+    
+    @Async
+    public void store(NewAssetDTO newAssetDTO) {
+        
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            
+            Experiment experiment = experimentRepository.findByExperimentId(newAssetDTO.getExperimentId());
+            
+            JSONObject object = new JSONObject();
+            final String uri = String.format(ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT, experiment.getUserId(), experiment.getOcExperimentId(), newAssetDTO.getName());
+            object.put("id", uri);
+            object.put("type", newAssetDTO.getType());
+            
+            JSONObject locationJson = new JSONObject();
+            locationJson.put("type", "geo:point");
+            locationJson.put("value", newAssetDTO.getLatitude() + ", " + newAssetDTO.getLongitude());
+            object.put("location", locationJson);
+            
+            JSONObject timeInstantJson = new JSONObject();
+            timeInstantJson.put("type", "urn:oc:attributeType:ISO8601");
+            timeInstantJson.put("value", df.format(new Date()));
+            object.put("TimeInstant", timeInstantJson);
+            
+            //Uses the Anon-user offline-token to get a new access token every time.
+            //offline-tokens expire after 30 days of inactivity.
+            String token = updateAccessToken();
+            postProxy(object.toString(), token, experiment.getOcExperimentId(), experiment.getExperimentId());
+            
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+    
     private String updateAccessToken() {
         return updateAccessToken(offlineToken, encodedToken);
     }
-
+    
     public String updateAccessToken(final String offlineToken, final String encodedToken) {
-
+        LOGGER.info("updateAccessToken()");
+        
         MultiValueMap<String, String> codeMap = new LinkedMultiValueMap<>();
         codeMap.add("grant_type", "refresh_token");
         codeMap.add("refresh_token", offlineToken);
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Basic " + encodedToken);
+        LOGGER.info(HttpHeaders.AUTHORIZATION + " Basic " + encodedToken);
+        LOGGER.info("offlineToken:" + offlineToken);
+        
         headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
         final HttpEntity<MultiValueMap<String, String>> req = new HttpEntity<>(codeMap, headers);
-
-        final ResponseEntity<OauthTokenResponse> response =
-                restTemplate.exchange(ACCOUNTS_TOKEN_ENDPOINT, HttpMethod.POST, req, OauthTokenResponse.class);
+        
+        final ResponseEntity<OauthTokenResponse> response = restTemplate.exchange(ACCOUNTS_TOKEN_ENDPOINT, HttpMethod.POST, req, OauthTokenResponse.class);
+        LOGGER.info("OauthTokenResponse:" + response.toString());
         if (response.hasBody()) {
+            LOGGER.info("response.hasBody:" + response.hasBody());
             OauthTokenResponse credentials = response.getBody();
+            LOGGER.info("response.body:" + response.getBody());
             LOGGER.info(credentials);
-
+            LOGGER.info("response.body.access_token:" + credentials.getAccess_token());
+            
             return credentials.getAccess_token();
         }
         return null;
     }
-
+    
     private String postProxy(final String entity, final String accessToken, final String expId, final String appId) {
-
+        
         final HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
         headers.add("X-Organicity-Application", appId);
         headers.add("X-Organicity-Experiment", expId);
+        LOGGER.info("Bearer " + accessToken);
+        LOGGER.info("X-Organicity-Application: " + appId);
+        LOGGER.info("X-Organicity-Experiment: " + expId);
+        
         headers.add(HttpHeaders.CONTENT_TYPE, "application/json");
         headers.add(HttpHeaders.ACCEPT, "application/json");
-
-        return restTemplate.exchange(EXP_PROXY_ENDPOINT,
-                HttpMethod.POST, new HttpEntity<>(entity, headers), String.class).getBody();
-
+        
+        return restTemplate.exchange(EXP_PROXY_ENDPOINT, HttpMethod.POST, new HttpEntity<>(entity, headers), String.class).getBody();
+        
     }
 }
