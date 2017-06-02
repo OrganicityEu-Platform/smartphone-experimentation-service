@@ -25,11 +25,18 @@ package gr.cti.android.experimentation.client;
 
 import eu.organicity.client.OrganicityServiceBaseClient;
 import eu.organicity.discovery.dto.FeatureCollectionDTO;
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.ExperimentDTO;
+import gr.cti.android.experimentation.model.ExperimentListDTO;
+import gr.cti.android.experimentation.model.NewAssetDTO;
+import gr.cti.android.experimentation.model.PluginListDTO;
+import gr.cti.android.experimentation.model.RegionListDTO;
+import gr.cti.android.experimentation.model.ResponseDTO;
+import gr.cti.android.experimentation.model.ResultListDTO;
+import gr.cti.android.experimentation.model.SmartphoneDTO;
+import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -61,30 +68,30 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public boolean updateAccessToken() {
-
-        final MultiValueMap<String, String> codeMap = new LinkedMultiValueMap<>();
-        codeMap.add("grant_type", "refresh_token");
-        codeMap.add("refresh_token", token);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.AUTHORIZATION, "Basic " + encodedToken);
-        headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
-        final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
-
-        final ResponseEntity<OauthTokenResponse> response =
-                restTemplate.exchange(ACCOUNTS_TOKEN_ENDPOINT, HttpMethod.POST, internalRec, OauthTokenResponse.class);
-        if (response.hasBody()) {
-            OauthTokenResponse credentials = response.getBody();
-
-            headers.remove(HttpHeaders.AUTHORIZATION);
-            headers.add(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", credentials.getAccess_token()));
-            req = new HttpEntity<>("", headers);
-            return true;
-        }
-        return false;
+        return true;
+//        final MultiValueMap<String, String> codeMap = new LinkedMultiValueMap<>();
+//        codeMap.add("grant_type", "refresh_token");
+//        codeMap.add("refresh_token", token);
+//        final HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.AUTHORIZATION, "Basic " + encodedToken);
+//        headers.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded");
+//        final HttpEntity<MultiValueMap<String, String>> internalRec = new HttpEntity<>(codeMap, headers);
+//
+//        final ResponseEntity<OauthTokenResponse> response =
+//                restTemplate.exchange(ACCOUNTS_TOKEN_ENDPOINT, HttpMethod.POST, internalRec, OauthTokenResponse.class);
+//        if (response.hasBody()) {
+//            OauthTokenResponse credentials = response.getBody();
+//
+//            headers.remove(HttpHeaders.AUTHORIZATION);
+//            headers.add(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", credentials.getAccess_token()));
+//            req = new HttpEntity<>("", headers);
+//            return true;
+//        }
+//        return false;
     }
 
     public ExperimentListDTO listExperiments() {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/experiment",
@@ -92,7 +99,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public ExperimentListDTO listLiveExperiments() {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/experiment/live",
@@ -100,7 +107,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public ExperimentListDTO listExperiments(final int smartphoneId) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/experiment?phoneId=" + smartphoneId,
@@ -108,7 +115,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public ExperimentDTO getExperiment(final String experimentId) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/experiment/" + experimentId,
@@ -116,7 +123,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public PluginListDTO listPlugins() {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/plugin",
@@ -124,7 +131,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/smartphone/" + smartphoneId + "/statistics",
@@ -132,7 +139,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId, final String experimentId) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/smartphone/" + smartphoneId + "/statistics/" + experimentId,
@@ -140,7 +147,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public SmartphoneDTO postSmartphone(final SmartphoneDTO smartphone) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/smartphone",
@@ -148,7 +155,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public RegionListDTO getExperimentRegions(final String experimentId) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/experiment/" + experimentId + "/region",
@@ -156,7 +163,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
     }
 
     public ResponseDTO postExperimentResults(final ResultListDTO resultListDTO) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         return restTemplate.exchange(BASE_URL + "v1/data/multiple",
@@ -165,7 +172,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
 
     public NewAssetDTO sendAsset(final String assetName, final String assetType, final String experimentId,
                                  final double latitude, final double longitude) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
 
@@ -188,7 +195,7 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
      * @return a {@see FeatureCollectionDTO} array.
      */
     public FeatureCollectionDTO[] listNearbyAssets(final double lat, final double lon) {
-        if (!"".equals(token)) {
+        if (!"".equals(getToken())) {
             updateAccessToken();
         }
         final MultiValueMap<String, Object> codeMap = new LinkedMultiValueMap<>();

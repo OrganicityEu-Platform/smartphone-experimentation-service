@@ -65,6 +65,13 @@ public class OrganicityAndroidClient {
         req = new HttpEntity<>("", headers);
     }
 
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
+    public void setExperimentId(String experimentId) {
+        this.experimentId = experimentId;
+    }
 
     public void setErrorHandler(final ResponseErrorHandler responseErrorHandler) {
         restTemplate.setErrorHandler(responseErrorHandler);
