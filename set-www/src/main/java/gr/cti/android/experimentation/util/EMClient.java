@@ -1,8 +1,8 @@
-package eu.organicity.discovery.dto;
+package gr.cti.android.experimentation.util;
 
 /*-
  * #%L
- * SET Common Model
+ * SET Android Client
  * $Id:$
  * $HeadURL:$
  * %%
@@ -23,36 +23,20 @@ package eu.organicity.discovery.dto;
  * #L%
  */
 
+import eu.organicity.experiment.management.dto.OCApplicationListDTO;
+import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class FeatureDTO {
-    private String type;
-    private GeometryDTO geometry;
-    private FeaturePropertyDTO properties;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public GeometryDTO getGeometry() {
-        return geometry;
-    }
-
-    public void setGeometry(GeometryDTO geometry) {
-        this.geometry = geometry;
-    }
-
-    public FeaturePropertyDTO getProperties() {
-        return properties;
-    }
-
-    public void setProperties(FeaturePropertyDTO properties) {
-        this.properties = properties;
+//    Experiment Management API
+public class EMClient {
+    private final RestTemplate restTemplate = new RestTemplate();
+    private static final String EXPERIMENT_MANAGEMENT_ENDPOINT = "http://31.200.243.76:8081/";
+    
+    /**
+     * List all applications for the current user from the Experiment Management OC Service.
+     *
+     * @return a {@see OCApplicationListDTO}.
+     */
+    public OCApplicationListDTO listApplications() {
+        return restTemplate.getForObject(EXPERIMENT_MANAGEMENT_ENDPOINT + "allapplications", OCApplicationListDTO.class);
     }
 }

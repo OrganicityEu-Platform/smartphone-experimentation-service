@@ -23,9 +23,9 @@ package gr.cti.android.experimentation.service;
  * #L%
  */
 
-import eu.organicity.sitemanager.client.OrganicityClient;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
+import gr.cti.android.experimentation.util.EMClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,21 +37,21 @@ import static org.apache.logging.log4j.LogManager.getLogger;
  */
 @Service
 public class ExperimentPortalService {
-
+    
     /**
      * a log4j logger to print messages.
      */
     private static final org.apache.logging.log4j.Logger LOGGER = getLogger(ExperimentPortalService.class);
-
+    
     private String BASE_URL = "http://31.200.243.76:8081/";
-
+    
     @Autowired
     ExperimentRepository experimentRepository;
-
-    private OrganicityClient experimentManagementClient = new OrganicityClient();
-
+    
+    private EMClient emClient = new EMClient();
+    
     public void getOCExperimentId(final String experimentId) {
-        experimentManagementClient.listApplications().getApplications().stream().filter(ocApplicationDTO -> ocApplicationDTO.getApplicationId().equals(experimentId)).forEach(ocApplicationDTO -> {
+        emClient.listApplications().getApplications().stream().filter(ocApplicationDTO -> ocApplicationDTO.getApplicationId().equals(experimentId)).forEach(ocApplicationDTO -> {
             Experiment exp = experimentRepository.findByExperimentId(experimentId);
             exp.setOcExperimentId(ocApplicationDTO.getExperimentId());
             experimentRepository.save(exp);

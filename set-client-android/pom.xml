@@ -47,6 +47,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>eu.organicity</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>cti.organicity.set</groupId>
             <artifactId>set-common</artifactId>
             <version>1.0-SNAPSHOT</version>

@@ -181,6 +181,11 @@
         </dependency>
         <dependency>
             <groupId>eu.organicity</groupId>
+            <artifactId>client</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.organicity</groupId>
             <artifactId>entities</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
