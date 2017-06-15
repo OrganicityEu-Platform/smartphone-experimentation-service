@@ -71,6 +71,8 @@ public class BaseController {
     protected BadgeRepository badgeRepository;
     @Autowired
     protected RegionRepository regionRepository;
+    @Autowired
+    protected MeasurementRepository measurementRepository;
 
     @Autowired
     protected ModelService modelService;

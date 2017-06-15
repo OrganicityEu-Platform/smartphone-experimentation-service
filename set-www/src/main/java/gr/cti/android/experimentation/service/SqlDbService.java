@@ -24,11 +24,13 @@ package gr.cti.android.experimentation.service;
  */
 
 import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.repository.GeoResultRepository;
+import gr.cti.android.experimentation.repository.MeasurementRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
-import gr.cti.android.experimentation.repository.SmartphoneRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,9 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import static org.apache.logging.log4j.LogManager.getLogger;
@@ -46,56 +51,109 @@ import static org.apache.logging.log4j.LogManager.getLogger;
  */
 @Service
 public class SqlDbService {
-
+    
     /**
      * a log4j logger to print messages.
      */
     private static final org.apache.logging.log4j.Logger LOGGER = getLogger(SqlDbService.class);
-
+    
     @Autowired
     ResultRepository resultRepository;
     @Autowired
-    GeoResultRepository geoResultRepository;
-    @Autowired
-    SmartphoneRepository smartphoneRepository;
-    @Autowired
     ExperimentRepository experimentRepository;
+    @Autowired
+    MeasurementRepository measurementRepository;
     @Autowired
     GCMService gcmService;
     @Autowired
     OrionService orionService;
     private DecimalFormat df;
-
+    
+    protected static final String LATITUDE = "org.ambientdynamix.contextplugins.Latitude";
+    protected static final String LONGITUDE = "org.ambientdynamix.contextplugins.Longitude";
+    
     @PostConstruct
     public void init() {
         df = new DecimalFormat("#.000");
     }
-
+    
+    @Async
+    public void transfer(final int experimentId) {
+        
+        Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        for (final Result result : results) {
+            try {
+                storeAsMeasurements(result);
+            } catch (Exception e) {
+                LOGGER.error(e, e);
+            }
+        }
+    }
+    
+    @Async
+    public void storeAsMeasurements(final Result result) throws JSONException {
+        final JSONObject message = new JSONObject(result.getMessage());
+        if (message.has(LATITUDE) && message.has(LONGITUDE)) {
+            List<Measurement> measurementList = new ArrayList<>();
+            final Iterator iterator = message.keys();
+            while (iterator.hasNext()) {
+                final String key = (String) iterator.next();
+                if (key.equals(LATITUDE) || key.equals(LONGITUDE)) {
+                    continue;
+                }
+                try {
+                    final String data = message.getString(key);
+                    
+                    final Measurement measurement = new Measurement();
+                    measurement.setResultId(result.getId());
+                    measurement.setExperimentId(result.getExperimentId());
+                    measurement.setLongitude(message.getDouble(LONGITUDE));
+                    measurement.setLatitude(message.getDouble(LATITUDE));
+                    measurement.setMeasurementKey(key);
+                    measurement.setMeasurementValue(data);
+                    measurement.setDeviceId(result.getDeviceId());
+                    measurement.setTimestamp(result.getTimestamp());
+                    measurementList.add(measurement);
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
+                }
+                if (!measurementList.isEmpty()) {
+                    measurementRepository.save(measurementList);
+                }
+            }
+        }
+    }
+    
     @Async
     public void store(final Result newResult) throws IOException {
-
+        
         LOGGER.info("saving result");
         try {
             final Set<Result> res = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(newResult.getExperimentId(), newResult.getDeviceId(), newResult.getTimestamp(), newResult.getMessage());
             if (res == null || res.isEmpty()) {
                 resultRepository.save(newResult);
-
+                
                 LOGGER.info("saveExperiment: OK");
                 LOGGER.info("saveExperiment: Stored:");
                 LOGGER.info("-----------------------------------");
-
+                
+                //send incentive messages to phone
+                try {
+                    storeAsMeasurements(newResult);
+                } catch (Exception e) {
+                    LOGGER.error(e, e);
+                }
+                
                 //send incentive messages to phone
                 try {
                     gcmService.check(newResult);
                 } catch (Exception e) {
                     LOGGER.error(e, e);
                 }
-
+                
                 //store to orion
                 try {
-                    Experiment experiment = experimentRepository.findById(
-                            newResult.getExperimentId()
-                    );
+                    Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
                     System.out.println("store: " + newResult.getExperimentId() + " experiment:" + experiment);
                     orionService.store(newResult, experiment);
                 } catch (Exception e) {
@@ -107,48 +165,48 @@ public class SqlDbService {
             LOGGER.info("-----------------------------------");
         }
     }
-
-//    @Async
-//    public void storeGeo(final Result newResult) throws IOException, JSONException {
-//
-//        GeoResult geoResult = new GeoResult();
-//
-//        Double longitude = null;
-//        Double latitude = null;
-//        JSONObject object = new JSONObject(newResult.getMessage());
-//        Iterator keysIterator = object.keys();
-//        while (keysIterator.hasNext()) {
-//            String key = (String) keysIterator.next();
-//            if (key.toLowerCase().contains("longitude")) {
-//                try {
-//                    longitude = Double.valueOf(object.getString(key));
-//                } catch (Exception e) {
-//                    longitude = object.getDouble(key);
-//                }
-//            } else if (key.toLowerCase().contains("latitude")) {
-//                try {
-//                    latitude = Double.valueOf(object.getString(key));
-//                } catch (Exception e) {
-//                    latitude = object.getDouble(key);
-//                }
-//            }
-//        }
-//
-//        if (latitude != null && longitude != null) {
-//            String longitudeS = df.format(longitude);
-//            String latitudeS = df.format(latitude);
-//
-//            final String hash = Geohasher.hash(new LatLng(latitude, longitude));
-//            LOGGER.info("Hash:" + hash);
-//
-//            geoResult.setLatitude(Double.parseDouble(latitudeS));
-//            geoResult.setLongitude(Double.parseDouble(longitudeS));
-//            geoResult.setTimestamp(newResult.getTimestamp());
-//            geoResult.setMessage(newResult.getMessage());
-//        }
-//
-//        if (geoResultRepository.findByTimestampAndMessage(geoResult.getTimestamp(), geoResult.getMessage()).isEmpty()) {
-//            geoResultRepository.save(geoResult);
-//        }
-//    }
+    
+    //    @Async
+    //    public void storeGeo(final Result newResult) throws IOException, JSONException {
+    //
+    //        GeoResult geoResult = new GeoResult();
+    //
+    //        Double longitude = null;
+    //        Double latitude = null;
+    //        JSONObject object = new JSONObject(newResult.getMessage());
+    //        Iterator keysIterator = object.keys();
+    //        while (keysIterator.hasNext()) {
+    //            String key = (String) keysIterator.next();
+    //            if (key.toLowerCase().contains("longitude")) {
+    //                try {
+    //                    longitude = Double.valueOf(object.getString(key));
+    //                } catch (Exception e) {
+    //                    longitude = object.getDouble(key);
+    //                }
+    //            } else if (key.toLowerCase().contains("latitude")) {
+    //                try {
+    //                    latitude = Double.valueOf(object.getString(key));
+    //                } catch (Exception e) {
+    //                    latitude = object.getDouble(key);
+    //                }
+    //            }
+    //        }
+    //
+    //        if (latitude != null && longitude != null) {
+    //            String longitudeS = df.format(longitude);
+    //            String latitudeS = df.format(latitude);
+    //
+    //            final String hash = Geohasher.hash(new LatLng(latitude, longitude));
+    //            LOGGER.info("Hash:" + hash);
+    //
+    //            geoResult.setLatitude(Double.parseDouble(latitudeS));
+    //            geoResult.setLongitude(Double.parseDouble(longitudeS));
+    //            geoResult.setTimestamp(newResult.getTimestamp());
+    //            geoResult.setMessage(newResult.getMessage());
+    //        }
+    //
+    //        if (geoResultRepository.findByTimestampAndMessage(geoResult.getTimestamp(), geoResult.getMessage()).isEmpty()) {
+    //            geoResultRepository.save(geoResult);
+    //        }
+    //    }
 }

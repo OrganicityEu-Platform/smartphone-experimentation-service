@@ -23,7 +23,7 @@ spring:
   # jpa schema auto update
   jpa.hibernate.ddl-auto: update
   # jpa database dialect
-  jpa.database-platform: org.hibernate.dialect.MySQLDialect
+  jpa.database-platform: org.hibernate.dialect.MySQL5Dialect
   # datasource connection information
   datasource:
     url: jdbc:mysql://api.smartphone-experimentation.eu:3306/androidExperimentation
@@ -37,7 +37,7 @@ spring:
   # jpa schema auto update
   jpa.hibernate.ddl-auto: update
   # jpa database dialect
-  jpa.database-platform: org.hibernate.dialect.MySQLDialect
+  jpa.database-platform: org.hibernate.dialect.MySQL5Dialect
   # datasource connection information
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/androidExperimentation
