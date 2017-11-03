@@ -26,13 +26,13 @@ package gr.cti.android.experimentation.controller.api;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.NewAssetDTO;
 import gr.cti.android.experimentation.service.OrionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
@@ -41,7 +41,7 @@ public class AssetController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(AssetController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssetController.class);
     
     @Autowired
     OrionService orionService;

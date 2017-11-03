@@ -25,10 +25,10 @@ package gr.cti.android.experimentation.service;
 
 import gr.cti.android.experimentation.model.Badge;
 import gr.cti.android.experimentation.repository.BadgeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * Provides operations on badges.
@@ -38,7 +38,7 @@ public class BadgeService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(BadgeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BadgeService.class);
 
     @Autowired
     BadgeRepository badgeRepository;

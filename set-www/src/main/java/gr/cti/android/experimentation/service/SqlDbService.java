@@ -23,14 +23,15 @@ package gr.cti.android.experimentation.service;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Measurement;
-import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.ResultDTO;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.MeasurementRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -41,9 +42,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -55,7 +53,7 @@ public class SqlDbService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(SqlDbService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlDbService.class);
     
     @Autowired
     ResultRepository resultRepository;
@@ -69,8 +67,8 @@ public class SqlDbService {
     OrionService orionService;
     private DecimalFormat df;
     
-    protected static final String LATITUDE = "org.ambientdynamix.contextplugins.Latitude";
-    protected static final String LONGITUDE = "org.ambientdynamix.contextplugins.Longitude";
+    protected static final String LATITUDE = "eu.organicity.set.sensors.location.Latitude";
+    protected static final String LONGITUDE = "eu.organicity.set.sensors.location.Longitude";
     
     @PostConstruct
     public void init() {
@@ -78,21 +76,8 @@ public class SqlDbService {
     }
     
     @Async
-    public void transfer(final int experimentId) {
-        
-        Set<Result> results = resultRepository.findByExperimentId(experimentId);
-        for (final Result result : results) {
-            try {
-                storeAsMeasurements(result);
-            } catch (Exception e) {
-                LOGGER.error(e, e);
-            }
-        }
-    }
-    
-    @Async
-    public void storeAsMeasurements(final Result result) throws JSONException {
-        final JSONObject message = new JSONObject(result.getMessage());
+    public void storeAsMeasurements(final ResultDTO result) throws JSONException {
+        final JSONObject message = new JSONObject(result.getJobResults());
         if (message.has(LATITUDE) && message.has(LONGITUDE)) {
             List<Measurement> measurementList = new ArrayList<>();
             final Iterator iterator = message.keys();
@@ -105,17 +90,16 @@ public class SqlDbService {
                     final String data = message.getString(key);
                     
                     final Measurement measurement = new Measurement();
-                    measurement.setResultId(result.getId());
                     measurement.setExperimentId(result.getExperimentId());
                     measurement.setLongitude(message.getDouble(LONGITUDE));
                     measurement.setLatitude(message.getDouble(LATITUDE));
                     measurement.setMeasurementKey(key);
                     measurement.setMeasurementValue(data);
                     measurement.setDeviceId(result.getDeviceId());
-                    measurement.setTimestamp(result.getTimestamp());
+                    measurement.setTimestamp(message.getLong("timestamp"));
                     measurementList.add(measurement);
                 } catch (Exception e) {
-                    LOGGER.error(e, e);
+                    LOGGER.error(e.getMessage(), e);
                 }
                 if (!measurementList.isEmpty()) {
                     measurementRepository.save(measurementList);
@@ -125,41 +109,39 @@ public class SqlDbService {
     }
     
     @Async
-    public void store(final Result newResult) throws IOException {
+    public void store(final ResultDTO newResult) throws IOException {
         
         LOGGER.info("saving result");
         try {
-            final Set<Result> res = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAndMessage(newResult.getExperimentId(), newResult.getDeviceId(), newResult.getTimestamp(), newResult.getMessage());
-            if (res == null || res.isEmpty()) {
-                resultRepository.save(newResult);
-                
-                LOGGER.info("saveExperiment: OK");
-                LOGGER.info("saveExperiment: Stored:");
-                LOGGER.info("-----------------------------------");
-                
-                //send incentive messages to phone
-                try {
-                    storeAsMeasurements(newResult);
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
-                }
-                
-                //send incentive messages to phone
-                try {
-                    gcmService.check(newResult);
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
-                }
-                
-                //store to orion
-                try {
-                    Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
-                    System.out.println("store: " + newResult.getExperimentId() + " experiment:" + experiment);
-                    orionService.store(newResult, experiment);
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
-                }
+        
+//            resultRepository.save(newResult);
+    
+            LOGGER.info("saveExperiment: OK");
+            LOGGER.info("saveExperiment: Stored:");
+            LOGGER.info("-----------------------------------");
+    
+            //send incentive messages to phone
+            try {
+                storeAsMeasurements(newResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
             }
+    
+            //send incentive messages to phone
+//            try {
+//                gcmService.check(newResult);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
+    
+            //store to orion
+//            try {
+//                Experiment experiment = experimentRepository.findById(newResult.getExperimentId());
+//                System.out.println("store: " + newResult.getExperimentId() + " experiment:" + experiment);
+//                orionService.store(newResult, experiment);
+//            } catch (Exception e) {
+//                LOGGER.error(e.getMessage(), e);
+//            }
         } catch (Exception e) {
             LOGGER.info("saveExperiment: FAILEd" + e.getMessage(), e);
             LOGGER.info("-----------------------------------");

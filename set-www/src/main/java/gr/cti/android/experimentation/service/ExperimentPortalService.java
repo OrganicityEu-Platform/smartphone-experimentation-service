@@ -26,10 +26,10 @@ package gr.cti.android.experimentation.service;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.util.EMClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -41,7 +41,7 @@ public class ExperimentPortalService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(ExperimentPortalService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentPortalService.class);
     
     private String BASE_URL = "http://31.200.243.76:8081/";
     

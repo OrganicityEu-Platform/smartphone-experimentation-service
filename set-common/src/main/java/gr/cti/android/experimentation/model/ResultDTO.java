@@ -25,46 +25,36 @@ package gr.cti.android.experimentation.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Set;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ResultListDTO implements Serializable {
-    @Id
-    @GeneratedValue
-    private Set<Report> resultList;
-
-    public Set<Report> getResultList() {
-        return resultList;
+public class ResultDTO implements Serializable {
+    private String experimentId;
+    private String jobResults;
+    private Long deviceId;
+    
+    public String getExperimentId() {
+        return experimentId;
     }
-
-    public void setResultList(Set<Report> resultList) {
-        this.resultList = resultList;
+    
+    public void setExperimentId(String experimentId) {
+        this.experimentId = experimentId;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ResultListDTO that = (ResultListDTO) o;
-
-        return resultList != null ? resultList.equals(that.resultList) : that.resultList == null;
-
+    
+    public Long getDeviceId() {
+        return deviceId;
     }
-
-    @Override
-    public int hashCode() {
-        return resultList != null ? resultList.hashCode() : 0;
+    
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
     }
-
-    @Override
-    public String toString() {
-        return "ResultListDTO{" +
-                "resultList=" + resultList.size() +
-                '}';
+    
+    public String getJobResults() {
+        return jobResults;
+    }
+    
+    public void setJobResults(String jobResults) {
+        this.jobResults = jobResults;
     }
 }

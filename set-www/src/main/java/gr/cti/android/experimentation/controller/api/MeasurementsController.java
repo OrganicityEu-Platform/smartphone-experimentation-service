@@ -27,6 +27,8 @@ import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.service.SqlDbService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,8 +40,6 @@ import java.security.Principal;
 import java.text.DecimalFormat;
 import java.util.Set;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
 /**
  * @author Dimitrios Amaxilatis.
  */
@@ -49,7 +49,7 @@ public class MeasurementsController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(MeasurementsController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeasurementsController.class);
     
     @Autowired
     SqlDbService sqlDbService;
@@ -58,15 +58,6 @@ public class MeasurementsController extends BaseController {
     public Set<Measurement> getExperimentMeasurementsByExperimentId(@PathVariable("experimentId") final String experiment, @RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after, @RequestParam(value = "to", defaultValue = "0", required = false) final String to, @RequestParam(value = "region", defaultValue = "0", required = false) final String regionId, @RequestParam(value = "accuracy", required = false, defaultValue = "3") final int accuracy, Principal principal) {
         LOGGER.info("GET /experiment/measurements/" + experiment + " " + principal);
         return getExperimentMeasurements(experiment, deviceId, after, to, accuracy);
-    }
-    
-    @RequestMapping(value = "/experiment/measurements/{experimentId}/update", method = RequestMethod.GET, produces = APPLICATION_JSON)
-    public void getExperimentMeasurementsByExperimentId(@PathVariable("experimentId") final String experimentId, Principal principal) {
-        LOGGER.info("GET /experiment/measurements/" + experimentId + "/update " + principal);
-        Experiment experiment = experimentRepository.findByExperimentId(experimentId);
-        Set<Measurement> measurements = measurementRepository.findByExperimentId(experiment.getId());
-        measurementRepository.delete(measurements);
-        sqlDbService.transfer(experiment.getId());
     }
     
     private Set<Measurement> getExperimentMeasurements(final String experiment, final int deviceId, final String after, final String to, final int accuracy) {

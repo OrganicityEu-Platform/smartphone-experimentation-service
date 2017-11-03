@@ -30,7 +30,14 @@ import gr.cti.android.experimentation.model.ApiResponse;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.model.PluginListDTO;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -38,19 +45,17 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
 /**
  * @author Dimitrios Amaxilatis.
  */
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
 public class PluginController extends BaseController {
-
+    
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(PluginController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginController.class);
 
     /**
      * Lists all available plugins in the system.

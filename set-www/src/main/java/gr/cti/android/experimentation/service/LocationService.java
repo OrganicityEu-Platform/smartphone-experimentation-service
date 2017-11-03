@@ -31,6 +31,8 @@ import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.util.Utils;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +41,6 @@ import java.util.List;
 import java.util.Set;
 
 import static gr.cti.android.experimentation.util.Utils.createPolygonForCoordinates;
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -51,7 +52,7 @@ public class LocationService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(LocationService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LocationService.class);
 
     @Autowired
     ExperimentRepository experimentRepository;

@@ -33,15 +33,21 @@ import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
 import org.json.JSONException;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -53,7 +59,7 @@ public class ExperimentController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(ExperimentController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentController.class);
 
     /**
      * Sends a message using GCM to all volunteers participating in a specific {@see Experiment}.
@@ -77,7 +83,7 @@ public class ExperimentController extends BaseController {
         try {
             gcmService.send2Experiment(experiment.getId(), message);
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
         return ok(response).toString();
     }
@@ -103,7 +109,7 @@ public class ExperimentController extends BaseController {
         try {
             gcmService.send2Device(Integer.parseInt(smartphoneId), new ObjectMapper().writeValueAsString(data));
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
         return ok(response).toString();
     }
@@ -202,7 +208,6 @@ public class ExperimentController extends BaseController {
         if (experiment.getName() == null
                 || experiment.getId() == null
                 || experiment.getDescription() == null
-                || experiment.getUrlDescription() == null
 //                || experiment.getUrl() == null
 //                || experiment.getFilename() == null
 //                || experiment.getSensorDependencies() == null
@@ -216,8 +221,6 @@ public class ExperimentController extends BaseController {
                 errorMessage = "name cannot be null";
             } else if (experiment.getDescription() == null) {
                 errorMessage = "description cannot be null";
-            } else if (experiment.getUrlDescription() == null) {
-                errorMessage = "urlDescription cannot be null";
 //            } else if (experiment.getFilename() == null) {
 //                errorMessage = "filename cannot be null";
 //            } else if (experiment.getUrl() == null) {
@@ -235,7 +238,6 @@ public class ExperimentController extends BaseController {
                 experimentObj.setExperimentId(experiment.getId());
                 experimentObj.setName(experiment.getName());
                 experimentObj.setDescription(experiment.getDescription());
-                experimentObj.setUrlDescription(experiment.getUrl());
 
                 if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
                     experimentObj.setFilename(experiment.getFilename());
@@ -245,7 +247,6 @@ public class ExperimentController extends BaseController {
                 }
                 experimentObj.setContextType(EXPERIMENT_CONTEXT_TYPE);
                 experimentObj.setSensorDependencies(experiment.getSensorDependencies());
-                experimentObj.setUrlDescription(experiment.getUrlDescription());
                 experimentObj.setUserId(principal.getName());
 
                 experimentObj.setEnabled(true);
@@ -288,7 +289,6 @@ public class ExperimentController extends BaseController {
         final ApiResponse apiResponse = new ApiResponse();
 //        if (experiment.getName() == null
 //                || experiment.getDescription() == null
-//                || experiment.getUrlDescription() == null
 //                || experiment.getUrl() == null
 //                || experiment.getFilename() == null
 //                || experiment.getSensorDependencies() == null
@@ -300,8 +300,6 @@ public class ExperimentController extends BaseController {
 //                errorMessage = "name cannot be null";
 //            } else if (experiment.getDescription() == null) {
 //                errorMessage = "description cannot be null";
-//            } else if (experiment.getUrlDescription() == null) {
-//                errorMessage = "urlDescription cannot be null";
 //            } else if (experiment.getFilename() == null) {
 //                errorMessage = "filename cannot be null";
 //            } else if (experiment.getUrl() == null) {
@@ -324,9 +322,6 @@ public class ExperimentController extends BaseController {
             }
             if (experiment.getDescription() != null) {
                 storedExperiment.setDescription(experiment.getDescription());
-            }
-            if (experiment.getUrlDescription() != null) {
-                storedExperiment.setUrlDescription(experiment.getUrlDescription());
             }
             if (experiment.getFilename() != null && !experiment.getFilename().equals("")) {
                 storedExperiment.setFilename(experiment.getFilename());

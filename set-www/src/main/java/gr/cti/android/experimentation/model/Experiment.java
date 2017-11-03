@@ -43,7 +43,6 @@ public class Experiment implements Serializable {
     private String experimentId;
     private String experimenter;
     private String description;
-    private String urlDescription;
     private Long timestamp;
     private String name;
     private String contextType;
@@ -150,14 +149,6 @@ public class Experiment implements Serializable {
         this.filename = filename;
     }
 
-    public String getUrlDescription() {
-        return urlDescription;
-    }
-
-    public void setUrlDescription(String urlDescription) {
-        this.urlDescription = urlDescription;
-    }
-
     public Boolean getEnabled() {
         return enabled;
     }
@@ -172,7 +163,6 @@ public class Experiment implements Serializable {
                 "id=" + id +
                 ", experimentId='" + experimentId + '\'' +
                 ", description='" + description + '\'' +
-                ", urlDescription='" + urlDescription + '\'' +
                 ", timestamp=" + timestamp +
                 ", name='" + name + '\'' +
                 ", contextType='" + contextType + '\'' +
@@ -195,8 +185,6 @@ public class Experiment implements Serializable {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (experimentId != null ? !experimentId.equals(that.experimentId) : that.experimentId != null) return false;
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
-        if (urlDescription != null ? !urlDescription.equals(that.urlDescription) : that.urlDescription != null)
-            return false;
         if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (contextType != null ? !contextType.equals(that.contextType) : that.contextType != null) return false;
@@ -215,7 +203,6 @@ public class Experiment implements Serializable {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (experimentId != null ? experimentId.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (urlDescription != null ? urlDescription.hashCode() : 0);
         result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (contextType != null ? contextType.hashCode() : 0);

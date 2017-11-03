@@ -27,12 +27,12 @@ import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.Result;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -42,7 +42,7 @@ public class RestDataController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RestDataController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestDataController.class);
 
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = "text/csv")
     public String dataCsv(@RequestParam(value = "type") final String type) throws JSONException {

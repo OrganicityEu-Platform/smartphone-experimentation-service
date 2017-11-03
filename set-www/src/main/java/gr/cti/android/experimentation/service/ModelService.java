@@ -23,20 +23,30 @@ package gr.cti.android.experimentation.service;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Plugin;
+import gr.cti.android.experimentation.model.Report;
+import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.Smartphone;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.PluginRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.repository.SmartphoneRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 @Service
 public class ModelService {
@@ -44,7 +54,7 @@ public class ModelService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(ModelService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelService.class);
 
     @Autowired
     PluginRepository pluginRepository;

@@ -36,12 +36,17 @@ import gr.cti.android.experimentation.model.NewAssetDTO;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.util.OauthTokenResponse;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -59,7 +64,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -71,7 +75,7 @@ public class OrionService {
     /**
      * a log4j logger to print messages.
      */
-    private static final Logger LOGGER = getLogger(OrionService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrionService.class);
     
     private static final String ORION_SMARTPHONE_EXPERIMENT_ID_FORMAT = "urn:oc:entity:experimenters:%s:%s:%s";
     private static final String ACCOUNTS_TOKEN_ENDPOINT = "https://accounts.organicity.eu/realms/organicity/protocol/openid-connect/token";
@@ -321,7 +325,7 @@ public class OrionService {
             LOGGER.info("response.hasBody:" + response.hasBody());
             OauthTokenResponse credentials = response.getBody();
             LOGGER.info("response.body:" + response.getBody());
-            LOGGER.info(credentials);
+            LOGGER.info(credentials.toString());
             LOGGER.info("response.body.access_token:" + credentials.getAccess_token());
             
             return credentials.getAccess_token();

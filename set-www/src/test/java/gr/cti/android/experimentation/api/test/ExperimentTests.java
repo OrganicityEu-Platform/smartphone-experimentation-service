@@ -25,19 +25,18 @@ package gr.cti.android.experimentation.api.test;
 
 
 import gr.cti.android.experimentation.Application;
+import gr.cti.android.experimentation.TestUtils;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
-import gr.cti.android.experimentation.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.context.embedded.LocalServerPort;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -47,12 +46,11 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-@IntegrationTest({"server.port=0"})
+@SpringBootTest(classes = Application.class)
+@WebAppConfiguration()
 public class ExperimentTests {
-
-    @Value("${local.server.port}")
+    
+    @LocalServerPort
     private int port;
 
     @Autowired

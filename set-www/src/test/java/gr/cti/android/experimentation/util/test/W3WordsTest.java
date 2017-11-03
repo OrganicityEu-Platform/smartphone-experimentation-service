@@ -62,7 +62,7 @@ package gr.cti.android.experimentation.util.test;
 //    @Before
 //    public void before() throws Exception {
 //        final Properties props = new Properties();
-//        final InputStream is = ClassLoader.getSystemResourceAsStream("application.properties");
+//        final InputStream is = ClassLoader.getSystemResourceAsStream("application.properties.backup");
 //        try {
 //            props.load(is);
 //            final String what3WordsApiKey = props.getProperty("w3w.key");

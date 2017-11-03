@@ -32,14 +32,24 @@ import gr.cti.android.experimentation.model.Result;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -50,7 +60,7 @@ public class RestRankingController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RestRankingController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestRankingController.class);
 
 
     @Deprecated
@@ -90,7 +100,7 @@ public class RestRankingController extends BaseController {
                     externalResults.add(dres);
                 }
             } catch (Exception e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return externalResults;
@@ -132,7 +142,7 @@ public class RestRankingController extends BaseController {
                 }
                 resResponse.append(String.join(",", values)).append("\n");
             } catch (IOException e) {
-                LOGGER.warn(e, e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
         return resResponse.toString();

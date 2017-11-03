@@ -25,12 +25,17 @@ package gr.cti.android.experimentation;
 
 
 import com.google.common.base.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -44,14 +49,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.TimeZone;
 
 import static com.google.common.base.Predicates.or;
-import static org.apache.logging.log4j.LogManager.getLogger;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 
 @SpringBootApplication
 @Configuration
 @ComponentScan(basePackages = "gr.cti.android.experimentation")
-@PropertySource("classpath:application.properties")
 @EnableAsync
 @EnableSwagger2
 @EnableScheduling
@@ -64,7 +67,7 @@ public class Application implements CommandLineRunner {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(Application.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     public static void main(String[] args)
             throws Exception {

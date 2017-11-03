@@ -146,7 +146,6 @@ public class ExperimentDTO implements Serializable {
         return "ExperimentDTO{" +
                 "id='" + id + '\'' +
                 ", description='" + description + '\'' +
-                ", urlDescription='" + urlDescription + '\'' +
                 ", timestamp=" + timestamp +
                 ", name='" + name + '\'' +
                 ", contextType='" + contextType + '\'' +

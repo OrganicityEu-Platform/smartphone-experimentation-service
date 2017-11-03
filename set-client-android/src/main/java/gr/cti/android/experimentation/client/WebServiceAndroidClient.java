@@ -30,8 +30,7 @@ import gr.cti.android.experimentation.model.ExperimentListDTO;
 import gr.cti.android.experimentation.model.NewAssetDTO;
 import gr.cti.android.experimentation.model.PluginListDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
-import gr.cti.android.experimentation.model.ResponseDTO;
-import gr.cti.android.experimentation.model.ResultListDTO;
+import gr.cti.android.experimentation.model.ResultDTO;
 import gr.cti.android.experimentation.model.SmartphoneDTO;
 import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
 import org.springframework.http.HttpEntity;
@@ -43,7 +42,7 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
 
-    private static final String BASE_URL = "https://api.smartphone-experimentation.eu/";
+    private static final String BASE_URL = "https://dev.smartphone-experimentation.eu/";
     private static final String ACCOUNTS_TOKEN_ENDPOINT = "https://accounts.organicity.eu/realms/organicity/protocol/openid-connect/token";
     private String encodedToken;
 
@@ -162,12 +161,12 @@ public class WebServiceAndroidClient extends OrganicityServiceBaseClient {
                 HttpMethod.GET, req, RegionListDTO.class).getBody();
     }
 
-    public ResponseDTO postExperimentResults(final ResultListDTO resultListDTO) {
+    public String postExperimentResults(final ResultDTO dto) {
         if (!"".equals(getToken())) {
             updateAccessToken();
         }
-        return restTemplate.exchange(BASE_URL + "v1/data/multiple",
-                HttpMethod.POST, new HttpEntity<>(resultListDTO, headers), ResponseDTO.class).getBody();
+        return restTemplate.exchange(BASE_URL + "v1/data",
+                HttpMethod.POST, new HttpEntity<>(dto, headers), String.class).getBody();
     }
 
     public NewAssetDTO sendAsset(final String assetName, final String assetType, final String experimentId,

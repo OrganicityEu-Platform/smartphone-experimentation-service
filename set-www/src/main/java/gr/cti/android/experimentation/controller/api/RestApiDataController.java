@@ -35,13 +35,21 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.text.DecimalFormat;
-import java.util.*;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -52,7 +60,7 @@ public class RestApiDataController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RestApiDataController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestApiDataController.class);
 
     @RequestMapping(value = "/data", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getExperimentDataByExperimentId(@RequestParam(value = "deviceId", defaultValue = "0", required = false) final int deviceId, @RequestParam(value = "after", defaultValue = "0", required = false) final String after
@@ -162,7 +170,7 @@ public class RestApiDataController extends BaseController {
                             final String data = message.getString(key);
                             dataJson.put(key, data);
                         } catch (Exception e) {
-                            LOGGER.error(e, e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     }
                     obj.put("data", dataJson);
@@ -171,7 +179,7 @@ public class RestApiDataController extends BaseController {
                 }
                 array.put(obj);
             } catch (Exception e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         LOGGER.info("returning:" + array.length());
@@ -313,13 +321,13 @@ public class RestApiDataController extends BaseController {
                                         wholeDataStatistics.addValue(1);
                                     }
                                 } catch (Exception e) {
-                                    LOGGER.error(e, e);
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             }
                         }
                     }
                 } catch (Exception e) {
-                    LOGGER.error(e, e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
             final JSONObject hourlyPoints = new JSONObject();
@@ -351,19 +359,19 @@ public class RestApiDataController extends BaseController {
                             }
                             addressPoints.put(measurement);
                         } catch (JSONException e) {
-                            LOGGER.error(e, e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     }
                 }
                 try {
                     hourlyPoints.put(String.valueOf(hour), addressPoints);
                 } catch (JSONException e) {
-                    LOGGER.error(e, e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
             return hourlyPoints;
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
 
@@ -435,13 +443,13 @@ public class RestApiDataController extends BaseController {
                                     wholeDataStatistics.addValue(1);
                                 }
                             } catch (Exception e) {
-                                LOGGER.error(e, e);
+                                LOGGER.error(e.getMessage(), e);
                             }
                         }
                     }
                 }
             } catch (Exception e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -474,7 +482,7 @@ public class RestApiDataController extends BaseController {
                     }
                     addressPoints.put(measurement);
                 } catch (JSONException e) {
-                    LOGGER.error(e, e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

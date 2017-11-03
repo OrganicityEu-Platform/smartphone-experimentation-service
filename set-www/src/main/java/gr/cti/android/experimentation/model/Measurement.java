@@ -37,8 +37,7 @@ public class Measurement implements Serializable {
     @Id
     @GeneratedValue
     private int id;
-    private long resultId;
-    private long experimentId;
+    private String experimentId;
     private long deviceId;
     private long timestamp;
     private Double latitude;
@@ -57,19 +56,11 @@ public class Measurement implements Serializable {
         this.id = id;
     }
     
-    public long getResultId() {
-        return resultId;
-    }
-    
-    public void setResultId(long resultId) {
-        this.resultId = resultId;
-    }
-    
-    public long getExperimentId() {
+    public String getExperimentId() {
         return experimentId;
     }
     
-    public void setExperimentId(long experimentId) {
+    public void setExperimentId(String experimentId) {
         this.experimentId = experimentId;
     }
     

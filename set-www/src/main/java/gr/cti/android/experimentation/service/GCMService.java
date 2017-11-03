@@ -29,6 +29,8 @@ import gr.cti.android.experimentation.GcmMessageData;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -40,8 +42,6 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
-
 /**
  * Provides connection to the gcm service for sending messages to the clients.
  */
@@ -50,7 +50,7 @@ public class GCMService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(GCMService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GCMService.class);
 
     @Value("${gcm.key}")
     private String gcmKey;

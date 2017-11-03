@@ -21,10 +21,14 @@
  * #L%
  */
 
-import eu.organicity.discovery.dto.FeatureCollectionDTO;
-import eu.organicity.discovery.dto.FeatureDTO;
 import gr.cti.android.experimentation.client.WebServiceAndroidClient;
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.ExperimentDTO;
+import gr.cti.android.experimentation.model.ExperimentListDTO;
+import gr.cti.android.experimentation.model.PluginDTO;
+import gr.cti.android.experimentation.model.PluginListDTO;
+import gr.cti.android.experimentation.model.RegionDTO;
+import gr.cti.android.experimentation.model.RegionListDTO;
+import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -107,16 +111,16 @@ public class WebServiceClientTest {
         }
     }
 
-    @Test
-    public void testListNearbyAssets() throws Exception {
-        WebServiceAndroidClient client = new WebServiceAndroidClient();
-        final FeatureCollectionDTO[] assets = client.listNearbyAssets(38.246639, 21.734573);
-        for (final FeatureCollectionDTO asset : assets) {
-            System.out.println(asset.getProperties().getName());
-            for (final FeatureDTO featureDTO : asset.getFeatures()) {
-                System.out.println("\t" + featureDTO.getProperties().getId() + " " + featureDTO.getGeometry());
-            }
-        }
-    }
+//    @Test
+//    public void testListNearbyAssets() throws Exception {
+//        WebServiceAndroidClient client = new WebServiceAndroidClient();
+//        final FeatureCollectionDTO[] assets = client.listNearbyAssets(38.246639, 21.734573);
+//        for (final FeatureCollectionDTO asset : assets) {
+//            System.out.println(asset.getProperties().getName());
+//            for (final FeatureDTO featureDTO : asset.getFeatures()) {
+//                System.out.println("\t" + featureDTO.getProperties().getId() + " " + featureDTO.getGeometry());
+//            }
+//        }
+//    }
 
 }

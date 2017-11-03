@@ -30,18 +30,28 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.Result;
-import gr.cti.android.experimentation.repository.*;
+import gr.cti.android.experimentation.repository.ExperimentRepository;
+import gr.cti.android.experimentation.repository.GeoResultRepository;
+import gr.cti.android.experimentation.repository.RegionRepository;
+import gr.cti.android.experimentation.repository.ResultRepository;
+import gr.cti.android.experimentation.repository.SmartphoneRepository;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static gr.cti.android.experimentation.util.Utils.createPolygonForCoordinates;
 import static gr.cti.android.experimentation.util.Utils.createPolygonForRegion;
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 
 /**
@@ -53,7 +63,7 @@ public class StatisticsService {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(StatisticsService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsService.class);
     
     private static final double DIFF = 0.00004;
 

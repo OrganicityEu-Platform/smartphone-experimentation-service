@@ -26,9 +26,17 @@ package gr.cti.android.experimentation.controller.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.organicity.entities.namespace.OrganicityAttributeTypes;
 import gr.cti.android.experimentation.controller.BaseController;
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.OkResponseDTO;
+import gr.cti.android.experimentation.model.Reading;
+import gr.cti.android.experimentation.model.Report;
+import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.ResultDTO;
+import gr.cti.android.experimentation.model.Smartphone;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,10 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.Set;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
@@ -48,59 +53,26 @@ public class AndroidExperimentationWS extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(AndroidExperimentationWS.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AndroidExperimentationWS.class);
 
-    @RequestMapping(value = "/data", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = TEXT_PLAIN)
-    public JSONObject data(@RequestBody String body, final HttpServletResponse response) throws
+    @RequestMapping(value = "/data", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+    public OkResponseDTO data(@RequestBody ResultDTO newResult, final HttpServletResponse response) throws
             JSONException, IOException {
 
-        Result newResult = null;
-        try {
-            newResult = extractResultFromBody(body);
-        } catch (Exception e) {
-            LOGGER.error(e, e);
-
-        }
         if (newResult != null) {
             //store to sql
             try {
                 sqlDbService.store(newResult);
             } catch (Exception e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
 
         }
         response.setStatus(HttpServletResponse.SC_OK);
-        final JSONObject responseObject = new JSONObject();
-        responseObject.put("status", "Ok");
-        responseObject.put("code", 202);
+        final OkResponseDTO responseObject = new OkResponseDTO();
+        responseObject.setStatus("Ok");
+        responseObject.setCode(202);
         return responseObject;
-    }
-
-    @RequestMapping(value = "/data/multiple", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-    public ResponseDTO data(@RequestBody final ResultListDTO resultList, final HttpServletResponse response,
-                            Principal principal) throws
-            JSONException, IOException {
-        LOGGER.info("POST /data/multiple " + principal);
-        for (final Report resultDTO : resultList.getResultList()) {
-            final Result result = newResult(resultDTO);
-
-            if (result != null) {
-                //store to sql
-                try {
-                    sqlDbService.store(result);
-                } catch (Exception e) {
-                    LOGGER.error(e, e);
-                }
-            }
-        }
-
-        response.setStatus(HttpServletResponse.SC_OK);
-
-        final ResponseDTO r = new ResponseDTO();
-        r.setCode(202);
-        r.setStatus("Ok");
-        return r;
     }
 
     protected Result newResult(final Report dto) throws IOException, JSONException {
@@ -141,7 +113,7 @@ public class AndroidExperimentationWS extends BaseController {
                     continue;
                 }
             } catch (Exception e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
             LOGGER.info(jobResult);
             newResult.setDeviceId(phone.getId());
@@ -201,7 +173,7 @@ public class AndroidExperimentationWS extends BaseController {
                     continue;
                 }
             } catch (Exception e) {
-                LOGGER.error(e, e);
+                LOGGER.error(e.getMessage(), e);
             }
             LOGGER.info(jobResult);
             newResult.setDeviceId(phone.getId());

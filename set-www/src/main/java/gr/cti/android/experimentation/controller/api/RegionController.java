@@ -31,14 +31,18 @@ import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.RegionDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Set;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * @author Dimitrios Amaxilatis.
@@ -50,7 +54,7 @@ public class RegionController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(RegionController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RegionController.class);
 
     /**
      * Returns the {@see Region} information of a specific {@see Experiment}.

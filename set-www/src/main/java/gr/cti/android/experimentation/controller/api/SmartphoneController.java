@@ -24,18 +24,34 @@ package gr.cti.android.experimentation.controller.api;
  */
 
 import gr.cti.android.experimentation.controller.BaseController;
-import gr.cti.android.experimentation.model.*;
+import gr.cti.android.experimentation.model.Badge;
+import gr.cti.android.experimentation.model.BadgeDTO;
+import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.Smartphone;
+import gr.cti.android.experimentation.model.SmartphoneDTO;
+import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
+import gr.cti.android.experimentation.model.UsageEntry;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.joda.time.DateTime;
-import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
-
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 @RestController
 @RequestMapping(value = {"/api/v1", "/v1"})
@@ -44,7 +60,7 @@ public class SmartphoneController extends BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(SmartphoneController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SmartphoneController.class);
 
 
     /**
@@ -58,7 +74,7 @@ public class SmartphoneController extends BaseController {
             @ApiResponse(code = 200, message = "Success", response = Smartphone.class)})
     public SmartphoneDTO registerSmartphone(@RequestBody SmartphoneDTO smartphoneDTO) {
         try {
-            LOGGER.info(smartphoneDTO);
+            LOGGER.info(smartphoneDTO.toString());
             Smartphone smartphone = newSmartphone(smartphoneDTO);
             smartphone = modelService.registerSmartphone(smartphone);
             LOGGER.info("register Smartphone: Device:" + smartphone.getId());
@@ -67,7 +83,7 @@ public class SmartphoneController extends BaseController {
             LOGGER.info("----------------------.-------------");
             return newSmartphoneDTO(smartphone);
         } catch (Exception e) {
-            LOGGER.error(e, e);
+            LOGGER.error(e.getMessage(), e);
             LOGGER.debug(e.getMessage());
         }
         return null;

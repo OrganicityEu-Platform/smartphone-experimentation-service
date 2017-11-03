@@ -33,7 +33,6 @@ public class TestUtils {
         //initialize
         newExperiment.setTimestamp(System.currentTimeMillis());
         newExperiment.setUrl("http://experiment.url");
-        newExperiment.setUrlDescription("http://url.description.com");
         newExperiment.setStatus("1");
         newExperiment.setUserId("amaxilat@cti.gr");
         newExperiment.setSensorDependencies("sensor1,sensor2,sensor3");

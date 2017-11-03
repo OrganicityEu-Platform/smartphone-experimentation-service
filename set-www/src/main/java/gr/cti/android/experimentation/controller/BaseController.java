@@ -23,16 +23,32 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
-import gr.cti.android.experimentation.model.*;
-import gr.cti.android.experimentation.repository.*;
+import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.ExperimentDTO;
+import gr.cti.android.experimentation.model.Plugin;
+import gr.cti.android.experimentation.model.PluginDTO;
+import gr.cti.android.experimentation.model.RankingEntry;
+import gr.cti.android.experimentation.model.Region;
+import gr.cti.android.experimentation.model.RegionDTO;
+import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.Smartphone;
+import gr.cti.android.experimentation.model.SmartphoneDTO;
+import gr.cti.android.experimentation.repository.BadgeRepository;
+import gr.cti.android.experimentation.repository.ExperimentRepository;
+import gr.cti.android.experimentation.repository.MeasurementRepository;
+import gr.cti.android.experimentation.repository.PluginRepository;
+import gr.cti.android.experimentation.repository.RegionRepository;
+import gr.cti.android.experimentation.repository.ResultRepository;
+import gr.cti.android.experimentation.repository.SmartphoneRepository;
 import gr.cti.android.experimentation.service.GCMService;
 import gr.cti.android.experimentation.service.ModelService;
 import gr.cti.android.experimentation.service.OrionService;
 import gr.cti.android.experimentation.service.SqlDbService;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -41,9 +57,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TimeZone;
+import java.util.TreeSet;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 @Controller
 public class BaseController {
@@ -51,7 +72,7 @@ public class BaseController {
     /**
      * a log4j logger to print messages.
      */
-    private static final org.apache.logging.log4j.Logger LOGGER = getLogger(BaseController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseController.class);
     protected static final String APPLICATION_JSON = "application/json";
     protected static final String TEXT_PLAIN = "text/plain";
 
@@ -269,7 +290,7 @@ public class BaseController {
         dto.setUserId(experiment.getUserId());
         dto.setName(experiment.getName());
         dto.setUrl(experiment.getUrl());
-        dto.setUrlDescription(experiment.getUrlDescription());
+        dto.setUrlDescription("");
         dto.setTimestamp(experiment.getTimestamp());
         dto.setContextType(experiment.getContextType());
         dto.setStatus(experiment.getStatus());
