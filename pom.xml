@@ -11,6 +11,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.boot.version>1.5.8.RELEASE</spring.boot.version>
+        <spring-android-rest.version>2.0.0.M3</spring-android-rest.version>
         <lombok.version>1.16.10</lombok.version>
     </properties>
 

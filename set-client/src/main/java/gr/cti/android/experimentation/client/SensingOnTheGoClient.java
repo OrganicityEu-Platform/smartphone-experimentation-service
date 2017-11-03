@@ -24,13 +24,13 @@ package gr.cti.android.experimentation.client;
  */
 
 
-public class WebServiceClient extends WebServiceAndroidClient {
+public class SensingOnTheGoClient extends SensingOnTheGoAndroidClient {
 
-    public WebServiceClient() {
+    public SensingOnTheGoClient() {
         super();
     }
 
-    public WebServiceClient(final String token) {
+    public SensingOnTheGoClient(final String token) {
         super(token);
     }
 }

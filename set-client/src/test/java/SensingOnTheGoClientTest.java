@@ -21,7 +21,7 @@
  * #L%
  */
 
-import gr.cti.android.experimentation.client.WebServiceAndroidClient;
+import gr.cti.android.experimentation.client.SensingOnTheGoAndroidClient;
 import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
 import gr.cti.android.experimentation.model.PluginDTO;
@@ -32,15 +32,13 @@ import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
 import org.junit.Before;
 import org.junit.Test;
 
-public class WebServiceClientTest {
+public class SensingOnTheGoClientTest {
 
-    private WebServiceAndroidClient client;
+    private SensingOnTheGoAndroidClient client;
 
     @Before
     public void before() throws Exception {
-        client = new WebServiceAndroidClient();
-//        client.setToken("eyJhbGciOiJSUzI1NiJ9.eyJqdGkiOiJkMmJhZTA0MS1iYmJlLTQzYWYtYmE5Zi1lOTRjYWEyMDFiZDciLCJleHAiOjAsIm5iZiI6MCwiaWF0IjoxNDc4Njg5NTU4LCJpc3MiOiJodHRwczovL2FjY291bnRzLm9yZ2FuaWNpdHkuZXUvcmVhbG1zL29yZ2FuaWNpdHkiLCJzdWIiOiIxYjZjMmU0Mi04OTViLTQ1NTYtOGYzNy04OTZhYzI5MDM5OGQiLCJ0eXAiOiJPZmZsaW5lIiwiYXpwIjoic21hcnRwaG9uZS1leHBlcmltZW50LW1hbmFnZW1lbnQiLCJzZXNzaW9uX3N0YXRlIjoiMjZiMjU0MjAtZjkxNC00MzYzLWFmZjEtMTQ2OTIwMjMyOGY1IiwiY2xpZW50X3Nlc3Npb24iOiI5NDZjYTE1Zi00OWQ0LTRhZDQtYjkwMS01M2JjOTQzNjA2ZjkiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiXX0sInJlc291cmNlX2FjY2VzcyI6e319.edgjyQpx5EiPeZQ3M6SZtKwL_lTyG9hMVKVmFpA7htninDAOcCEsqKzZKoDGEob0P2117QEMz7CNeZ0sIpyz6jhT1O38rC3U0Y-sF1FNwnxvUfk427B3LW9O0xIviL3CsV6Lux2IHCqRnHTzxo3xZTffA1gio45cq4u6MS50Q0Iq307052lO7jLsOhk5AcarZOqO5j5k9JxDzGUqQUzQKKZo2_H-GnndwmJQ5jF5S5Q1msULPXtLLlK0i0x6crQIf1If0TudnwB3LyLaCsbHpCCT4vV4HffrxPq_8_c1aBIw7fpXS57mTU1R2LoJd0wU-ocZK_PDZ15GfKW3m7eA_Q");
-//        client.setEncodedToken("c21hcnRwaG9uZS1leHBlcmltZW50LW1hbmFnZW1lbnQ6YmI2ODFmZmItNDNiNi00OTRmLTgwYTItNDY3YjE1MDViNzkz");
+        client = new SensingOnTheGoAndroidClient();
     }
 
     @Test
@@ -113,7 +111,7 @@ public class WebServiceClientTest {
 
 //    @Test
 //    public void testListNearbyAssets() throws Exception {
-//        WebServiceAndroidClient client = new WebServiceAndroidClient();
+//        SensingOnTheGoAndroidClient client = new SensingOnTheGoAndroidClient();
 //        final FeatureCollectionDTO[] assets = client.listNearbyAssets(38.246639, 21.734573);
 //        for (final FeatureCollectionDTO asset : assets) {
 //            System.out.println(asset.getProperties().getName());
