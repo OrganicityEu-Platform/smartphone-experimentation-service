@@ -43,11 +43,11 @@ public class BadgeDTO implements Serializable {
     /**
      * Id of the {@see Experiment} the badge was awarded for.
      */
-    private int experimentId;
+    private String experimentId;
     /**
      * Id of the {@see Smartphone} used to collect the data the badge was awarded for.
      */
-    private int deviceId;
+    private long deviceId;
     /**
      * Message of the badge. Used to describe the action awarded for.
      */
@@ -94,7 +94,7 @@ public class BadgeDTO implements Serializable {
      *
      * @return the Id of the {@see Experiment} the badge was awarded for.
      */
-    public int getExperimentId() {
+    public String getExperimentId() {
         return experimentId;
     }
 
@@ -103,7 +103,7 @@ public class BadgeDTO implements Serializable {
      *
      * @param experimentId the Id of the {@see Experiment} the badge was awarded for.
      */
-    public void setExperimentId(int experimentId) {
+    public void setExperimentId(String experimentId) {
         this.experimentId = experimentId;
     }
 
@@ -112,7 +112,7 @@ public class BadgeDTO implements Serializable {
      *
      * @return the Id of the {@see Smartphone} used to collect the data the badge was awarded for.
      */
-    public int getDeviceId() {
+    public long getDeviceId() {
         return deviceId;
     }
 
@@ -121,7 +121,7 @@ public class BadgeDTO implements Serializable {
      *
      * @param deviceId the Id of the {@see Smartphone} used to collect the data the badge was awarded for.
      */
-    public void setDeviceId(int deviceId) {
+    public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
     }
 
@@ -162,16 +162,6 @@ public class BadgeDTO implements Serializable {
         }
         return message.equals(badge.message);
 
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id;
-        result = 31 * result + (int) (timestamp ^ (timestamp >>> 32));
-        result = 31 * result + experimentId;
-        result = 31 * result + deviceId;
-        result = 31 * result + message.hashCode();
-        return result;
     }
 
     @Override

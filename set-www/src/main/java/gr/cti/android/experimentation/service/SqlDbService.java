@@ -129,11 +129,11 @@ public class SqlDbService {
             }
     
             //send incentive messages to phone
-//            try {
-//                gcmService.check(newResult);
-//            } catch (Exception e) {
-//                LOGGER.error(e.getMessage(), e);
-//            }
+            try {
+                gcmService.check(newResult);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
     
             //store to orion
 //            try {

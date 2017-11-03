@@ -39,10 +39,10 @@ public interface BadgeRepository extends CrudRepository<Badge, Long> {
 
     Badge findById(int id);
 
-    Set<Badge> findByExperimentId(int experimentId);
+    Set<Badge> findByExperimentId(String experimentId);
 
-    Set<Badge> findByDeviceId(int deviceId);
+    Set<Badge> findByDeviceId(long deviceId);
 
-    Set<Badge> findByExperimentIdAndDeviceId(int experimentId, int deviceId);
+    Set<Badge> findByExperimentIdAndDeviceId(String experimentId, long deviceId);
 
 }

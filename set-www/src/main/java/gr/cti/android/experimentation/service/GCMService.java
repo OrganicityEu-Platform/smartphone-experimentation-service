@@ -27,6 +27,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.GcmMessageData;
 import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.ResultDTO;
+import gr.cti.android.experimentation.repository.MeasurementRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -51,14 +53,17 @@ public class GCMService {
      * a log4j logger to print messages.
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(GCMService.class);
-
+    
+    private MeasurementRepository measurementRepository;
+    private BadgeService badgeService;
+    
+    public GCMService(MeasurementRepository measurementRepository, BadgeService badgeService) {
+        this.measurementRepository = measurementRepository;
+        this.badgeService = badgeService;
+    }
+    
     @Value("${gcm.key}")
     private String gcmKey;
-
-    @Autowired
-    ResultRepository resultRepository;
-    @Autowired
-    BadgeService badgeService;
 
     public String send2Experiment(int experiment, String message) {
         Map<String, String> dataMap = new HashMap<>();
@@ -66,7 +71,7 @@ public class GCMService {
         return send2Topic("/topics/experiment-" + experiment, dataMap);
     }
 
-    public String send2Device(int deviceId, String message) {
+    public String send2Device(long deviceId, String message) {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("message", message);
         return send2Topic("/topics/device-" + deviceId, dataMap);
@@ -105,9 +110,9 @@ public class GCMService {
     }
 
     @Async
-    public void check(final Result newResult) throws JsonProcessingException {
+    public void check(final ResultDTO newResult) throws JsonProcessingException {
 
-        long total = resultRepository.countByDeviceIdAndTimestampAfter(newResult.getDeviceId(),
+        long total = measurementRepository.countByDeviceIdAndTimestampAfter(newResult.getDeviceId(),
                 new DateTime().withMillisOfDay(0).getMillis());
 
         LOGGER.info("Total measurements : " + total + " device: " + newResult.getDeviceId());

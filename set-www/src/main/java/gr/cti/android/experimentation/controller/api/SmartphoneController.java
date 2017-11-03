@@ -125,7 +125,7 @@ public class SmartphoneController extends BaseController {
             if (experimentId != null) {
                 final Experiment exp = experimentRepository.findByExperimentId(experimentId);
                 smartphoneStatistics.setExperimentRankings(getRankingList("", experimentId));
-                smartphoneStatistics.setExperimentBadges(newBadgeDTOSet(badgeRepository.findByExperimentIdAndDeviceId(exp.getId(), smartphone.getId())));
+                smartphoneStatistics.setExperimentBadges(newBadgeDTOSet(badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphone.getId())));
                 smartphoneStatistics.setExperimentUsage(getExperimentParticipationTime(experimentId, (int) smartphoneId));
             }
             smartphoneStatistics.setBadges(newBadgeDTOSet(badgeRepository.findByDeviceId(smartphone.getId())));
@@ -139,7 +139,7 @@ public class SmartphoneController extends BaseController {
     }
 
     private Set<BadgeDTO> newBadgeDTOSet(Set<Badge> byExperimentIdAndDeviceId) {
-        final HashSet<BadgeDTO> badgeSet = new HashSet<BadgeDTO>();
+        final HashSet<BadgeDTO> badgeSet = new HashSet<>();
         for (final Badge badge : byExperimentIdAndDeviceId) {
             badgeSet.add(newBadgeDTO(badge));
         }
@@ -159,13 +159,13 @@ public class SmartphoneController extends BaseController {
     @RequestMapping(value = "/smartphone/{smartphoneId}/badge", method = RequestMethod.GET)
     public Set<Badge> getSmartphoneBadges(
             @PathVariable(value = "smartphoneId") final int smartphoneId) {
-        return getExperimentSmartphoneBadges(smartphoneId, 0);
+        return getExperimentSmartphoneBadges(smartphoneId, null);
     }
 
     @RequestMapping(value = "/smartphone/{smartphoneId}/badge/{experimentId}", method = RequestMethod.GET)
     public Set<Badge> getExperimentSmartphoneBadges(
-            @PathVariable(value = "smartphoneId") final int smartphoneId, @PathVariable(value = "experimentId") final int experimentId) {
-        if (experimentId == 0) {
+            @PathVariable(value = "smartphoneId") final long smartphoneId, @PathVariable(value = "experimentId") final String experimentId) {
+        if (experimentId == null) {
             return badgeRepository.findByDeviceId(smartphoneId);
         } else {
             return badgeRepository.findByExperimentIdAndDeviceId(experimentId, smartphoneId);
