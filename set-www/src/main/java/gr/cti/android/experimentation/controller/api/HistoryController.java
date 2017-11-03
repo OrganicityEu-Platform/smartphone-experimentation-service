@@ -25,6 +25,7 @@ package gr.cti.android.experimentation.controller.api;
 
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.HistoricDataDTO;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.model.TempReading;
 import io.swagger.annotations.ApiOperation;
@@ -103,27 +104,18 @@ public class HistoryController extends BaseController {
 
         LOGGER.info("phoneId: " + phoneId + " from: " + from + " to: " + to);
 
-        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampBetween(Integer.parseInt(phoneId), fromLong, toLong);
+        final Set<Measurement> results = measurementRepository.findByDeviceIdAndTimestampBetween(Integer.parseInt(phoneId), fromLong, toLong);
 
-        final Set<Result> resultsCleanup = new HashSet<>();
-
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             try {
-                final JSONObject readingList = new JSONObject(result.getMessage());
-                final Iterator keys = readingList.keys();
-                while (keys.hasNext()) {
-                    final String key = (String) keys.next();
-                    if (key.contains(attributeId)) {
-                        tempReadings.add(new TempReading(result.getTimestamp(), readingList.getDouble(key)));
-                    }
+                if (result.getMeasurementKey().equals(attributeId)){
+                    tempReadings.add(new TempReading(result.getTimestamp(),Double.parseDouble(result.getMeasurementValue())));
                 }
-            } catch (JSONException e) {
-                resultsCleanup.add(result);
+            } catch (NumberFormatException e) {
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        resultRepository.delete(resultsCleanup);
 
         List<TempReading> rolledUpTempReadings = new ArrayList<>();
 

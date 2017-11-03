@@ -26,8 +26,10 @@ package gr.cti.android.experimentation.service;
 
 import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
+import gr.cti.android.experimentation.repository.MeasurementRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.util.Utils;
 import org.json.JSONObject;
@@ -58,7 +60,7 @@ public class LocationService {
     ExperimentRepository experimentRepository;
 
     @Autowired
-    ResultRepository resultRepository;
+    MeasurementRepository measurementRepository;
 
 //    @PostConstruct
 //    public void init() {
@@ -86,20 +88,15 @@ public class LocationService {
     }
 
     public List<Polygon> experimentPolygons(final Experiment experiment) {
-        final Set<Result> results = resultRepository.findByExperimentId(experiment.getId());
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getId());
         final List<Polygon> polygons = new ArrayList<>();
         System.out.println("converting " + results.size() + " results to area");
-        for (final Result result : results) {
-            try {
-                final JSONObject message = new JSONObject(result.getMessage());
-                if (message.has(Utils.LATITUDE) && message.has(Utils.LONGITUDE)) {
-                    double longitude = message.getDouble(Utils.LONGITUDE);
-                    double latitude = message.getDouble(Utils.LATITUDE);
-                    final Polygon pol = createPolygonForCoordinates(latitude, longitude);
-                    polygons.add(pol);
-                }
-            } catch (Exception e) {
-                //ignore
+        for (final Measurement result : results) {
+            if (result.getLatitude() != null && result.getLongitude() != null) {
+                double longitude = result.getLongitude();
+                double latitude = result.getLatitude();
+                final Polygon pol = createPolygonForCoordinates(latitude, longitude);
+                polygons.add(pol);
             }
         }
         return polygons;

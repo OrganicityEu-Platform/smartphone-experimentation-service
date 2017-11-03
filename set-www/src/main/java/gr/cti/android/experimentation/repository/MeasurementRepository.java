@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -50,6 +51,8 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
     
     Set<Measurement> findByExperimentIdAndTimestampAfter(long experimentId, long start);
     
+    Set<Measurement> findByDeviceIdAndTimestampBetween(long deviceId, long start, long end);
+    
     Set<Measurement> findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(String experimentId, long deviceId, long start);
     
     Set<Measurement> findByDeviceIdAndTimestampAfterOrderByTimestampAsc(long deviceId, long start);
@@ -57,6 +60,8 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
     Set<Measurement> findDistinctExperimentIdByDeviceId(long deviceId);
     
     Set<Measurement> findDistinctExperimentIdByDeviceIdAndTimestampAfter(int deviceId, long millis);
+    
+    List<Measurement> findTimestampByExperimentId(String experimentId);
     
     long countByDeviceIdAndTimestampAfter(long deviceId, long millis);
     

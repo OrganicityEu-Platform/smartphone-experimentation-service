@@ -24,6 +24,7 @@ package gr.cti.android.experimentation.service;
  */
 
 import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.Report;
 import gr.cti.android.experimentation.model.Result;
@@ -155,31 +156,8 @@ public class ModelService {
         }
 
     }
-
-    public void reportResults(final Report report) {
-        final String experimentId = report.getName();
-        final List<String> experimentResults = report.getResults();
-        System.out.println("experiment Id: " + experimentId);
-
-        final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
-
-        for (final String result : experimentResults) {
-            final Result resultsEntity = new Result();
-            resultsEntity.setExperimentId(experiment.getId());
-            resultsEntity.setDeviceId(report.getDeviceId());
-            resultsEntity.setTimestamp(System.currentTimeMillis());
-
-            if (result != null) {
-                resultsEntity.setMessage(result);
-            } else {
-                resultsEntity.setMessage("");
-            }
-
-            resultRepository.save(resultsEntity);
-        }
-    }
-
-
+    
+    
     public List<Result> getResults(Integer experimentId) {
         if (experimentId == null)
             return new ArrayList<>();

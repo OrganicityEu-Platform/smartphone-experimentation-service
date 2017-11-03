@@ -24,7 +24,7 @@ package gr.cti.android.experimentation.controller;
  */
 
 import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Smartphone;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -51,18 +51,18 @@ public class StatsController extends BaseController {
     @RequestMapping(value = "/stats", method = RequestMethod.GET, produces = APPLICATION_JSON)
     public String getStats(final Map<String, Object> model) {
 
-        final Map<Integer, Long> experimentCount = new HashMap<>();
+        final Map<String, Long> experimentCount = new HashMap<>();
         model.put("experimentCount", experimentCount);
         final Map<Long, Long> totalDateCounts = new HashMap<>();
-        final Map<Integer, HashMap<Long, Long>> experimentDateCounts = new HashMap<>();
+        final Map<String, HashMap<Long, Long>> experimentDateCounts = new HashMap<>();
         model.put("totalDateCounts", totalDateCounts);
         model.put("experimentDateCounts", experimentDateCounts);
         for (final Experiment experiment : experimentRepository.findAll()) {
-            experimentCount.put(experiment.getId(), resultRepository.countByExperimentId(experiment.getId()));
+            experimentCount.put(experiment.getExperimentId(), measurementRepository.countByExperimentId(experiment.getExperimentId()));
 
-            experimentDateCounts.put(experiment.getId(), new HashMap<>());
-            final List<Result> results = resultRepository.findTimestampByExperimentId(experiment.getId());
-            for (final Result result : results) {
+            experimentDateCounts.put(experiment.getExperimentId(), new HashMap<>());
+            final List<Measurement> results = measurementRepository.findTimestampByExperimentId(experiment.getExperimentId());
+            for (final Measurement result : results) {
                 final long date = new DateTime(result.getTimestamp()).withMillisOfDay(0).getMillis();
                 if (date > 0) {
                     if (totalDateCounts.containsKey(date)) {

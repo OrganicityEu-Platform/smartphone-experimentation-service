@@ -28,10 +28,12 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Region;
 import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.repository.ExperimentRepository;
 import gr.cti.android.experimentation.repository.GeoResultRepository;
+import gr.cti.android.experimentation.repository.MeasurementRepository;
 import gr.cti.android.experimentation.repository.RegionRepository;
 import gr.cti.android.experimentation.repository.ResultRepository;
 import gr.cti.android.experimentation.repository.SmartphoneRepository;
@@ -68,7 +70,7 @@ public class StatisticsService {
     private static final double DIFF = 0.00004;
 
     @Autowired
-    ResultRepository resultRepository;
+    MeasurementRepository measurementRepository;
     @Autowired
     GeoResultRepository geoResultRepository;
     @Autowired
@@ -85,9 +87,9 @@ public class StatisticsService {
 
     public Map<Integer, Integer> getContributionsPerHour(final int experimentId) {
         LOGGER.debug("===================================CONTRIBUTION PER HOUR");
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
         final Map<Integer, Integer> counts = new HashMap<>();
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).getHourOfDay();
             if (!counts.containsKey(index)) {
                 counts.put(index, 0);
@@ -102,9 +104,9 @@ public class StatisticsService {
 
     public Map<Integer, Integer> getContributionsPerDay(final int experimentId) {
         LOGGER.debug("===================================CONTRIBUTION PER DAY");
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
         final Map<Integer, Integer> counts = new HashMap<>();
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).withMillisOfDay(0).getDayOfYear();
             if (!counts.containsKey(index)) {
                 counts.put(index, 0);
@@ -117,11 +119,11 @@ public class StatisticsService {
         return counts;
     }
 
-    public Map<Integer, Set<Integer>> getTotalUserParticipationPerDay(final int experimentId) {
+    public Map<Integer, Set<Long>> getTotalUserParticipationPerDay(final int experimentId) {
         LOGGER.debug("===================================USER PARTICIPATED TOTAL");
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
-        final Map<Integer, Set<Integer>> counts = new HashMap<>();
-        for (final Result result : results) {
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
+        final Map<Integer, Set<Long>> counts = new HashMap<>();
+        for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).withMillisOfDay(0).getDayOfYear();
             if (!counts.containsKey(index)) {
                 counts.put(index, new HashSet<>());
@@ -140,9 +142,9 @@ public class StatisticsService {
 
     public Map<Integer, Set<Integer>> getTemporalCoveragePerDay(final int experimentId) {
         LOGGER.debug("===================================TEMPORAL COVERAGE");
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
         final Map<Integer, Set<Integer>> counts = new HashMap<>();
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).withMillisOfDay(0).getDayOfYear();
             int hour = new DateTime(result.getTimestamp()).getHourOfDay();
             if (!counts.containsKey(index)) {
@@ -183,18 +185,14 @@ public class StatisticsService {
 
     public double getCoveredExperimentArea(final int experimentId) {
         LOGGER.debug("===================================TEMPORAL COVERAGE");
-        final Set<Result> results = resultRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
         final GeometryFactory fact = new GeometryFactory();
         final List<Polygon> polygons = new ArrayList<>();
-        for (final Result result : results) {
-            try {
-                final JSONObject res = new JSONObject(result.getMessage());
-                final double lat = res.getDouble("org.ambientdynamix.contextplugins.Latitude");
-                final double lon = res.getDouble("org.ambientdynamix.contextplugins.Longitude");
-                final Polygon pol = createPolygonForCoordinates(lat, lon);
-                polygons.add(pol);
-            } catch (Exception ignore) {
-            }
+        for (final Measurement result : results) {
+            final double lat = result.getLatitude();
+            final double lon = result.getLongitude();
+            final Polygon pol = createPolygonForCoordinates(lat, lon);
+            polygons.add(pol);
         }
 
         final GeometryCollection geometryCollection = (GeometryCollection) fact.buildGeometry(polygons);

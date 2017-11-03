@@ -27,8 +27,8 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Region;
-import gr.cti.android.experimentation.model.Result;
 import gr.cti.android.experimentation.util.Utils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.joda.time.DateTime;
@@ -47,7 +47,6 @@ import java.security.Principal;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,12 +118,12 @@ public class RestApiDataController extends BaseController {
         final long end = parseDateMillis(to);
 
 
-        final Set<Result> results;
+        final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = resultRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
         } else {
-            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getId(), deviceId, start);
+            results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getExperimentId(), deviceId, start);
         }
 
 
@@ -138,40 +137,33 @@ public class RestApiDataController extends BaseController {
         final long end = parseDateMillis(to);
 
 
-        final Set<Result> results;
+        final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = resultRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
         } else {
-            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getId(), deviceId, start);
+            results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getExperimentId(), deviceId, start);
         }
         LOGGER.info("found:" + results.size());
 
         final JSONArray array = new JSONArray();
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             if (end != 0 && result.getTimestamp() > end) {
                 continue;
             }
             try {
                 final JSONObject obj = new JSONObject();
-                final JSONObject message = new JSONObject(result.getMessage());
-                if (message.has(LATITUDE) && message.has(LONGITUDE)) {
-                    obj.put("longitude", message.getDouble(LONGITUDE));
-                    obj.put("latitude", message.getDouble(LATITUDE));
+                if (result.getLatitude() != null && result.getLongitude() != null) {
+                    obj.put("longitude", result.getLongitude());
+                    obj.put("latitude", result.getLatitude());
 
-                    final Iterator iterator = message.keys();
                     final JSONObject dataJson = new JSONObject();
-                    while (iterator.hasNext()) {
-                        final String key = (String) iterator.next();
-                        if (key.equals(LATITUDE) || key.equals(LONGITUDE)) {
-                            continue;
-                        }
-                        try {
-                            final String data = message.getString(key);
-                            dataJson.put(key, data);
-                        } catch (Exception e) {
-                            LOGGER.error(e.getMessage(), e);
-                        }
+                    final String key = result.getMeasurementKey();
+                    try {
+                        final String data = result.getMeasurementValue();
+                        dataJson.put(key, data);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                     obj.put("data", dataJson);
                     obj.put("timestamp", result.getTimestamp());
@@ -193,11 +185,11 @@ public class RestApiDataController extends BaseController {
         long start = parseDateMillis(after);
         long end = parseDateMillis(to);
 
-        final Set<Result> results;
+        final Set<Measurement> results;
         if (deviceId == 0) {
             results = new HashSet<>();
         } else {
-            results = resultRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(deviceId, start);
+            results = measurementRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(deviceId, start);
         }
 
         final JSONArray addressPoints = doCalculations(results, end, df);
@@ -212,15 +204,15 @@ public class RestApiDataController extends BaseController {
         long start = parseDateMillis(after);
         long end = parseDateMillis(to);
 
-        final Set<Result> results;
+        final Set<Measurement> results;
         if (deviceId == 0) {
             results = new HashSet<>();
         } else {
-            results = resultRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(deviceId, start);
+            results = measurementRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(deviceId, start);
         }
 
         JSONArray array = new JSONArray();
-        for (Result result : results) {
+        for (Measurement result : results) {
             if (result.getTimestamp() > end) {
                 continue;
             }
@@ -235,12 +227,12 @@ public class RestApiDataController extends BaseController {
         final long start = parseDateMillis(after);
         final long end = parseDateMillis(to);
 
-        final Set<Result> results;
+        final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = resultRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
         } else {
-            results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getId(), deviceId, start);
+            results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getExperimentId(), deviceId, start);
         }
 
         try {
@@ -254,21 +246,17 @@ public class RestApiDataController extends BaseController {
             String latitude;
             final DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
             final Map<Integer, Map<String, Map<String, Long>>> locationsHeatMap = new HashMap<>();
-            for (final Result result : results) {
+            for (final Measurement result : results) {
                 try {
-                    if (!result.getMessage().startsWith("{")) {
-                        continue;
-                    }
                     if (end != 0 && result.getTimestamp() > end) {
                         continue;
                     }
-                    final JSONObject message = new JSONObject(result.getMessage());
 
                     int hour = new DateTime(result.getTimestamp()).getHourOfDay();
-
-                    if (message.has(LATITUDE) && message.has(LONGITUDE)) {
-                        longitude = df.format(message.getDouble(LONGITUDE));
-                        latitude = df.format(message.getDouble(LATITUDE));
+    
+                    if (result.getLatitude() != null && result.getLongitude() != null) {
+                        longitude = df.format(result.getLongitude());
+                        latitude = df.format(result.getLatitude());
 
                         if (poly != null && !dataInRegion(poly, latitude, longitude)) {
                             continue;
@@ -297,33 +285,24 @@ public class RestApiDataController extends BaseController {
 
                         final Long val = locationsHeatMap.get(hour).get(longitude).get(latitude);
                         locationsHeatMap.get(hour).get(longitude).put(latitude, val + 1);
-
-
-                        final Iterator iterator = message.keys();
-                        if (longitude != null && latitude != null) {
-                            while (iterator.hasNext()) {
-                                final String key = (String) iterator.next();
-                                if (key.equals(LATITUDE) || key.equals(LONGITUDE)) {
-                                    continue;
-                                }
-
-                                if (!dataAggregates.get(hour).get(longitude).get(latitude).containsKey(key)) {
-                                    dataAggregates.get(hour).get(longitude).get(latitude).put(key, new DescriptiveStatistics());
-                                }
-                                try {
-                                    String data = message.getString(key);
-                                    try {
-                                        final double doubleData = Double.parseDouble(data);
-                                        dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(doubleData);
-                                        wholeDataStatistics.addValue(doubleData);
-                                    } catch (NumberFormatException ignore) {
-                                        dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(1);
-                                        wholeDataStatistics.addValue(1);
-                                    }
-                                } catch (Exception e) {
-                                    LOGGER.error(e.getMessage(), e);
-                                }
+    
+                        final String key = result.getMeasurementKey();
+    
+                        if (!dataAggregates.get(hour).get(longitude).get(latitude).containsKey(key)) {
+                            dataAggregates.get(hour).get(longitude).get(latitude).put(key, new DescriptiveStatistics());
+                        }
+                        try {
+                            String data = result.getMeasurementValue();
+                            try {
+                                final double doubleData = Double.parseDouble(data);
+                                dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(doubleData);
+                                wholeDataStatistics.addValue(doubleData);
+                            } catch (NumberFormatException ignore) {
+                                dataAggregates.get(hour).get(longitude).get(latitude).get(key).addValue(1);
+                                wholeDataStatistics.addValue(1);
                             }
+                        } catch (Exception e) {
+                            LOGGER.error(e.getMessage(), e);
                         }
                     }
                 } catch (Exception e) {
@@ -383,26 +362,21 @@ public class RestApiDataController extends BaseController {
     }
 
 
-    private JSONArray doCalculations(final Set<Result> results, final long end, final DecimalFormat df) {
+    private JSONArray doCalculations(final Set<Measurement> results, final long end, final DecimalFormat df) {
         final Map<String, Map<String, Map<String, DescriptiveStatistics>>> dataAggregates = new HashMap<>();
         final DescriptiveStatistics wholeDataStatistics = new DescriptiveStatistics();
         final Map<String, Map<String, Long>> locationsHeatMap = new HashMap<>();
 
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             try {
-                if (!result.getMessage().startsWith("{")) {
-                    continue;
-                }
                 if (end != 0 && result.getTimestamp() > end) {
                     continue;
                 }
-
-
-                final JSONObject message = new JSONObject(result.getMessage());
-
-                if (message.has(LATITUDE) && message.has(LONGITUDE)) {
-                    final String longitude = df.format(message.getDouble(LONGITUDE));
-                    final String latitude = df.format(message.getDouble(LATITUDE));
+    
+    
+                if (result.getLatitude() != null && result.getLongitude() != null) {
+                    final String longitude = df.format(result.getLongitude());
+                    final String latitude = df.format(result.getLatitude());
                     if (!dataAggregates.containsKey(longitude)) {
                         dataAggregates.put(longitude, new HashMap<>());
                     }
@@ -421,31 +395,23 @@ public class RestApiDataController extends BaseController {
                     locationsHeatMap.get(longitude).put(latitude, val + 1);
 
 
-                    final Iterator iterator = message.keys();
-                    if (longitude != null && latitude != null) {
-                        while (iterator.hasNext()) {
-                            final String key = (String) iterator.next();
-                            if (key.equals(LATITUDE) || key.equals(LONGITUDE)) {
-                                continue;
-                            }
-
-                            if (!dataAggregates.get(longitude).get(latitude).containsKey(key)) {
-                                dataAggregates.get(longitude).get(latitude).put(key, new DescriptiveStatistics());
-                            }
-                            try {
-                                String data = message.getString(key);
-                                try {
-                                    final double doubleData = Double.parseDouble(data);
-                                    dataAggregates.get(longitude).get(latitude).get(key).addValue(doubleData);
-                                    wholeDataStatistics.addValue(doubleData);
-                                } catch (NumberFormatException ignore) {
-                                    dataAggregates.get(longitude).get(latitude).get(key).addValue(1);
-                                    wholeDataStatistics.addValue(1);
-                                }
-                            } catch (Exception e) {
-                                LOGGER.error(e.getMessage(), e);
-                            }
+                    final String key = result.getMeasurementKey();
+    
+                    if (!dataAggregates.get(longitude).get(latitude).containsKey(key)) {
+                        dataAggregates.get(longitude).get(latitude).put(key, new DescriptiveStatistics());
+                    }
+                    try {
+                        String data = result.getMeasurementValue();
+                        try {
+                            final double doubleData = Double.parseDouble(data);
+                            dataAggregates.get(longitude).get(latitude).get(key).addValue(doubleData);
+                            wholeDataStatistics.addValue(doubleData);
+                        } catch (NumberFormatException ignore) {
+                            dataAggregates.get(longitude).get(latitude).get(key).addValue(1);
+                            wholeDataStatistics.addValue(1);
                         }
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             } catch (Exception e) {

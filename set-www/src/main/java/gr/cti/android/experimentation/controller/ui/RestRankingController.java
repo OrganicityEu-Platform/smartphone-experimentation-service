@@ -23,13 +23,11 @@ package gr.cti.android.experimentation.controller.ui;
  * #L%
  */
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.DownloadableResultDTO;
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.RankingEntry;
-import gr.cti.android.experimentation.model.Result;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +40,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,21 +79,16 @@ public class RestRankingController extends BaseController {
     ) {
         final Set<DownloadableResultDTO> externalResults = new TreeSet<>();
         Experiment experiment = experimentRepository.findByExperimentId(experimentId);
-        final Set<Result> results = resultRepository.findByExperimentId(experiment.getId());
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getId());
         LOGGER.info("Will try to convert " + results.size() + " results.");
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             try {
                 final DownloadableResultDTO dres = new DownloadableResultDTO();
                 dres.setDate(result.getTimestamp());
-                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                if (dataMap.containsKey(LONGITUDE) && dataMap.containsKey(LATITUDE)) {
-                    dres.setLongitude((Double) dataMap.get(LONGITUDE));
-                    dres.setLatitude((Double) dataMap.get(LATITUDE));
-                    dres.setResults(new HashMap<>());
-                    dataMap.keySet().stream().filter(key -> !key.equals(LATITUDE) && !key.contains(LONGITUDE)).forEach(key -> {
-                        dres.getResults().put(key, String.valueOf(dataMap.get(key)));
-                    });
-                }
+                dres.setLongitude(result.getLongitude());
+                dres.setLatitude(result.getLatitude());
+                dres.setResults(new HashMap<>());
+                dres.getResults().put(result.getMeasurementKey(), result.getMeasurementValue());
                 if (dres.getResults() != null) {
                     externalResults.add(dres);
                 }
@@ -112,39 +104,30 @@ public class RestRankingController extends BaseController {
             @PathVariable("experimentId") final String experimentId
     ) {
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
-        final Set<Result> results = resultRepository.findByExperimentId(experiment.getId());
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getId());
         final StringBuilder resResponse = new StringBuilder();
         final Set<String> headers = new HashSet<>();
-        for (final Result result : results) {
-            try {
-                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                headers.addAll(dataMap.keySet());
-            } catch (IOException ignore) {
-            }
+        for (final Measurement result : results) {
+            headers.add(result.getMeasurementValue());
         }
         headers.remove(LONGITUDE);
         headers.remove(LATITUDE);
 
         resResponse.append("timestamp,longitude,latitude,");
         resResponse.append(String.join(",", headers)).append("\n");
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             final List<String> values = new ArrayList<>();
             values.add(String.valueOf(result.getTimestamp()));
-            try {
-                final HashMap<String, Object> dataMap = new ObjectMapper().readValue(result.getMessage(), new HashMap<String, Object>().getClass());
-                values.add(String.valueOf(dataMap.get(LONGITUDE)));
-                values.add(String.valueOf(dataMap.get(LATITUDE)));
-                for (final String key : headers) {
-                    if (dataMap.containsKey(key)) {
-                        values.add(String.valueOf(dataMap.get(key)));
-                    } else {
-                        values.add(null);
-                    }
+            values.add(String.valueOf(result.getLongitude()));
+            values.add(String.valueOf(result.getLatitude()));
+            for (final String key : headers) {
+                if (result.getMeasurementKey().equals(key)) {
+                    values.add(result.getMeasurementValue());
+                } else {
+                    values.add(null);
                 }
-                resResponse.append(String.join(",", values)).append("\n");
-            } catch (IOException e) {
-                LOGGER.warn(e.getMessage(), e);
             }
+            resResponse.append(String.join(",", values)).append("\n");
         }
         return resResponse.toString();
     }
@@ -161,17 +144,17 @@ public class RestRankingController extends BaseController {
     @RequestMapping(value = "/statistics", method = RequestMethod.GET)
     public String getRankings(@RequestParam(required = false, defaultValue = "0") final int deviceId) {
 
-        final long resultsTotal = resultRepository.countByDeviceId(deviceId);
-        final long resultsToday = resultRepository.countByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis());
-        final Set<Result> experimentsTotal = new HashSet<>();
-        final Set<Integer> experimentIdsTotal = new HashSet<>();
-        experimentsTotal.addAll(resultRepository.findDistinctExperimentIdByDeviceId(deviceId));
-        final Set<Result> experimentsToday = new HashSet<>();
-        final Set<Integer> experimentsIdsToday = new HashSet<>();
-        experimentsToday.addAll(resultRepository.findDistinctExperimentIdByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis()));
+        final long resultsTotal = measurementRepository.countByDeviceId(deviceId);
+        final long resultsToday = measurementRepository.countByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis());
+        final Set<Measurement> experimentsTotal = new HashSet<>();
+        final Set<String> experimentIdsTotal = new HashSet<>();
+        experimentsTotal.addAll(measurementRepository.findDistinctExperimentIdByDeviceId(deviceId));
+        final Set<Measurement> experimentsToday = new HashSet<>();
+        final Set<String> experimentsIdsToday = new HashSet<>();
+        experimentsToday.addAll(measurementRepository.findDistinctExperimentIdByDeviceIdAndTimestampAfter(deviceId, new DateTime().withMillisOfDay(0).getMillis()));
 
-        experimentIdsTotal.addAll(experimentsTotal.stream().map(Result::getExperimentId).collect(Collectors.toList()));
-        experimentsIdsToday.addAll(experimentsToday.stream().map(Result::getExperimentId).collect(Collectors.toList()));
+        experimentIdsTotal.addAll(experimentsTotal.stream().map(Measurement::getExperimentId).collect(Collectors.toList()));
+        experimentsIdsToday.addAll(experimentsToday.stream().map(Measurement::getExperimentId).collect(Collectors.toList()));
         final JSONObject obj = new JSONObject();
         try {
             obj.put("resultsTotal", resultsTotal);
