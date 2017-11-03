@@ -69,6 +69,7 @@ public class SqlDbService {
     
     protected static final String LATITUDE = "eu.organicity.set.sensors.location.Latitude";
     protected static final String LONGITUDE = "eu.organicity.set.sensors.location.Longitude";
+    protected static final String TIMESTAMP = "TIMESTAMP";
     
     @PostConstruct
     public void init() {
@@ -83,7 +84,7 @@ public class SqlDbService {
             final Iterator iterator = message.keys();
             while (iterator.hasNext()) {
                 final String key = (String) iterator.next();
-                if (key.equals(LATITUDE) || key.equals(LONGITUDE)) {
+                if (key.equals(LATITUDE) || key.equals(LONGITUDE) || key.equals(TIMESTAMP)) {
                     continue;
                 }
                 try {
