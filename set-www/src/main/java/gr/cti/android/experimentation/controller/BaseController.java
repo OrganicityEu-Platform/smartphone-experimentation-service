@@ -25,6 +25,7 @@ package gr.cti.android.experimentation.controller;
 
 import gr.cti.android.experimentation.model.Experiment;
 import gr.cti.android.experimentation.model.ExperimentDTO;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Plugin;
 import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.model.RankingEntry;
@@ -154,13 +155,13 @@ public class BaseController {
         }
     }
 
-    protected Map<Long, Long> extractCounters(final Set<Result> results, final DateTime date) {
+    protected Map<Long, Long> extractCounters(final Set<Measurement> results, final DateTime date) {
         final Map<Long, Long> counters = new HashMap<>();
         for (long i = 0; i <= 7; i++) {
             counters.put(i, 0L);
         }
         final Map<DateTime, Long> datecounters = new HashMap<>();
-        for (final Result result : results) {
+        for (final Measurement result : results) {
             final DateTime index = new DateTime(result.getTimestamp()).withMillisOfDay(0);
             if (!datecounters.containsKey(index)) {
                 datecounters.put(index, 0L);
@@ -174,20 +175,20 @@ public class BaseController {
         return counters;
     }
 
-    protected SortedSet<RankingEntry> getRankingList(final String after, final int experimentId) {
+    protected SortedSet<RankingEntry> getRankingList(final String after, final String experimentId) {
 
         final SortedSet<RankingEntry> list = new TreeSet<>((o1, o2) -> (int) (o2.getCount() - o1.getCount()));
         final Iterable<Smartphone> phones = smartphoneRepository.findAll();
 
         if (after.isEmpty()) {
             for (final Smartphone phone : phones) {
-                if (experimentId == 0) {
-                    long count = resultRepository.countByDeviceId(phone.getId());
+                if (experimentId == null) {
+                    long count = measurementRepository.countByDeviceId(phone.getId());
                     if (count > 0) {
                         list.add(new RankingEntry(phone.getId(), count));
                     }
                 } else {
-                    long count = resultRepository.countByDeviceIdAndExperimentId(phone.getId(), experimentId);
+                    long count = measurementRepository.countByDeviceIdAndExperimentId(phone.getId(), experimentId);
                     if (count > 0) {
                         list.add(new RankingEntry(phone.getId(), count));
                     }
@@ -202,13 +203,13 @@ public class BaseController {
                     afterMillis = dfDay.parse(after);
                 }
                 for (final Smartphone phone : phones) {
-                    if (experimentId == 0) {
-                        long count = resultRepository.countByDeviceIdAndTimestampAfter(phone.getId(), afterMillis.getTime());
+                    if (experimentId == null) {
+                        long count = measurementRepository.countByDeviceIdAndTimestampAfter(phone.getId(), afterMillis.getTime());
                         if (count > 0) {
                             list.add(new RankingEntry(phone.getId(), count));
                         }
                     } else {
-                        long count = resultRepository.countByDeviceIdAndExperimentIdAndTimestampAfter(phone.getId(), experimentId, afterMillis.getTime());
+                        long count = measurementRepository.countByDeviceIdAndExperimentIdAndTimestampAfter(phone.getId(), experimentId, afterMillis.getTime());
                         if (count > 0) {
                             list.add(new RankingEntry(phone.getId(), count));
                         }

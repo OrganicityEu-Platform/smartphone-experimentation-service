@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.DownloadableResultDTO;
 import gr.cti.android.experimentation.model.Experiment;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.RankingEntry;
 import gr.cti.android.experimentation.model.Result;
 import org.joda.time.DateTime;
@@ -69,7 +70,7 @@ public class RestRankingController extends BaseController {
                                              final HttpServletResponse response) {
 
         final DateTime date = new DateTime().withMillisOfDay(0);
-        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfter(Integer.parseInt(phoneId), date.minusDays(7).getMillis());
+        final Set<Measurement> results = measurementRepository.findByDeviceIdAndTimestampAfter(Integer.parseInt(phoneId), date.minusDays(7).getMillis());
 
         return extractCounters(results, date);
     }
@@ -153,8 +154,7 @@ public class RestRankingController extends BaseController {
             @RequestParam(required = false, defaultValue = "") final String after,
             @RequestParam(required = false, defaultValue = "0") final String experimentId
     ) {
-        final Experiment exp = experimentRepository.findByExperimentId(experimentId);
-        return getRankingList(after, exp.getId());
+        return getRankingList(after, experimentId);
     }
 
     @Deprecated

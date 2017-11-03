@@ -27,7 +27,7 @@ import gr.cti.android.experimentation.controller.BaseController;
 import gr.cti.android.experimentation.model.Badge;
 import gr.cti.android.experimentation.model.BadgeDTO;
 import gr.cti.android.experimentation.model.Experiment;
-import gr.cti.android.experimentation.model.Result;
+import gr.cti.android.experimentation.model.Measurement;
 import gr.cti.android.experimentation.model.Smartphone;
 import gr.cti.android.experimentation.model.SmartphoneDTO;
 import gr.cti.android.experimentation.model.SmartphoneStatisticsDTO;
@@ -100,37 +100,37 @@ public class SmartphoneController extends BaseController {
 
     @RequestMapping(value = "/smartphone/{smartphoneId}/statistics/{experimentId}", method = RequestMethod.GET)
     public SmartphoneStatisticsDTO getExperimentSmartphoneStatistics(
-            Principal principal, @PathVariable(value = "smartphoneId") final int smartphoneId,
+            Principal principal, @PathVariable(value = "smartphoneId") final long smartphoneId,
             @PathVariable(value = "experimentId") final String experimentId) {
         LOGGER.info("GET /smartphone/" + smartphoneId + "/statistics/" + experimentId + " " + principal);
-        final Smartphone smartphone = smartphoneRepository.findById(smartphoneId);
+        final Smartphone smartphone = smartphoneRepository.findById((int) smartphoneId);
         if (smartphone != null) {
-            final SmartphoneStatisticsDTO smartphoneStatistics = new SmartphoneStatisticsDTO(smartphoneId);
+            final SmartphoneStatisticsDTO smartphoneStatistics = new SmartphoneStatisticsDTO((int) smartphoneId);
             smartphoneStatistics.setSensorRules(smartphone.getSensorsRules());
-            smartphoneStatistics.setReadings(resultRepository.countByDeviceId(smartphone.getId()));
+            smartphoneStatistics.setReadings(measurementRepository.countByDeviceId(smartphone.getId()));
             if (experimentId != null) {
                 final Experiment exp = experimentRepository.findByExperimentId(experimentId);
-                smartphoneStatistics.setExperimentReadings(resultRepository.countByDeviceIdAndExperimentId(smartphone.getId(), exp.getId()));
+                smartphoneStatistics.setExperimentReadings(measurementRepository.countByDeviceIdAndExperimentId(smartphone.getId(), experimentId));
             } else {
                 smartphoneStatistics.setExperimentReadings(0);
             }
 
-            final Set<Result> experimentsTotal = new HashSet<>();
-            final Set<Integer> experimentIdsTotal = new HashSet<>();
-            experimentsTotal.addAll(resultRepository.findDistinctExperimentIdByDeviceId(smartphone.getId()));
-            experimentIdsTotal.addAll(experimentsTotal.stream().map(Result::getExperimentId).collect(Collectors.toList()));
+            final Set<Measurement> experimentsTotal = new HashSet<>();
+            final Set<String> experimentIdsTotal = new HashSet<>();
+            experimentsTotal.addAll(measurementRepository.findDistinctExperimentIdByDeviceId(smartphone.getId()));
+            experimentIdsTotal.addAll(experimentsTotal.stream().map(Measurement::getExperimentId).collect(Collectors.toList()));
             smartphoneStatistics.setExperiments(experimentIdsTotal.size());
 
             smartphoneStatistics.setLast7Days(getLast7DaysTotalReadings(smartphone));
             if (experimentId != null) {
                 final Experiment exp = experimentRepository.findByExperimentId(experimentId);
-                smartphoneStatistics.setExperimentRankings(getRankingList("", exp.getId()));
+                smartphoneStatistics.setExperimentRankings(getRankingList("", experimentId));
                 smartphoneStatistics.setExperimentBadges(newBadgeDTOSet(badgeRepository.findByExperimentIdAndDeviceId(exp.getId(), smartphone.getId())));
-                smartphoneStatistics.setExperimentUsage(getExperimentParticipationTime(exp.getId(), smartphoneId));
+                smartphoneStatistics.setExperimentUsage(getExperimentParticipationTime(experimentId, (int) smartphoneId));
             }
             smartphoneStatistics.setBadges(newBadgeDTOSet(badgeRepository.findByDeviceId(smartphone.getId())));
-            smartphoneStatistics.setRankings(getRankingList("", 0));
-            smartphoneStatistics.setUsage(getExperimentParticipationTime(0, smartphoneId));
+            smartphoneStatistics.setRankings(getRankingList("", null));
+            smartphoneStatistics.setUsage(getExperimentParticipationTime(null, (int) smartphoneId));
 
 
             return smartphoneStatistics;
@@ -175,24 +175,24 @@ public class SmartphoneController extends BaseController {
     @RequestMapping(value = "/smartphone/{smartphoneId}/time", method = RequestMethod.GET)
     public TreeSet<UsageEntry> getExperimentParticipationTime(
             @PathVariable(value = "smartphoneId") final int smartphoneId) {
-        return getExperimentParticipationTime(0, smartphoneId);
+        return getExperimentParticipationTime(null, smartphoneId);
     }
 
     @RequestMapping(value = "/smartphone/{smartphoneId}/time/{experimentId}", method = RequestMethod.GET)
     public TreeSet<UsageEntry> getExperimentParticipationTime(
-            @PathVariable(value = "experimentId") final int experimentId, @PathVariable(value = "smartphoneId") final int smartphoneId) {
-        if (experimentId == 0) {
-            final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(smartphoneId, 0);
+            @PathVariable(value = "experimentId") final String experimentId, @PathVariable(value = "smartphoneId") final int smartphoneId) {
+        if (experimentId == null) {
+            final Set<Measurement> results = measurementRepository.findByDeviceIdAndTimestampAfterOrderByTimestampAsc(smartphoneId, 0);
             return extractUsageTimes(results);
         } else {
-            final Set<Result> results = resultRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(experimentId, smartphoneId, 0);
+            final Set<Measurement> results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(experimentId, smartphoneId, 0);
             return extractUsageTimes(results);
         }
     }
 
-    private TreeSet<UsageEntry> extractUsageTimes(final Set<Result> results) {
+    private TreeSet<UsageEntry> extractUsageTimes(final Set<Measurement> results) {
         final Map<String, Long> res = new TreeMap<>();
-        final SortedSet<Long> timestamps = results.stream().map(Result::getTimestamp).collect(Collectors.toCollection(TreeSet::new));
+        final SortedSet<Long> timestamps = results.stream().map(Measurement::getTimestamp).collect(Collectors.toCollection(TreeSet::new));
         DateTime start = null;
         DateTime lastDay = null;
         for (final Long timestamp : timestamps) {
@@ -219,7 +219,7 @@ public class SmartphoneController extends BaseController {
     private Map<Long, Long> getLast7DaysTotalReadings(final Smartphone smartphone) {
         //Readings in the past 7 days
         final DateTime date = new DateTime().withMillisOfDay(0);
-        final Set<Result> results = resultRepository.findByDeviceIdAndTimestampAfter(smartphone.getId(), date.minusDays(7).getMillis());
+        final Set<Measurement> results = measurementRepository.findByDeviceIdAndTimestampAfter(smartphone.getId(), date.minusDays(7).getMillis());
 
         return extractCounters(results, date);
     }
