@@ -203,8 +203,6 @@ public class PluginController extends BaseController {
 //                || plugin.getFilename() == null
 //                || plugin.getInstallUrl() == null
                 || plugin.getDescription() == null
-                || plugin.getRuntimeFactoryClass() == null
-                || plugin.getUserId() == null
                 ) {
             LOGGER.error("wrong data: " + plugin);
             String errorMessage = "error";
@@ -222,19 +220,15 @@ public class PluginController extends BaseController {
 //                errorMessage = "url cannot be null";
             } else if (plugin.getDescription() == null) {
                 errorMessage = "description cannot be null";
-            } else if (plugin.getRuntimeFactoryClass() == null) {
-                errorMessage = "runtimeFactoryClass cannot be null";
-            } else if (plugin.getUserId() == null) {
-                errorMessage = "userId cannot be null";
             }
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
         } else {
-
+            LOGGER.info("PluginId:" + pluginId);
             final Plugin storedPlugin = pluginRepository.findById((int) pluginId);
             if (storedPlugin == null) {
                 throw new PluginNotFoundException();
             } else {
-                if (!isPluginOfUser(plugin, principal)) {
+                if (!isPluginOfUser(storedPlugin, principal)) {
                     throw new PluginNotFoundException();
                 }
 
@@ -247,14 +241,23 @@ public class PluginController extends BaseController {
                 }
 
                 LOGGER.info("updatePlugin: " + plugin);
-                plugin.setId((int) pluginId);
-                if (plugin.getFilename() == null || plugin.getFilename().equals("")) {
-                    plugin.setFilename(storedPlugin.getFilename());
+                if (plugin.getName() != null) {
+                    storedPlugin.setName(plugin.getName());
                 }
-                if (plugin.getInstallUrl() == null || plugin.getInstallUrl().equals("")) {
-                    plugin.setInstallUrl(storedPlugin.getInstallUrl());
+                if (plugin.getDescription() != null) {
+                    storedPlugin.setDescription(plugin.getDescription());
                 }
-                pluginRepository.save(plugin);
+                if (plugin.getFilename() != null) {
+                    storedPlugin.setFilename(plugin.getFilename());
+                }
+                if (plugin.getContextType() != null) {
+                    storedPlugin.setContextType(plugin.getContextType());
+                }
+                if (plugin.getImageUrl() != null) {
+                    storedPlugin.setImageUrl(plugin.getImageUrl());
+                }
+    
+                pluginRepository.save(storedPlugin);
                 apiResponse.setStatus(HttpServletResponse.SC_OK);
                 apiResponse.setMessage("ok");
                 apiResponse.setValue(plugin);
