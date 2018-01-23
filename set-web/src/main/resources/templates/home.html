@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <object th:include="main :: css" th:remove="tag"/>
+    <object th:include="main :: js" th:remove="tag"/>
+
+    <style type="text/css">
+        .headerhome .title {
+            text-align: center;
+            padding-top: 6.5rem;
+        }
+
+        .headerhome {
+            background-color: white;
+            padding-bottom: 4.5rem;
+        }
+
+        .headerhome h2 {
+            text-transform: uppercase;
+            margin: 0 auto 3.5rem;
+            color: #ef4070;
+            max-width: 950px;
+            font-size: 60px;
+            line-height: 70px;
+            line-height: 7rem;
+        }
+
+        .headerhome .title__actions {
+            max-width: 550px;
+            max-width: 55rem;
+            margin: 0 auto;
+        }
+
+        .button--bordered, button--bordered {
+            border: 2px solid #ef4070;
+
+        }
+
+        .btn-org {
+            color: #ef4070;
+            background-color: transparent;
+            text-transform: uppercase;
+            text-decoration: none;
+            text-align: center;
+
+
+            padding: 1.5rem 4rem 1rem;
+        }
+
+        .btn-org:active, .btn-org:hover {
+            background-color: #ef4070;
+            color: white;
+        }
+
+        .section--main {
+            outline: 0;
+        }
+
+        .section {
+            overflow: hidden;
+            background-color: white;
+            padding-top: 6rem;
+            padding-bottom: 6rem;
+        }
+
+        .section .pure-g {
+            margin: 0 auto 2rem;
+            max-width: 1200px;
+            max-width: 120rem;
+            padding: 60 0;
+            padding: 60 0/10rem;
+        }
+
+        h2 {
+            text-align: center;
+            color: #EF4070;
+            font-size: 46px;
+            font-size: 4.6rem;
+            line-height: 1.4;
+        }
+
+        hr {
+            border: 0;
+            border-bottom: 3px solid #f3f4f8;
+            margin-bottom: 3rem;
+        }
+
+        h3 {
+            text-align: center;
+            color: #EF4070;
+            font-size: 34px;
+            font-size: 3.4rem;
+        }
+
+        p {
+            color: #5D5D5D;
+            line-height: 30px;
+            line-height: 3rem;
+            margin-bottom: 4rem;
+        }
+    </style>
+</head>
+
+<body>
+
+<object th:include="main :: common-header" th:remove="tag"/>
+
+<div class="headerhome">
+    <div class="title">
+        <h2>Smartphone&nbsp;Experimentation for the smart cities of the future</h2>
+        <div class="title__actions button-pair pure-g">
+            <div class="pure-u-1-1  button-pair__left">
+                <a class="smoothScroll btn-org button--bordered " href="#main"
+                   title="Link to How Does It Work? section">
+                   <span>
+                       how does it work?
+                   </span> </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="main" class="section section--main" tabindex="-1" data-internal-scroll-focus-target="">
+
+
+    <div class="col-lg-4 col-md-3 col-sm-1"></div>
+    <div class="col-lg-4 col-md-6 col-sm-10">
+        <h2 class="p1">How it works</h2>
+        <hr/>
+        <h3 class="p1">&nbsp;Preparation</h3>
+        <p class="p1">
+            <span class="s1">
+                Smartphone Experimentation allows experimenters to use the computational and sensing capabilities of
+                volunteers' android smartphone to gather data in a fully distributed and ad-hoc manner.
+                Smartphone Experimentation is based on executing exchangeable OSGI plugins as part of the main
+                experimentation application. Experimenters need to implement the business logic of their experiment
+                according to OC guidelines and OrganiCity delivers them to volunteers for execution.
+
+            </span>
+        </p>
+        <hr/>
+        <h3 class="p1">&nbsp;Experimentation</h3>
+        <p class="p1">
+            <span class="s1">
+                OrganiCity volunteers only need to install the Smartphone Experimentation Android application on their
+                phones and select the experiment to participate in. Data collection happens anonymously in the background
+                while they perform their everyday actions. Volunteers have at all times the ability to stop or pause the
+                execution of an experiment or even opt out of the entire experiment.
+            </span>
+        </p>
+        <hr/>
+        <h3 class="p1">&nbsp;Data Collection</h3>
+        <p class="p1">
+            <span class="s1">
+                Data are automatically collected by OrganiCity and delivered to the experimenters and provided to the
+                experimenters in a fully anonymous format with no information on the actual users that produced them.
+                Demographics and other data on the characteristics of the user group can be retrieved from the Organicity
+                Experiment Management platform. Data can be access immediately after the experiment has started and
+                extra capabilities, like interaction with the experimenters and rewarding is also available for the
+                duration of the experiment.
+            </span>
+        </p>
+    </div>
+    <div class="pure-u-1-4"></div>
+</div>
+
+</body>
+</html>

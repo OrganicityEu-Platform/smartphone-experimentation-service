@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <object th:include="main :: css" th:remove="tag"/>
+    <object th:include="main :: js" th:remove="tag"/>
+
+    <script src="/js/leaflet/leaflet.js"></script>
+    <script src="/js/leaflet-draw/leaflet.draw.js"></script>
+    <script src="/js/marked/marked.js"></script>
+
+    <link rel="stylesheet" href="/css/leaflet/leaflet.css"/>
+    <link rel="stylesheet" href="/css/leaflet-draw/leaflet.draw.css"/>
+
+</head>
+
+<body>
+
+<object th:include="main :: common-header" th:remove="tag"/>
+<div id="page-wrapper" style="padding-left:0;padding-right: 0;">
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header"><span th:text="${experiment.name}"></span>
+                <small>
+                    <a th:href="'/experiment/certain/'+${experiment.id}+'/data'">View Data</a>
+                    , Download Measurements: Areas Only
+                    (<a target="_blank"
+                        th:href="'/experiment/downloadMeasurements/experiment/'+${experiment.id}+'/type/JSON'">JSON</a>,
+                    <a th:href="'/experiment/downloadMeasurements/experiment/'+${experiment.id}+'/type/CSV'">CSV</a>
+                    )
+
+                    All Data
+                    (<a target="_blank"
+                        th:href="'/experiment/downloadMeasurements/experiment/'+${experiment.id}+'/type/JSON/all'">JSON</a>,
+                    <a th:href="'/experiment/downloadMeasurements/experiment/'+${experiment.id}+'/type/CSV/all'">CSV</a>
+                    )
+
+                </small>
+
+            </h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div id="map" style="width: 100%; height: 450px;"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12" style="padding-top: 20px">
+            <div class="col-lg-1"></div>
+            <div class="col-lg-2 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge">
+                                    1
+                                </div>
+                                <div>application</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a tabindex="0" href="#home" aria-controls="home" role="tab" data-toggle="tab">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Info</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="panel panel-green">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-tasks fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge"
+                                     th:text="${#lists.size(#strings.arraySplit(experiment.sensorDependencies, ','))}">
+                                </div>
+                                <div>sensors</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a tabindex="0" href="#sensors" aria-controls="sensors" role="tab" data-toggle="tab">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Sensors</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-comments fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" th:text="${#lists.size(regions.regions)}">
+                                </div>
+                                <div>regions</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a tabindex="0" href="#regions" aria-controls="home" role="tab" data-toggle="tab">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Regions</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-6">
+                <div class="panel panel-yellow">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-shopping-cart fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" th:text="${totalValid}">
+                                </div>
+                                <div>measurements</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a tabindex="0" href="#regions" aria-controls="inside" role="tab" data-toggle="tab">
+                        <div class="panel-footer">
+                            <span class="pull-left">Inside Areas</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-6">
+                <div class="panel panel-red">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <i class="fa fa-support fa-5x"></i>
+                            </div>
+                            <div class="col-xs-9 text-right">
+                                <div class="huge" th:text="${totalValid}">
+                                </div>
+                                <div>measurements</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a role="button" tabindex="0" th:href="'/experiment/showInvalid/'+${experiment.id}"
+                       aria-controls="outside">
+                        <div class="panel-footer">
+                            <span class="pull-left">View Outside Areas</span>
+                            <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                            <div class="clearfix"></div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="home">
+                    <div class="col-lg-offset-1 col-lg-10 col-md-12 col-sm-12 col-xs-12">
+
+                        <p class="kit_details_location">
+                                    <span class="ng-binding" th:text="${experiment.userId}">
+                                    </span>
+                        </p>
+                        <p class="kit_details_description_content ng-binding">
+                            Users Contribution
+                            <a th:href="'/experiment/showContribution/'+${experiment.id}">
+                                <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                            </a>
+                        </p>
+                        <!--<p class="kit_details_description_content ng-binding">-->
+                        <!--Contact Volunteers-->
+                        <!--&nbsp;-->
+                        <!--<a href="/experiment/updateRegions/<%= experiment.id %>">-->
+                        <!--<i class="fa fa-envelope-o" aria-hidden="true"></i>-->
+                        <!--</a>-->
+                        <!--</p>-->
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Description
+                            </div>
+                            <div class="panel-body">
+                                <div class="col-lg-12" th:text="${experiment.description}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="regions">
+                    <div class="row">
+                        <div class="col-lg-offset-1 col-lg-10">
+                            <table class="table table-bordered text-center"
+                                   id="regions-table" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Name
+                                    </th>
+                                    <th class="text-center">
+                                        Measurements
+                                    </th>
+                                    <th class="text-center">
+                                        %
+                                    </th>
+                                    <th class="text-center">
+                                        Coverage
+                                    </th>
+                                    <th class="text-center">
+                                        View
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tr th:each="region : ${regions.regions}">
+                                    <td>
+                                        <a th:href="'javascript:zoomToRegion('+${region.id}+')'"
+                                           th:text="${region.name}">
+                                        </a>
+                                    </td>
+                                    <!--<td th:text="regionMeasurements[region.id]">-->
+                                    <!--</td>-->
+                                    <!--<td th:id="'region_'+${region.id}" th:text="${regionMeasurements[region.id]}">-->
+                                    <!--</td>-->
+                                    <!--<td th:text="${parseInt(regionMeasurements[region.id] / region.minMeasurements * 100)}+'%'">-->
+                                    <!--</td>-->
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-default dropdown-toggle" type="button"
+                                                    id="dropdownMenu1"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="true">
+                                                Actions
+                                                &nbsp;
+                                                <i class="glyphicon glyphicon-chevron-down"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                                <li>
+                                                    <a th:href="'/experiment/showRegion/'+${region.id}">
+                                                        <i class="glyphicon glyphicon-map-marker"></i>&nbsp;View
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="sensors">
+                    <div class="row">
+                        <div class="col-lg-offset-1 col-lg-10">
+                            <table class="table table-bordered text-center"
+                                   id="plugins-table" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        Name
+                                    </th>
+                                    <th class="text-center">
+                                        Description
+                                    </th>
+                                    <th class="text-center">
+                                        View
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tr th:each="plugin : ${sensors.plugins}">
+                                    <th:block
+                                            th:unless="${#strings.indexOf(experiment.sensorDependencies,plugin.contextType)}==-1">
+                                        <td th:text="${plugin.name}">
+                                        </td>
+                                        <td th:text="${plugin.description}">
+                                        </td>
+                                        <td>
+                                            <div class="dropdown">
+                                                <button class="btn btn-default dropdown-toggle"
+                                                        type="button"
+                                                        id="dropdownMenu1"
+                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="true">
+                                                    Actions
+                                                    &nbsp;
+                                                    <i class="glyphicon glyphicon-chevron-down"></i>
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                                    <li>
+                                                        <a th:href="'/plugin/update/'+${plugin.id}">
+                                                            <i class="glyphicon glyphicon-map-marker"></i>&nbsp;View
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </th:block>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane " id="inside">
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h2 class="page-header">Measurements Inside Areas </h2></div>
+                    </div>
+
+                    <div class="kit_detailed col-lg-10 col-lg-offset-1">
+                        <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
+
+                        </div>
+                        <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+                            <div class="kit_detailed_title_container">
+                                <div class="kit_detailed_content_container" layout="row">
+                                    <div class="kit_details_content_main col-md-4 col-lg-4 col-sm-12" flex="">
+                                        <div class="kit_details_content ">
+                                            <p class="kit_details_labels">
+
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    // create a map in the "map" div, set the view to a given place and zoom
+    var map = L.map('map').setView([38.2908379, 21.7961805], 12);
+
+    // add an OpenStreetMap tile layer
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var coords;
+    var polygonList = [];
+    var polygonIndex = [];
+
+    /*<![CDATA[*/
+    regions = /*[[${regions}]]*/ null;
+    /*]]>*/
+    if (regions !== null) {
+        regions.regions.forEach(function (region) {
+            var coords = JSON.parse(region.coordinates);
+            console.log(coords);
+            if (coords) {
+                if (coords[0][0] instanceof Object) {
+                } else {
+                    coords = [coords];
+                }
+
+                var i = 0;
+                var poly = [];
+                var polyLength = coords[0].length - 1;
+
+                for (i; i !== polyLength; i++) {
+                    var poly_c = [];
+                    poly_c.push(coords[0][i][1]);
+                    poly_c.push(coords[0][i][0]);
+                    poly.push(poly_c);
+                }
+                console.log(poly);
+                var polygon = L.polygon([poly]);
+                polygonList.push(polygon);
+                polygonIndex.push(region.id);
+                polygon.bindPopup(region.name);
+                polygon.addTo(map);
+            }
+        });
+    }
+
+    var fGroup = L.featureGroup(polygonList);
+    map.fitBounds(fGroup.getBounds());
+
+    function zoomToRegion(regionId) {
+        map.fitBounds(polygonList[polygonIndex.indexOf(regionId)]);
+    }
+
+
+    function calcExperimentMeasurementsPercentages() {
+        /*<![CDATA[*/
+        var totalValid = /*[[${totalValid}]]*/ 0;
+        var totalInvalid = /*[[${totalInvalid}]]*/ 0;
+        var total = /*[[${total}]]*/ 0;
+        /*]]>*/
+        if (total === 0) {
+            $("#totalValid").append("(0%)");
+            $("#totalInvalid").append("(0%)");
+        } else {
+            var totalValidPercentage = ((totalValid * 100) / total).toFixed(2);
+            $("#totalValid").append("(" + totalValidPercentage + "%)");
+            var totalInvalidPercentage = (( totalInvalid * 100 ) / total).toFixed(2);
+            $("#totalInvalid").append("(" + totalInvalidPercentage + "%)");
+        }
+    }
+
+    function calcRegionMeasurementsPercentages() {
+        /*<![CDATA[*/
+        regions = /*[[${regions}]]*/ null;
+        /*]]>*/
+        if (regions !== null) {
+            regions.regions.forEach(function (region) {
+                var regionValid = /*[[${regionMeasurements[region.id]}]]*/ 0;
+                var totalValid = /*[[${totalValid }]]*/ 0;
+
+                if (totalValid == 0) {
+                    $("#region_" + regions.id).text("0%");
+                } else {
+                    var regionValidPercentage = ((regionValid * 100) / totalValid).toFixed(2);
+                    $("#region_" + regions.id).text(regionValidPercentage + "%");
+                }
+            });
+        }
+    }
+
+    function contactSend() {
+        $.ajax({
+            type: "POST",
+            url: "/experiment/contact",
+            data: $("#contactForm").serialize(),
+            success: function () {
+                var successMessage = $("#contact_success_message");
+                successMessage.show();
+                var delay = 2000;
+                setTimeout(function () {
+                    successMessage.hide();
+                    $("#contactModal").modal("hide");
+                }, delay);
+            },
+            error: function () {
+                var errorMessage = $("#contact_error_message");
+                errorMessage.show();
+                var delay = 2000;
+                setTimeout(function () {
+                    errorMessage.hide();
+                    $("#contactModal").modal("hide");
+                }, delay);
+            }
+
+        })
+    }
+
+    $(function () {
+        calcExperimentMeasurementsPercentages();
+        calcRegionMeasurementsPercentages();
+
+        $("#contactForm").on('submit', function (e) {
+            e.preventDefault();
+            contactSend();
+        });
+
+        var contactModal = $("#contactModal");
+        contactModal.on('hidden.bs.modal', function (e) {
+            $(this).find("input").val('').end();
+            $(this).find("textarea").val('').end();
+        });
+    });
+</script>
+</body>
+</html>

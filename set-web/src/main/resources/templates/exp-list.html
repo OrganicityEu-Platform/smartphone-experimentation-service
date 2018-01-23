@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <object th:include="main :: css" th:remove="tag"/>
+    <object th:include="main :: js" th:remove="tag"/>
+
+</head>
+
+<body>
+
+<object th:include="main :: common-header" th:remove="tag"/>
+
+<div id="page-wrapper">
+    <div class="row">
+        <h1 class="page-header">Smartphone Experiment Applications</h1>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <th:block th:unless="${experiments}==null">
+            <table class="dataTables_wrapper table" id="experiments-table">
+                <thead>
+                <tr>
+                    <th class="text-center col-md-2">OrganiCity Experiment Id</th>
+                    <th class="text-center col-md-2">Name</th>
+                    <th class="text-center col-md-2">Organizer</th>
+                    <th class="text-center col-md-2"></th>
+                    <!--<th class="text-center col-md-1"></th>-->
+                    <!--<th class="text-center col-md-1"></th>-->
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="experiment :${experiments.experiments}">
+                    <td class="text-center col-md-2" th:text="${experiment.id}"> </td>
+                    <td class="text-center col-md-2" th:text="${experiment.name}"> </td>
+                    <td class="text-center col-md-2" th:text="${experiment.userId}"> </td>
+                    <td class="text-center col-md-2">
+
+                        <div class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                OPTIONS&nbsp;<i class="glyphicon glyphicon-chevron-down"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                <li>
+                                    <a th:href="'/experiment/certain/'+${experiment.id}">
+                                        <i class="glyphicon glyphicon-stats"></i>&nbsp;Monitor Results
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://docs.organicity.eu/tools/set/">
+                                        <i class="glyphicon glyphicon-info-sign"></i>&nbsp;View Documentation
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            </th:block>
+            <th:block th:if="${experiments}==null">
+            <div class="well">
+                You have not created any Smartphone Experiment Applications.
+                Please visit the
+                <a href="//experimenters.organicity.eu">OrganiCity Experimenter's Portal</a>
+                and start your application from there.
+            </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var table = $('#experiments-table').DataTable({
+            "order": [[0, "desc"]],
+            "lengthMenu": [[10, 5], [10, 5]]
+        });
+    });
+
+</script>
+
+</body>
+</html>
