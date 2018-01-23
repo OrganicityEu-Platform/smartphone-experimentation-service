@@ -32,6 +32,7 @@
         <module>set-client</module>
         <module>set-client-android</module>
         <module>set-www</module>
+        <module>set-web</module>
     </modules>
 
     <build>
