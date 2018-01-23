@@ -1,0 +1,138 @@
+.windshield-navbar {
+    height: 64px;
+    background: #ef4070;
+    border-radius: 0;
+    border: 0;
+    font-size: 14px !important;
+}
+
+.windshield-navbar button {
+    font-size: 14px !important;
+    color: white;
+}
+
+.windshield-navbar-brand img {
+    height: 60px;
+    width: 120px;
+}
+
+.windshield-navbar-brand {
+    margin-top: 0px !important;
+    margin-left: 5px !important;
+    padding-top: 0 !important;
+}
+
+.navbar_signup_button {
+    border: 2px solid #00ffa8;
+    color: #00ffa8;
+    border-radius: 50px;
+    padding: 9px 11px;
+    color: #00ffa8;
+    height: 38px;
+
+}
+
+.navbar_signup_button:hover {
+    background-color: rgba(158, 158, 158, 0.2);
+}
+
+.navbar_signup_button a {
+    color: #00ffa8 !important;
+    text-decoration: none;
+    font-size: 14px !important;
+    font-weight: 500;
+}
+
+.windshield-main-menu a {
+    height: 64px;
+    display: table-cell;
+    vertical-align: middle;
+    color: black !important;
+    text-decoration: none;
+    font-size: 14px !important;
+    font-weight: 500;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+
+    padding: 0 10px;
+}
+
+.windshield-main-menu button {
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+.windshield-main-menu button:focus {
+    outline: 0;
+}
+
+.windshield-main-menu button:hover {
+    background-color: rgba(158, 158, 158, 0.2);
+}
+
+body {
+    /*background-image: url(/img/oc-hero-image.jpg);*/
+}
+
+.container {
+    /*background: white;*/
+}
+
+.input-lg {
+    height: 34px;
+    background-image: none;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    border: 1px solid #9C9C9C;
+    border-radius: 4px;
+    box-shadow: none;
+    min-height: 55px;
+    font-size: 17px;
+    background-color: #FFF;
+    color: #8e9090;
+}
+
+.input-lg:focus {
+    outline: 0;
+    border: 1px solid #ee3e6e;
+    -webkit-box-shadow: 0 0 8px #ee3e6e;
+    -moz-box-shadow: 0 0 8px #ee3e6e;
+    box-shadow: 0 0 8px #ee3e6e;
+}
+
+.btn {
+    border-radius: 2px;
+    border: 0;
+    background-color: #ee3e6e;
+    color: #fefefa;
+    margin-bottom: 10px;
+}
+
+.btn:active {
+    border-radius: 2px;
+    border: 0;
+    background-color: #ee3e6e !important;
+    color: #fefefa;
+    margin-bottom: 10px;
+}
+
+.btn:hover {
+    background-color: #191115;
+    color: #fefefa;
+}
+
+.create-experiment-header {
+    padding-bottom: 40px;
+}
+
+.nav-sidebar {
+    margin-right: -21px;
+    margin-bottom: 20px;
+    margin-left: -20px;
+}
+
+.sidebar{
+    margin-top:2px;
+}
