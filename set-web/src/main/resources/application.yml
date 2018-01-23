@@ -1,0 +1,25 @@
+# port of the server
+server.port: 8080
+# caching of html templates
+spring.thymeleaf.cache: false
+spring.template.cache: false
+
+# embedded server response compression
+server.compression:
+  enabled: true
+  mime-types: application/json,text/html,text/plain
+
+sotg:
+  keycloak: /home/amaxilatis/repositories/cti-organicity/smartphone-experimentation-service/set-web/keycloak.json
+
+keycloak:
+  realm: organicity
+  auth-server-url: https://accounts.organicity.eu
+  ssl-required: external
+  bearer-only: false
+  resource: smartphone-experiment-management-dev
+  credentials:
+    secret: f2e5f2d9-2fdb-4135-98ce-b1348549a9f5
+  use-resource-role-mappings: true
+  principal-attribute: email
+
