@@ -41,12 +41,12 @@ import java.util.Map;
  */
 @Controller
 public class HomeController {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
-    
+
     @Autowired
     BackendService backendService;
-    
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String home(Principal principal, Map<String, Object> model) {
         model.put("principal", principal);
@@ -54,7 +54,7 @@ public class HomeController {
         model.put("experiments", backendService.getExperiments());
         return "home";
     }
-    
+
     @RequestMapping(value = "/experiment/list", method = RequestMethod.GET)
     public String experimentsList(Principal principal, HttpServletRequest req, Map<String, Object> model) {
         model.put("principal", principal);
@@ -62,7 +62,7 @@ public class HomeController {
         model.put("experiments", backendService.getExperiments());
         return "exp-list";
     }
-    
+
     @RequestMapping(value = "/experiment/certain/{experimentId}", method = RequestMethod.GET)
     public String experimentsList(Principal principal, Map<String, Object> model, @PathVariable("experimentId") final String experimentId) {
         model.put("principal", principal);
@@ -72,5 +72,20 @@ public class HomeController {
         model.put("regions", backendService.getExperimentRegions(experimentId));
         return "exp-view";
     }
-    
+
+    @RequestMapping(value = "/plugin/userPlugins", method = RequestMethod.GET)
+    public String experimentsList(Principal principal, Map<String, Object> model) {
+        model.put("principal", principal);
+        model.put("sensors", backendService.getSensors());
+        model.put("experiments", backendService.getExperiments());
+        return "plugin-list";
+    }
+    @RequestMapping(value = "/plugin/update/{pluginId}", method = RequestMethod.GET)
+    public String experimentsList(Principal principal, Map<String, Object> model, @PathVariable("pluginId") final long pluginId) {
+        model.put("principal", principal);
+        model.put("sensors", backendService.getSensors());
+        model.put("experiments", backendService.getExperiments());
+        return "plugin-list";
+    }
+
 }

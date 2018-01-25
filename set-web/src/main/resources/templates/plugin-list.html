@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <object th:include="main :: css" th:remove="tag"/>
+    <object th:include="main :: js" th:remove="tag"/>
+
+</head>
+
+<body>
+
+<object th:include="main :: common-header" th:remove="tag"/>
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="col-md-12">
+
+            <div class="text-center create-experiment-header">
+                <h2>Sensors List</h2>
+            </div>
+
+            <div th:if="${errMsg}!=null" class="alert alert-danger">
+                <strong th:text="${errMsg}"></strong>
+            </div>
+
+            <table class="table text-center" id="sensors-table">
+                <thead>
+                <tr>
+                    <th class="text-center"></th>
+                    <th class="text-center">Id</th>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center"></th>
+                    <th class="text-center"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sensor : ${sensors.plugins}">
+                    <td class="col-md-1">
+                    <img th:src="${sensor.imageUrl}"
+                                              class="img-rounded"
+                                              width="40" height="40"/>
+                    </td>
+                    <td class="col-md-1" th:text="${sensor.id}"></td>
+                    <td class="col-md-2" th:text="${sensor.name}"></td>
+                    <td class="col-md-2" th:text="${sensor.description}"></td>
+                    <td class="col-md-1">
+                        <a class="btn btn-warning" th:href="${sensor.id}">Update
+                        </a>
+                    </td>
+                    <td class="col-md-1">
+                        <a class="btn btn-danger" th:href="${sensor.id}" >Delete
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="container">
+                <div class="text-center create-experiment-header">
+                    <a class="btn btn-default" href="/plugin/addPlugin">Add new sensor</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sensors-table').DataTable({
+            "order": [[ 1, "asc" ]],
+            "lengthMenu": [[5, 10], [5, 10]]
+        });
+    });
+</script>
+</body>
+</html>
