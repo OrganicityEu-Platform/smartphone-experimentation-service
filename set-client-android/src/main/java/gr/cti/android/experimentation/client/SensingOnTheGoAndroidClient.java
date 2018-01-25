@@ -28,6 +28,7 @@ import eu.organicity.discovery.dto.FeatureCollectionDTO;
 import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
 import gr.cti.android.experimentation.model.NewAssetDTO;
+import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.model.PluginListDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
 import gr.cti.android.experimentation.model.ResultDTO;
@@ -41,18 +42,18 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
 
 public class SensingOnTheGoAndroidClient extends OrganicityServiceBaseClient {
-    
+
     private String baseUrl = "https://api.smartphone-experimentation.eu/";
     private String encodedToken;
-    
+
     public SensingOnTheGoAndroidClient() {
         this("");
     }
-    
+
     public SensingOnTheGoAndroidClient(final String token) {
         super(token);
     }
-    
+
     public SensingOnTheGoAndroidClient(final String token, final String baseUrl) {
         super(token);
         this.baseUrl = baseUrl;
@@ -69,7 +70,7 @@ public class SensingOnTheGoAndroidClient extends OrganicityServiceBaseClient {
     public void setEncodedToken(final String encodedToken) {
         this.encodedToken = encodedToken;
     }
-    
+
     public boolean updateAccessToken() {
         return true;
     }
@@ -112,6 +113,30 @@ public class SensingOnTheGoAndroidClient extends OrganicityServiceBaseClient {
         }
         return restTemplate.exchange(baseUrl + "v1/plugin",
                 HttpMethod.GET, req, PluginListDTO.class).getBody();
+    }
+
+    public String addPlugin(PluginDTO dto) {
+        if (!"".equals(getToken())) {
+            updateAccessToken();
+        }
+        return restTemplate.exchange(baseUrl + "v1/plugin?name=" + dto.getName() + "&contextType=" + dto.getContextType() + "&runtimeFactoryClass=" + dto.getRuntimeFactoryClass() + "&description=" + dto.getDescription() + "&imageUrl=" + dto.getImageUrl() + "&filename=" + dto.getFilename() + "&installUrl=none",
+                HttpMethod.POST, new HttpEntity<>(headers), String.class).getBody();
+    }
+
+    public String updatePlugin(PluginDTO dto) {
+        if (!"".equals(getToken())) {
+            updateAccessToken();
+        }
+        return restTemplate.exchange(baseUrl + "v1/plugin/" + dto.getId() + "?id=" + dto.getId() + "&name=" + dto.getName() + "&contextType=" + dto.getContextType() + "&runtimeFactoryClass=" + dto.getRuntimeFactoryClass() + "&description=" + dto.getDescription() + "&imageUrl=" + dto.getImageUrl() + "&filename=" + dto.getFilename() + "&installUrl=none",
+                HttpMethod.POST, new HttpEntity<>(headers), String.class).getBody();
+    }
+
+    public boolean deletePlugin(final int pluginId) {
+        if (!"".equals(getToken())) {
+            updateAccessToken();
+        }
+        return restTemplate.exchange(baseUrl + "v1/plugin/" + pluginId,
+                HttpMethod.DELETE, new HttpEntity<>(headers), String.class).getStatusCode().is2xxSuccessful();
     }
 
     public SmartphoneStatisticsDTO getSmartphoneStatistics(final int smartphoneId) {
