@@ -37,11 +37,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BackendService {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(BackendService.class);
-    
+
     private static final ObjectMapper mapper = new ObjectMapper();
-    
+
     public PluginListDTO getSensors() {
         final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
         if (ou != null) {
@@ -51,7 +51,7 @@ public class BackendService {
             return null;
         }
     }
-    
+
     public ExperimentListDTO getExperiments() {
         final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
         if (ou != null) {
@@ -60,7 +60,9 @@ public class BackendService {
         } else {
             return null;
         }
-    }   public ExperimentDTO getExperiment(final String id) {
+    }
+
+    public ExperimentDTO getExperiment(final String id) {
         final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
         if (ou != null) {
             SensingOnTheGoClient c = new SensingOnTheGoClient(ou.getKeycloakSecurityContext().getTokenString());
@@ -69,7 +71,7 @@ public class BackendService {
             return null;
         }
     }
-    
+
     public RegionListDTO getExperimentRegions(final String id) {
         final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
         if (ou != null) {
@@ -89,6 +91,17 @@ public class BackendService {
             return null;
         }
     }
+
+    public String updatePlugin(final PluginDTO dto) {
+        final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
+        if (ou != null) {
+            SensingOnTheGoClient c = new SensingOnTheGoClient(ou.getKeycloakSecurityContext().getTokenString());
+            return c.updatePlugin(dto);
+        } else {
+            return null;
+        }
+    }
+
     public boolean deletePlugin(final int pluginId) {
         final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
         if (ou != null) {

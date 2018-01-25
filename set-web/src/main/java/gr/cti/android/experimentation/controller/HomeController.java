@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -104,6 +105,12 @@ public class HomeController {
     public String postAddSensor(Principal principal, @ModelAttribute PluginDTO dto) {
         String resp = backendService.addPlugin(dto);
         return "redirect:/plugin/userPlugins";
+    }
+
+    @RequestMapping(value = "/plugin/update", method = RequestMethod.POST)
+    public String postUpdateSensor(Principal principal, @ModelAttribute PluginDTO dto) {
+        String resp = backendService.updatePlugin(dto);
+        return "redirect:/plugin/update/" + dto.getId();
     }
 
     @RequestMapping(value = "/plugin/delete/{pluginId}", method = RequestMethod.GET)

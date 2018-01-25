@@ -32,8 +32,8 @@
                       action="/plugin/update" method="post" enctype="multipart/form-data">
 
                     <input type="hidden"
-                           name="plugin_id"
-                           th:value="${pluginId}"/>
+                           name="id"
+                           th:value="${sensor.id}"/>
 
                     <div class="form-group">
                         <label for="name">
@@ -88,8 +88,8 @@
                         </label>
                         <input class="form-control input-lg"
                                type="text"
-                               name="androidPackage"
-                               id="androidPackage"
+                               name="contextType"
+                               id="contextType"
                                placeholder="eu.organicity.set.sensors.mysensor"
                                th:value="${sensor.contextType}"
                                required="required"/>
@@ -104,8 +104,8 @@
                         </label>
                         <input class="form-control input-lg"
                                type="text"
-                               name="serviceName"
-                               id="serviceName"
+                               name="filename"
+                               id="filename"
                                placeholder="MySensorServiceName"
                                th:value="${sensor.filename}"
                                required="required"/>
