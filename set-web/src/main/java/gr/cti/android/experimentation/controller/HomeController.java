@@ -23,11 +23,13 @@ package gr.cti.android.experimentation.controller;
  * #L%
  */
 
+import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.service.BackendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,18 +76,40 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/plugin/userPlugins", method = RequestMethod.GET)
-    public String experimentsList(Principal principal, Map<String, Object> model) {
+    public String sensorList(Principal principal, Map<String, Object> model) {
         model.put("principal", principal);
         model.put("sensors", backendService.getSensors());
         model.put("experiments", backendService.getExperiments());
         return "plugin-list";
     }
+
     @RequestMapping(value = "/plugin/update/{pluginId}", method = RequestMethod.GET)
-    public String experimentsList(Principal principal, Map<String, Object> model, @PathVariable("pluginId") final long pluginId) {
+    public String showSensor(Principal principal, Map<String, Object> model, @PathVariable("pluginId") final long pluginId) {
+        model.put("principal", principal);
+        model.put("pluginId", pluginId);
+        model.put("sensors", backendService.getSensors());
+        model.put("experiments", backendService.getExperiments());
+        return "plugin-edit";
+    }
+
+    @RequestMapping(value = "/plugin/addPlugin", method = RequestMethod.GET)
+    public String addSensor(Principal principal, Map<String, Object> model) {
         model.put("principal", principal);
         model.put("sensors", backendService.getSensors());
         model.put("experiments", backendService.getExperiments());
-        return "plugin-list";
+        return "plugin-add";
+    }
+
+    @RequestMapping(value = "/plugin/addPlugin", method = RequestMethod.POST)
+    public String postAddSensor(Principal principal, @ModelAttribute PluginDTO dto) {
+        String resp = backendService.addPlugin(dto);
+        return "redirect:/plugin/userPlugins";
+    }
+
+    @RequestMapping(value = "/plugin/delete/{pluginId}", method = RequestMethod.GET)
+    public String postAddSensor(Principal principal, @PathVariable("pluginId") final int pluginId) {
+        backendService.deletePlugin(pluginId);
+        return "redirect:/plugin/userPlugins";
     }
 
 }

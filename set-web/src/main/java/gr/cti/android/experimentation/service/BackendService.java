@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gr.cti.android.experimentation.client.SensingOnTheGoClient;
 import gr.cti.android.experimentation.model.ExperimentDTO;
 import gr.cti.android.experimentation.model.ExperimentListDTO;
+import gr.cti.android.experimentation.model.PluginDTO;
 import gr.cti.android.experimentation.model.PluginListDTO;
 import gr.cti.android.experimentation.model.RegionListDTO;
 import gr.cti.android.experimentation.util.OrganicityAccount;
@@ -76,6 +77,25 @@ public class BackendService {
             return c.getExperimentRegions(id);
         } else {
             return null;
+        }
+    }
+
+    public String addPlugin(final PluginDTO dto) {
+        final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
+        if (ou != null) {
+            SensingOnTheGoClient c = new SensingOnTheGoClient(ou.getKeycloakSecurityContext().getTokenString());
+            return c.addPlugin(dto);
+        } else {
+            return null;
+        }
+    }
+    public boolean deletePlugin(final int pluginId) {
+        final OrganicityAccount ou = OrganicityUserDetailsService.getCurrentUser();
+        if (ou != null) {
+            SensingOnTheGoClient c = new SensingOnTheGoClient(ou.getKeycloakSecurityContext().getTokenString());
+            return c.deletePlugin(pluginId);
+        } else {
+            return false;
         }
     }
 }

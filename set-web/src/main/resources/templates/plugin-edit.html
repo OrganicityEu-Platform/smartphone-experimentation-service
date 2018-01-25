@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Home</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <object th:include="main :: css" th:remove="tag"/>
+    <object th:include="main :: js" th:remove="tag"/>
+
+</head>
+
+<body>
+
+<object th:include="main :: common-header" th:remove="tag"/>
+
+<div class="container">
+
+    <div class="row">
+
+        <div class="text-center create-experiment-header">
+            <h2>Update Sensor</h2>
+        </div>
+
+        <div th:if="${errMsg}!=null" class="alert alert-danger">
+            <strong th:text="${errMsg}"></strong>
+        </div>
+
+        <th:block th:each="sensor : ${sensors.plugins}">
+            <th:block th:if="${pluginId}==${sensor.id}">
+                <form role="form" data-toggle="validator" class="form-horizontal" name="updatePluginForm"
+                      action="/plugin/update" method="post" enctype="multipart/form-data">
+
+                    <input type="hidden"
+                           name="plugin_id"
+                           th:value="${pluginId}"/>
+
+                    <div class="form-group">
+                        <label for="name">
+                            Name
+                            <small class="text-muted">(Name of the sensor)</small>
+                        </label>
+                        <input class="form-control input-lg"
+                               type="text"
+                               name="name"
+                               id="name"
+                               placeholder="Sensor name"
+                               th:value="${sensor.name}"
+                               required="required"/>
+                        <p class="help-block with-errors"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">
+                            Description
+                            <small class="text-muted">(Description of the sensor)</small>
+                        </label>
+                        <textarea class="form-control-static col-lg-12"
+                                  name="description"
+                                  id="description"
+                                  placeholder="Sensor Description"
+                                  th:text="${sensor.description}"
+                                  required="required">
+                            </textarea>
+                        <p class="help-block with-errors"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">
+                            Image Icon URL
+                            <small class="text-muted">(An image url with a descriptive icon for the sensor)
+                            </small>
+                        </label>
+                        <input class="form-control input-lg"
+                               type="url"
+                               name="imageUrl"
+                               id="imageUrl"
+                               placeholder="Sensor Image URL"
+                               th:value="${sensor.imageUrl}"
+                               required="required"/>
+                        <p class="help-block with-errors"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">
+                            Android Package
+                            <small class="text-muted">(Android package of the sensor)
+                            </small>
+                        </label>
+                        <input class="form-control input-lg"
+                               type="text"
+                               name="androidPackage"
+                               id="androidPackage"
+                               placeholder="eu.organicity.set.sensors.mysensor"
+                               th:value="${sensor.contextType}"
+                               required="required"/>
+                        <p class="help-block with-errors"></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">
+                            Service Name
+                            <small class="text-muted">(Name of the Service class of the sensor)
+                            </small>
+                        </label>
+                        <input class="form-control input-lg"
+                               type="text"
+                               name="serviceName"
+                               id="serviceName"
+                               placeholder="MySensorServiceName"
+                               th:value="${sensor.filename}"
+                               required="required"/>
+                        <p class="help-block with-errors"></p>
+                    </div>
+
+                    <div class="col-md-12">
+                        <button type="submit"
+                                class="btn btn-info btn-lg">
+                            Update
+                        </button>
+                    </div>
+                </form>
+            </th:block>
+        </th:block>
+    </div>
+</div>
+</body>
+</html>
