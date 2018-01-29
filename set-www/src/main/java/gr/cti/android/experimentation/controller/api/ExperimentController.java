@@ -151,12 +151,12 @@ public class ExperimentController extends BaseController {
         experiments.setExperiments(new ArrayList<>());
         final Iterable<Experiment> enabledExperiments = experimentRepository.findAll();
         for (Experiment experiment : enabledExperiments) {
-            if (experiment.getEnabled()) {
+            if (experiment.getEnabled()
+                    && (experiment.getContextType() != null && !experiment.getContextType().isEmpty() )
+                    && (experiment.getFilename() != null && !experiment.getFilename().isEmpty())
+                    ) {
+                
                 //check for live experiments
-                experiments.getExperiments().add(newExperimentDTO(experiment));
-            } else if (principal != null && experiment.getUserId() != null
-                    && experiment.getUserId().contains(principal.getName())) {
-                //check for under development experiments
                 experiments.getExperiments().add(newExperimentDTO(experiment));
             }
         }
@@ -208,9 +208,6 @@ public class ExperimentController extends BaseController {
         if (experiment.getName() == null
                 || experiment.getId() == null
                 || experiment.getDescription() == null
-//                || experiment.getUrl() == null
-//                || experiment.getFilename() == null
-//                || experiment.getSensorDependencies() == null
                 || experiment.getUserId() == null
                 ) {
             LOGGER.info("wrong data: " + experiment);
@@ -221,12 +218,6 @@ public class ExperimentController extends BaseController {
                 errorMessage = "name cannot be null";
             } else if (experiment.getDescription() == null) {
                 errorMessage = "description cannot be null";
-//            } else if (experiment.getFilename() == null) {
-//                errorMessage = "filename cannot be null";
-//            } else if (experiment.getUrl() == null) {
-//                errorMessage = "url cannot be null";
-//            } else if (experiment.getSensorDependencies() == null) {
-//                errorMessage = "sensorDependencies cannot be null";
             } else if (experiment.getUserId() == null) {
                 errorMessage = "userId cannot be null";
             }
@@ -245,7 +236,7 @@ public class ExperimentController extends BaseController {
                 if (experiment.getUrl() != null && !experiment.getUrl().equals("")) {
                     experimentObj.setUrl(experiment.getUrl());
                 }
-                experimentObj.setContextType(EXPERIMENT_CONTEXT_TYPE);
+                experimentObj.setContextType(experiment.getContextType());
                 experimentObj.setSensorDependencies(experiment.getSensorDependencies());
                 experimentObj.setUserId(principal.getName());
 
@@ -287,30 +278,6 @@ public class ExperimentController extends BaseController {
         }
 
         final ApiResponse apiResponse = new ApiResponse();
-//        if (experiment.getName() == null
-//                || experiment.getDescription() == null
-//                || experiment.getUrl() == null
-//                || experiment.getFilename() == null
-//                || experiment.getSensorDependencies() == null
-//                || experiment.getUserId() == null
-//                ) {
-//            LOGGER.info("wrong data: " + experiment);
-//            String errorMessage = "error";
-//            if (experiment.getName() == null) {
-//                errorMessage = "name cannot be null";
-//            } else if (experiment.getDescription() == null) {
-//                errorMessage = "description cannot be null";
-//            } else if (experiment.getFilename() == null) {
-//                errorMessage = "filename cannot be null";
-//            } else if (experiment.getUrl() == null) {
-//                errorMessage = "url cannot be null";
-//            } else if (experiment.getSensorDependencies() == null) {
-//                errorMessage = "sensorDependencies cannot be null";
-//            } else if (experiment.getUserId() == null) {
-//                errorMessage = "userId cannot be null";
-//            }
-//            response.sendError(HttpServletResponse.SC_BAD_REQUEST, errorMessage);
-//        } else {
         final Experiment storedExperiment = experimentRepository.findByExperimentId(experimentId);
         if (storedExperiment != null) {
             if (!isExperimentOfUser(storedExperiment, principal)) {
