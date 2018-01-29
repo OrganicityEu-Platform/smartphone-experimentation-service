@@ -74,9 +74,9 @@ public class MeasurementsController extends BaseController {
         final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = measurementRepository.findByExperimentIdAndTimestampBetween(exp.getId(), start, end);
+            results = measurementRepository.findByExperimentIdAndTimestampBetween(exp.getExperimentId(), start, end);
         } else {
-            results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampBetween(exp.getId(), deviceId, start, end);
+            results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampBetween(exp.getExperimentId(), deviceId, start, end);
         }
         return results;
     }

@@ -88,7 +88,7 @@ public class LocationService {
     }
 
     public List<Polygon> experimentPolygons(final Experiment experiment) {
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getId());
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getExperimentId());
         final List<Polygon> polygons = new ArrayList<>();
         System.out.println("converting " + results.size() + " results to area");
         for (final Measurement result : results) {

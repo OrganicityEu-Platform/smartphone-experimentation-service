@@ -79,7 +79,7 @@ public class RestRankingController extends BaseController {
     ) {
         final Set<DownloadableResultDTO> externalResults = new TreeSet<>();
         Experiment experiment = experimentRepository.findByExperimentId(experimentId);
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getId());
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getExperimentId());
         LOGGER.info("Will try to convert " + results.size() + " results.");
         for (final Measurement result : results) {
             try {
@@ -104,7 +104,7 @@ public class RestRankingController extends BaseController {
             @PathVariable("experimentId") final String experimentId
     ) {
         final Experiment experiment = experimentRepository.findByExperimentId(experimentId);
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getId());
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experiment.getExperimentId());
         final StringBuilder resResponse = new StringBuilder();
         final Set<String> headers = new HashSet<>();
         for (final Measurement result : results) {

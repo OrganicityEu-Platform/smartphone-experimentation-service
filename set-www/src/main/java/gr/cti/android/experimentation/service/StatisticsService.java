@@ -87,7 +87,7 @@ public class StatisticsService {
 
     public Map<Integer, Integer> getContributionsPerHour(final int experimentId) {
         LOGGER.debug("===================================CONTRIBUTION PER HOUR");
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentRepository.findById(experimentId).getExperimentId());
         final Map<Integer, Integer> counts = new HashMap<>();
         for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).getHourOfDay();
@@ -104,7 +104,7 @@ public class StatisticsService {
 
     public Map<Integer, Integer> getContributionsPerDay(final int experimentId) {
         LOGGER.debug("===================================CONTRIBUTION PER DAY");
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentRepository.findById(experimentId).getExperimentId());
         final Map<Integer, Integer> counts = new HashMap<>();
         for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).withMillisOfDay(0).getDayOfYear();
@@ -121,7 +121,7 @@ public class StatisticsService {
 
     public Map<Integer, Set<Long>> getTotalUserParticipationPerDay(final int experimentId) {
         LOGGER.debug("===================================USER PARTICIPATED TOTAL");
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentRepository.findById(experimentId).getExperimentId());
         final Map<Integer, Set<Long>> counts = new HashMap<>();
         for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).withMillisOfDay(0).getDayOfYear();
@@ -142,7 +142,8 @@ public class StatisticsService {
 
     public Map<Integer, Set<Integer>> getTemporalCoveragePerDay(final int experimentId) {
         LOGGER.debug("===================================TEMPORAL COVERAGE");
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
+        
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentRepository.findById(experimentId).getExperimentId());
         final Map<Integer, Set<Integer>> counts = new HashMap<>();
         for (final Measurement result : results) {
             int index = new DateTime(result.getTimestamp()).withMillisOfDay(0).getDayOfYear();
@@ -185,7 +186,7 @@ public class StatisticsService {
 
     public double getCoveredExperimentArea(final int experimentId) {
         LOGGER.debug("===================================TEMPORAL COVERAGE");
-        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentId);
+        final Set<Measurement> results = measurementRepository.findByExperimentId(experimentRepository.findById(experimentId).getExperimentId());
         final GeometryFactory fact = new GeometryFactory();
         final List<Polygon> polygons = new ArrayList<>();
         for (final Measurement result : results) {

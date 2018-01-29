@@ -121,7 +121,7 @@ public class RestApiDataController extends BaseController {
         final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getExperimentId(), start);
         } else {
             results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getExperimentId(), deviceId, start);
         }
@@ -140,7 +140,7 @@ public class RestApiDataController extends BaseController {
         final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getExperimentId(), start);
         } else {
             results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getExperimentId(), deviceId, start);
         }
@@ -230,7 +230,7 @@ public class RestApiDataController extends BaseController {
         final Set<Measurement> results;
         Experiment exp = experimentRepository.findByExperimentId(experiment);
         if (deviceId == 0) {
-            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getId(), start);
+            results = measurementRepository.findByExperimentIdAndTimestampAfter(exp.getExperimentId(), start);
         } else {
             results = measurementRepository.findByExperimentIdAndDeviceIdAndTimestampAfterOrderByTimestampAsc(exp.getExperimentId(), deviceId, start);
         }

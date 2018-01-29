@@ -41,15 +41,15 @@ public interface MeasurementRepository extends CrudRepository<Measurement, Long>
     
     Measurement findById(int id);
     
-    Set<Measurement>  findByExperimentId(long experimentId);
+    Set<Measurement>  findByExperimentId(String experimentId);
     
-    Set<Measurement> findByExperimentIdAndTimestampBetween(long experimentId, long start, long end);
+    Set<Measurement> findByExperimentIdAndTimestampBetween(String experimentId, long start, long end);
     
-    Set<Measurement> findByExperimentIdAndDeviceIdAndTimestampBetween(long experimentId, long deviceId, long start, long end);
+    Set<Measurement> findByExperimentIdAndDeviceIdAndTimestampBetween(String experimentId, long deviceId, long start, long end);
     
     Set<Measurement> findByDeviceIdAndTimestampAfter(long deviceId, long start);
     
-    Set<Measurement> findByExperimentIdAndTimestampAfter(long experimentId, long start);
+    Set<Measurement> findByExperimentIdAndTimestampAfter(String experimentId, long start);
     
     Set<Measurement> findByDeviceIdAndTimestampBetween(long deviceId, long start, long end);
     
