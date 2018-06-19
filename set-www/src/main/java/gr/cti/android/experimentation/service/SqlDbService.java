@@ -98,7 +98,9 @@ public class SqlDbService {
                     measurement.setMeasurementValue(data);
                     measurement.setDeviceId(result.getDeviceId());
                     measurement.setTimestamp(message.getLong("timestamp"));
-                    measurementList.add(measurement);
+                    if (!key.equals("timestamp")) {
+                        measurementList.add(measurement);
+                    }
                 } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                 }
