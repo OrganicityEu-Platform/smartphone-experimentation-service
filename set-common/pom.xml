@@ -87,12 +87,4 @@
         </plugins>
     </build>
 
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>organicity</id>
-            <url>https://maven.organicity.eu/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-
 </project>
